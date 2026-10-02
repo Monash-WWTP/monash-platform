@@ -57,3 +57,7 @@ Fresh review disposition after fixes: “ship this portal scope”; no remaining
 ## CI path correction — 2026-10-03
 
 The inventory job passed the source manifest but failed the repository guard because design JSON was tracked under a directory named `build`. Local verification had run before these ignored paths were force-added, so it missed the committed-state failure. Durable design records now live in `docs/design/portal/`; the policy is unchanged and local Impeccable runtime copies remain ignored. Repository checks are rerun on the staged file set before push.
+
+## Public hosting — 2026-10-03
+
+Website deployment succeeded at https://monash-water-platform.jienweng-lai.chatgpt.site with public access. Hosting source/version identities are in `docs/operations/public-site.json`; website hosting does not supply backend or identity services. APK release remains blocked on the intended operational configuration and project signing identity, requested from the user. Download availability is still honest.
