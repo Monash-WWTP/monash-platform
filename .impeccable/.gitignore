@@ -9,3 +9,4 @@ build/font-match/
 build/crops/
 build/comp-grid.png
 build/scaffold/
+questions/*.state.json
