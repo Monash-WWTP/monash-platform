@@ -19,11 +19,11 @@ The production build runs TypeScript checking. There is no inherited browser tes
 Public routes: `/`, `/download`, `/research`, `/research/:slug`, `/login`, `/register`.
 Operator routes: `/dashboard`, `/dashboard/plants/:plantId`. Old `/plants/:plantId` links redirect. Operator code is loaded separately from the public entry bundle.
 
-Shared accounts are **not integrated yet**; account entry pages explain this without collecting credentials. A signed public APK has not been released. The public research collection is empty until approved content is supplied.
+Shared accounts are **not integrated yet**; account entry pages explain this without collecting credentials. CitizenFlood 1.0.0 is publicly available from the download page; its immutable artifact and verification record are documented in [Android release](../../docs/operations/android-release-1.0.0.json). The public research collection is empty until approved content is supplied.
 
 ### Publish a release
 
-Set `currentRelease` in `src/releases/release.ts` through `parseRelease(manifest)` after the signing, real-device installation/update and public HTTPS access gates pass. Required fields: versionName, monotonically increasing versionCode, minAndroid, ISO publication date, byteSize, lowercase SHA-256, public artifactUrl and nonempty release notes (`notes`). Invalid metadata returns null; no active APK link is rendered without a release. Metadata validation alone does not establish that the file exists, is public or signed. See [release acceptance](../../docs/product/portal-acceptance-checklist.md).
+Replace the derived `src/releases/current.json` manifest after signature, Android runtime and anonymous public HTTPS checksum verification. `currentRelease` is validated through `parseRelease(manifest)`. The first release passed Android 16 emulator installation, launch and same-version reinstall; physical-device and cross-version updates remain untested and must be recorded for subsequent release qualification. Required fields: versionName, monotonically increasing versionCode, minAndroid, ISO publication date, byteSize, lowercase SHA-256, public artifactUrl and nonempty release notes (`notes`). Invalid metadata returns null; no active APK link is rendered without a release. Metadata validation alone does not establish that the file exists, is public or signed. See [release acceptance](../../docs/product/portal-acceptance-checklist.md).
 
 ### Publish research
 
