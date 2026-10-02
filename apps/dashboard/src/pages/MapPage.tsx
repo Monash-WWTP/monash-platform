@@ -224,7 +224,7 @@ export default function MapPage() {
 
   const openWorkspace = (station: Station) => {
     const plant = plants?.find((p) => p.code === station.code)
-    if (plant) navigate(`/plants/${plant.id}`)
+    if (plant) navigate(`/dashboard/plants/${plant.id}`)
   }
 
   return (
@@ -246,7 +246,7 @@ export default function MapPage() {
                 onClick={() => {
                   const station = stations?.find((s) => s.code === plant.code)
                   if (station) setSelected(station)
-                  else navigate(`/plants/${plant.id}`)
+                  else navigate(`/dashboard/plants/${plant.id}`)
                 }}
                 className="rounded-lg border border-border bg-card p-4 text-left hover:border-primary"
               >

@@ -1,0 +1,496 @@
+{
+  "regions": [
+    {
+      "id": "nav",
+      "kind": "chrome",
+      "pixelBox": {
+        "x": 0,
+        "y": 0,
+        "w": 1505,
+        "h": 52
+      },
+      "note": "Ivory navigation strip with bottom border",
+      "codeDrawn": true
+    },
+    {
+      "id": "brand",
+      "kind": "text",
+      "pixelBox": {
+        "x": 65,
+        "y": 14,
+        "w": 175,
+        "h": 27
+      },
+      "note": "Monash WWTP project name",
+      "codeDrawn": true
+    },
+    {
+      "id": "research-nav",
+      "kind": "control",
+      "pixelBox": {
+        "x": 1013,
+        "y": 12,
+        "w": 72,
+        "h": 26
+      },
+      "note": "Research link",
+      "codeDrawn": true
+    },
+    {
+      "id": "dashboard-nav",
+      "kind": "control",
+      "pixelBox": {
+        "x": 1105,
+        "y": 12,
+        "w": 75,
+        "h": 26
+      },
+      "note": "Dashboard link",
+      "codeDrawn": true
+    },
+    {
+      "id": "login-nav",
+      "kind": "control",
+      "pixelBox": {
+        "x": 1214,
+        "y": 12,
+        "w": 48,
+        "h": 26
+      },
+      "note": "Log in link",
+      "codeDrawn": true
+    },
+    {
+      "id": "register-nav",
+      "kind": "control",
+      "pixelBox": {
+        "x": 1287,
+        "y": 6,
+        "w": 153,
+        "h": 40
+      },
+      "note": "Create account outlined link",
+      "codeDrawn": true
+    },
+    {
+      "id": "atlas",
+      "kind": "plate",
+      "pixelBox": {
+        "x": 0,
+        "y": 52,
+        "w": 1505,
+        "h": 642
+      },
+      "note": "Illustrative topographic river basin artwork, muted green hills, blue waterways and coast, light calm left area; excludes text and UI overlays"
+    },
+    {
+      "id": "headline",
+      "kind": "text",
+      "pixelBox": {
+        "x": 64,
+        "y": 127,
+        "w": 553,
+        "h": 128
+      },
+      "note": "Understand water. Report what you see. in two lines",
+      "codeDrawn": true
+    },
+    {
+      "id": "intro",
+      "kind": "text",
+      "pixelBox": {
+        "x": 66,
+        "y": 270,
+        "w": 585,
+        "h": 52
+      },
+      "note": "Citizen observations, wastewater monitoring and research \u2014 with their evidence kept distinct.",
+      "codeDrawn": true
+    },
+    {
+      "id": "download",
+      "kind": "control",
+      "pixelBox": {
+        "x": 66,
+        "y": 349,
+        "w": 282,
+        "h": 52
+      },
+      "note": "Disabled rust Download Android APK button",
+      "codeDrawn": true
+    },
+    {
+      "id": "release-status",
+      "kind": "text",
+      "pixelBox": {
+        "x": 371,
+        "y": 352,
+        "w": 183,
+        "h": 22
+      },
+      "note": "Android release coming soon",
+      "codeDrawn": true
+    },
+    {
+      "id": "install-guide",
+      "kind": "control",
+      "pixelBox": {
+        "x": 371,
+        "y": 376,
+        "w": 134,
+        "h": 24
+      },
+      "note": "Installation guide link",
+      "codeDrawn": true
+    },
+    {
+      "id": "purpose-frame",
+      "kind": "chrome",
+      "pixelBox": {
+        "x": 66,
+        "y": 425,
+        "w": 575,
+        "h": 176
+      },
+      "note": "Ivory purpose index outlined panel with horizontal row rules",
+      "codeDrawn": true
+    },
+    {
+      "id": "purpose-title",
+      "kind": "text",
+      "pixelBox": {
+        "x": 89,
+        "y": 438,
+        "w": 270,
+        "h": 24
+      },
+      "note": "Explore the map by purpose",
+      "codeDrawn": true
+    },
+    {
+      "id": "citizen-row",
+      "kind": "control",
+      "pixelBox": {
+        "x": 89,
+        "y": 478,
+        "w": 530,
+        "h": 28
+      },
+      "note": "CitizenFlood: Community observations from the public.",
+      "codeDrawn": true
+    },
+    {
+      "id": "operator-row",
+      "kind": "control",
+      "pixelBox": {
+        "x": 89,
+        "y": 520,
+        "w": 530,
+        "h": 28
+      },
+      "note": "Operator workspace: Wastewater operations and monitoring.",
+      "codeDrawn": true
+    },
+    {
+      "id": "research-row",
+      "kind": "control",
+      "pixelBox": {
+        "x": 89,
+        "y": 563,
+        "w": 530,
+        "h": 28
+      },
+      "note": "Research: Illustrative model outputs and research.",
+      "codeDrawn": true
+    },
+    {
+      "id": "map-tools",
+      "kind": "chrome",
+      "pixelBox": {
+        "x": 1439,
+        "y": 90,
+        "w": 36,
+        "h": 112
+      },
+      "note": "Decorative concept zoom and layer controls; omit from production unless map is interactive",
+      "codeDrawn": true
+    },
+    {
+      "id": "north",
+      "kind": "chrome",
+      "pixelBox": {
+        "x": 39,
+        "y": 616,
+        "w": 21,
+        "h": 46
+      },
+      "note": "Small compass north indicator",
+      "codeDrawn": true
+    },
+    {
+      "id": "scale",
+      "kind": "chrome",
+      "pixelBox": {
+        "x": 87,
+        "y": 644,
+        "w": 72,
+        "h": 18
+      },
+      "note": "Unnumbered map scale decoration",
+      "codeDrawn": true
+    },
+    {
+      "id": "map-caption",
+      "kind": "text",
+      "pixelBox": {
+        "x": 182,
+        "y": 648,
+        "w": 218,
+        "h": 18
+      },
+      "note": "Illustrative geography \u2014 not live monitoring.",
+      "codeDrawn": true
+    },
+    {
+      "id": "legend",
+      "kind": "chrome",
+      "pixelBox": {
+        "x": 1301,
+        "y": 555,
+        "w": 173,
+        "h": 122
+      },
+      "note": "Ivory map legend panel with colored swatches and water/land labels",
+      "codeDrawn": true
+    },
+    {
+      "id": "evidence-heading",
+      "kind": "text",
+      "pixelBox": {
+        "x": 65,
+        "y": 729,
+        "w": 378,
+        "h": 41
+      },
+      "note": "Three kinds of evidence",
+      "codeDrawn": true
+    },
+    {
+      "id": "evidence-intro",
+      "kind": "text",
+      "pixelBox": {
+        "x": 736,
+        "y": 727,
+        "w": 672,
+        "h": 45
+      },
+      "note": "Different types of information help us see a fuller picture of water in our environment. Each has a distinct purpose, and we keep their evidence separate.",
+      "codeDrawn": true
+    },
+    {
+      "id": "citizen-icon",
+      "kind": "chrome",
+      "pixelBox": {
+        "x": 65,
+        "y": 800,
+        "w": 91,
+        "h": 92
+      },
+      "note": "Blue circle with simple community icon",
+      "codeDrawn": true
+    },
+    {
+      "id": "citizen-heading",
+      "kind": "text",
+      "pixelBox": {
+        "x": 183,
+        "y": 809,
+        "w": 267,
+        "h": 27
+      },
+      "note": "Community observations",
+      "codeDrawn": true
+    },
+    {
+      "id": "citizen-description",
+      "kind": "text",
+      "pixelBox": {
+        "x": 183,
+        "y": 846,
+        "w": 315,
+        "h": 42
+      },
+      "note": "Reports from people in the community, such as photos and notes about water in their local area.",
+      "codeDrawn": true
+    },
+    {
+      "id": "citizen-link",
+      "kind": "control",
+      "pixelBox": {
+        "x": 183,
+        "y": 905,
+        "w": 151,
+        "h": 24
+      },
+      "note": "Go to CitizenFlood link",
+      "codeDrawn": true
+    },
+    {
+      "id": "lab-icon",
+      "kind": "chrome",
+      "pixelBox": {
+        "x": 547,
+        "y": 800,
+        "w": 91,
+        "h": 92
+      },
+      "note": "Green circle with simple flask icon",
+      "codeDrawn": true
+    },
+    {
+      "id": "lab-heading",
+      "kind": "text",
+      "pixelBox": {
+        "x": 670,
+        "y": 809,
+        "w": 285,
+        "h": 27
+      },
+      "note": "Laboratory measurements",
+      "codeDrawn": true
+    },
+    {
+      "id": "lab-description",
+      "kind": "text",
+      "pixelBox": {
+        "x": 670,
+        "y": 846,
+        "w": 318,
+        "h": 42
+      },
+      "note": "Waste water and water quality measurements from operational monitoring.",
+      "codeDrawn": true
+    },
+    {
+      "id": "lab-link",
+      "kind": "control",
+      "pixelBox": {
+        "x": 670,
+        "y": 905,
+        "w": 198,
+        "h": 24
+      },
+      "note": "Go to operator workspace link",
+      "codeDrawn": true
+    },
+    {
+      "id": "model-icon",
+      "kind": "chrome",
+      "pixelBox": {
+        "x": 1020,
+        "y": 800,
+        "w": 91,
+        "h": 92
+      },
+      "note": "Rust circle with simple chart icon",
+      "codeDrawn": true
+    },
+    {
+      "id": "model-heading",
+      "kind": "text",
+      "pixelBox": {
+        "x": 1145,
+        "y": 809,
+        "w": 274,
+        "h": 27
+      },
+      "note": "Illustrative model outputs",
+      "codeDrawn": true
+    },
+    {
+      "id": "model-description",
+      "kind": "text",
+      "pixelBox": {
+        "x": 1145,
+        "y": 846,
+        "w": 304,
+        "h": 42
+      },
+      "note": "Model outputs used for research and exploration, not real-time monitoring.",
+      "codeDrawn": true
+    },
+    {
+      "id": "model-link",
+      "kind": "control",
+      "pixelBox": {
+        "x": 1145,
+        "y": 905,
+        "w": 126,
+        "h": 24
+      },
+      "note": "Go to research link",
+      "codeDrawn": true
+    },
+    {
+      "id": "research-heading",
+      "kind": "text",
+      "pixelBox": {
+        "x": 65,
+        "y": 983,
+        "w": 140,
+        "h": 39
+      },
+      "note": "Research",
+      "codeDrawn": true
+    },
+    {
+      "id": "research-empty",
+      "kind": "text",
+      "pixelBox": {
+        "x": 282,
+        "y": 995,
+        "w": 265,
+        "h": 22
+      },
+      "note": "Approved publications will appear here.",
+      "codeDrawn": true
+    },
+    {
+      "id": "research-all",
+      "kind": "control",
+      "pixelBox": {
+        "x": 1311,
+        "y": 993,
+        "w": 131,
+        "h": 27
+      },
+      "note": "View all research link",
+      "codeDrawn": true
+    },
+    {
+      "id": "evidence-ground",
+      "kind": "chrome",
+      "pixelBox": {
+        "x": 0,
+        "y": 694,
+        "w": 1505,
+        "h": 265
+      },
+      "note": "Ivory evidence section ground with two column divider rules",
+      "codeDrawn": true,
+      "container": true
+    },
+    {
+      "id": "research-ground",
+      "kind": "chrome",
+      "pixelBox": {
+        "x": 0,
+        "y": 959,
+        "w": 1505,
+        "h": 86
+      },
+      "note": "Ivory research strip with top horizontal rule",
+      "codeDrawn": true
+    }
+  ]
+}

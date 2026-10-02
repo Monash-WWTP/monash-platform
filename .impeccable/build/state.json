@@ -1,0 +1,645 @@
+{
+  "tool": "build-phase",
+  "version": 2,
+  "startedAt": "2026-10-02T10:40:35.197Z",
+  "comp": ".impeccable/mocks/atlas-purpose-index.png",
+  "direction": "4da37c5e",
+  "breakpoint": "1505x1045",
+  "artifact": null,
+  "phase": "hero",
+  "phases": {
+    "comps": {
+      "status": "closed",
+      "openedAt": "2026-10-02T10:40:35.197Z",
+      "closedAt": "2026-10-02T11:05:18.180Z",
+      "attempts": 2,
+      "notes": [],
+      "gate": {
+        "ok": true,
+        "reasons": [],
+        "summary": "3 comps, 1 approved",
+        "approved": ".impeccable/mocks/atlas-purpose-index.png",
+        "at": "2026-10-02T11:05:18.180Z"
+      },
+      "forced": null
+    },
+    "spec": {
+      "status": "closed",
+      "openedAt": "2026-10-02T11:05:18.199Z",
+      "closedAt": "2026-10-02T11:07:48.672Z",
+      "attempts": 2,
+      "notes": [],
+      "gate": {
+        "ok": true,
+        "reasons": [],
+        "summary": "41 regions, 1 plates, 16 text regions measured",
+        "at": "2026-10-02T11:07:48.672Z"
+      },
+      "forced": null
+    },
+    "plates": {
+      "status": "closed",
+      "openedAt": "2026-10-02T11:07:48.672Z",
+      "closedAt": "2026-10-02T11:15:55.723Z",
+      "attempts": 2,
+      "notes": [],
+      "gate": {
+        "ok": true,
+        "reasons": [],
+        "summary": "1/1 plates",
+        "at": "2026-10-02T11:15:55.707Z"
+      },
+      "forced": null
+    },
+    "hero": {
+      "status": "open",
+      "openedAt": "2026-10-02T11:15:55.723Z",
+      "closedAt": null,
+      "attempts": 3,
+      "notes": [],
+      "gate": {
+        "ok": false,
+        "reasons": [
+          "control login-nav drifts to 64% (structure 65%, color 77%): open .impeccable/review/diff/hero/regions/login-nav.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+          "control download drifts to 59% (structure 80%, color 54%): open .impeccable/review/diff/hero/regions/download.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+          "control install-guide drifts to 64% (structure 68%, color 60%): open .impeccable/review/diff/hero/regions/install-guide.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+          "control citizen-link drifts to 55% (structure 62%, color 55%): open .impeccable/review/diff/hero/regions/citizen-link.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+          "control lab-link drifts to 58% (structure 65%, color 51%): open .impeccable/review/diff/hero/regions/lab-link.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+          "control model-link drifts to 53% (structure 60%, color 55%): open .impeccable/review/diff/hero/regions/model-link.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification"
+        ],
+        "regionReasons": {
+          "login-nav": [
+            "control login-nav drifts to 64% (structure 65%, color 77%): open .impeccable/review/diff/hero/regions/login-nav.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification"
+          ],
+          "download": [
+            "control download drifts to 59% (structure 80%, color 54%): open .impeccable/review/diff/hero/regions/download.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification"
+          ],
+          "install-guide": [
+            "control install-guide drifts to 64% (structure 68%, color 60%): open .impeccable/review/diff/hero/regions/install-guide.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification"
+          ],
+          "citizen-link": [
+            "control citizen-link drifts to 55% (structure 62%, color 55%): open .impeccable/review/diff/hero/regions/citizen-link.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification"
+          ],
+          "lab-link": [
+            "control lab-link drifts to 58% (structure 65%, color 51%): open .impeccable/review/diff/hero/regions/lab-link.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification"
+          ],
+          "model-link": [
+            "control model-link drifts to 53% (structure 60%, color 55%): open .impeccable/review/diff/hero/regions/model-link.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification"
+          ]
+        },
+        "summary": "hero 90% (match)",
+        "score": 0.8958,
+        "verdict": "match",
+        "report": ".impeccable/review/diff/hero/report.json",
+        "sideBySide": "/home/jienweng/projects/monash-platform/.impeccable/review/diff/hero/side-by-side.png",
+        "worst": [
+          "model-link drift 53%",
+          "citizen-link drift 55%",
+          "lab-link drift 58%"
+        ],
+        "worstIds": [
+          "model-link",
+          "citizen-link",
+          "lab-link"
+        ],
+        "worstCrops": [
+          {
+            "id": "model-link",
+            "verdict": "drift",
+            "score": {
+              "overall": 0.5256,
+              "structure": 0.601,
+              "color": 0.5514,
+              "colorIntersection": 0.25,
+              "paletteMatch": 0.7137,
+              "detail": 0.311,
+              "detailRaw": 0.3839,
+              "detailAdded": 0.1458,
+              "bands": 0.2667
+            },
+            "file": ".impeccable/review/diff/hero/regions/model-link.png"
+          },
+          {
+            "id": "citizen-link",
+            "verdict": "drift",
+            "score": {
+              "overall": 0.5513,
+              "structure": 0.6182,
+              "color": 0.5458,
+              "colorIntersection": 0.2807,
+              "paletteMatch": 0.6885,
+              "detail": 0.4104,
+              "detailRaw": 0.5146,
+              "detailAdded": 0.2083,
+              "bands": 0.1667
+            },
+            "file": ".impeccable/review/diff/hero/regions/citizen-link.png"
+          },
+          {
+            "id": "lab-link",
+            "verdict": "drift",
+            "score": {
+              "overall": 0.5816,
+              "structure": 0.6549,
+              "color": 0.5098,
+              "colorIntersection": 0.2668,
+              "paletteMatch": 0.6407,
+              "detail": 0.5421,
+              "detailRaw": 0.6046,
+              "detailAdded": 0.125,
+              "bands": 0.6629
+            },
+            "file": ".impeccable/review/diff/hero/regions/lab-link.png"
+          }
+        ],
+        "advisories": [
+          "(advisory, above the 72% bar; fix in the polish pass before responsive) 6 readings:",
+          "  text operator-row: letter-spacing is tighter than the comp's (gap 0.029 vs 0.060 of the cap height); set letter-spacing to open it by about 0px",
+          "  text intro: ink is #0d283b in the build, #495f68 in the comp; use the comp's colour",
+          "  text map-caption: ink is #3962a0 in the build, #8d9799 in the comp; use the comp's colour",
+          "  text lab-heading: ink is #0d283d in the build, #acb7ba in the comp; use the comp's colour",
+          "  control citizen-row: its rule sits 19px into the box in the comp and 11px in the build (-8px), so the strip is shorter than the comp's; match the height, not only the position",
+          "  control model-link: its rule sits 9px into the box in the comp and 18px in the build (+9px), so the strip is taller than the comp's; match the height, not only the position"
+        ],
+        "regionVerdicts": {
+          "nav": "match",
+          "brand": "drift",
+          "research-nav": "drift",
+          "dashboard-nav": "drift",
+          "login-nav": "drift",
+          "register-nav": "drift",
+          "atlas": "match",
+          "headline": "drift",
+          "intro": "drift",
+          "download": "drift",
+          "release-status": "drift",
+          "install-guide": "drift",
+          "purpose-frame": "match",
+          "purpose-title": "drift",
+          "citizen-row": "drift",
+          "operator-row": "drift",
+          "research-row": "drift",
+          "map-tools": "drift",
+          "north": "drift",
+          "scale": "drift",
+          "map-caption": "drift",
+          "legend": "drift",
+          "evidence-heading": "drift",
+          "evidence-intro": "drift",
+          "citizen-icon": "drift",
+          "citizen-heading": "drift",
+          "citizen-description": "drift",
+          "citizen-link": "drift",
+          "lab-icon": "match",
+          "lab-heading": "drift",
+          "lab-description": "drift",
+          "lab-link": "drift",
+          "model-icon": "drift",
+          "model-heading": "drift",
+          "model-description": "drift",
+          "model-link": "drift",
+          "research-heading": "drift",
+          "research-empty": "drift",
+          "research-all": "drift",
+          "evidence-ground": "match",
+          "research-ground": "match"
+        },
+        "at": "2026-10-02T11:22:28.543Z"
+      },
+      "forced": null,
+      "readingsSeen": {
+        "text release-status: cap height 21.9px in the build, 11.1px in the comp (+97%); set font-size so the cap height renders at 11.1px": 1,
+        "text purpose-title: cap height 23.9px in the build, 13.2px in the comp (+81%); set font-size so the cap height renders at 13.2px": 1,
+        "text citizen-row: cap height 27.5px in the build, 10.8px in the comp (+155%); set font-size so the cap height renders at 10.8px": 1,
+        "text operator-row: cap height 27.5px in the build, 11px in the comp (+150%); set font-size so the cap height renders at 11px": 1,
+        "text research-row: cap height 27.7px in the build, 10.8px in the comp (+156%); set font-size so the cap height renders at 10.8px": 1,
+        "text operator-row: letter-spacing is tighter than the comp's (gap 0.029 vs 0.060 of the cap height); set letter-spacing to open it by about 0px": 3,
+        "text intro: ink is #0d283b in the build, #495f68 in the comp; use the comp's colour": 3,
+        "text map-caption: ink is #3962a0 in the build, #8d9799 in the comp; use the comp's colour": 3,
+        "text lab-heading: ink is #0d283d in the build, #acb7ba in the comp; use the comp's colour": 3,
+        "control install-guide: its rule sits 7px into the box in the comp and 21px in the build (+14px), so the strip is taller than the comp's; match the height, not only the position": 1,
+        "control citizen-row: its rule sits 19px into the box in the comp and 1px in the build (-18px), so the strip is shorter than the comp's; match the height, not only the position": 1,
+        "control operator-row: its rule sits 12px into the box in the comp and 1px in the build (-11px), so the strip is shorter than the comp's; match the height, not only the position": 1,
+        "chrome scale: its rule sits 2px into the box in the comp and 9px in the build (+7px), so the strip is taller than the comp's; match the height, not only the position": 1,
+        "control model-link: its rule sits 9px into the box in the comp and 18px in the build (+9px), so the strip is taller than the comp's; match the height, not only the position": 3,
+        "control citizen-row: its rule sits 19px into the box in the comp and 11px in the build (-8px), so the strip is shorter than the comp's; match the height, not only the position": 2
+      },
+      "records": 1,
+      "history": [
+        {
+          "at": "2026-10-02T11:21:07.283Z",
+          "score": 0.8709,
+          "worstIds": [
+            "scale",
+            "evidence-heading",
+            "install-guide"
+          ],
+          "blockingReasons": [
+            "region scale is missing (detail 0%, structure 50%): the comp shows material the build does not",
+            "region download (control) is contradicted (structure 74%, detail added 29%): this control differs from the comp: inspect its lettering and visible shape separately against the crop and the measured readings; preserve the region's control classification",
+            "region install-guide (control) is contradicted (structure 48%, detail added 17%): this control differs from the comp: inspect its lettering and visible shape separately against the crop and the measured readings; preserve the region's control classification",
+            "region evidence-heading (text) is contradicted (structure 39%, detail added 16%): the composition of this text region differs from the comp; re-derive it from the spec box",
+            "region evidence-intro (text) is contradicted (structure 70%, detail added 36%): the composition of this text region differs from the comp; re-derive it from the spec box",
+            "control login-nav drifts to 64% (structure 65%, color 77%): open .impeccable/review/diff/hero/regions/login-nav.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+            "control citizen-link drifts to 55% (structure 62%, color 55%): open .impeccable/review/diff/hero/regions/citizen-link.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+            "control lab-link drifts to 58% (structure 65%, color 51%): open .impeccable/review/diff/hero/regions/lab-link.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+            "control model-link drifts to 53% (structure 60%, color 55%): open .impeccable/review/diff/hero/regions/model-link.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification"
+          ],
+          "regionVerdicts": {
+            "nav": "match",
+            "brand": "drift",
+            "research-nav": "drift",
+            "dashboard-nav": "drift",
+            "login-nav": "drift",
+            "register-nav": "drift",
+            "atlas": "match",
+            "headline": "drift",
+            "intro": "drift",
+            "download": "contradicted",
+            "release-status": "drift",
+            "install-guide": "contradicted",
+            "purpose-frame": "drift",
+            "purpose-title": "drift",
+            "citizen-row": "drift",
+            "operator-row": "drift",
+            "research-row": "drift",
+            "map-tools": "drift",
+            "north": "drift",
+            "scale": "missing",
+            "map-caption": "drift",
+            "legend": "drift",
+            "evidence-heading": "contradicted",
+            "evidence-intro": "contradicted",
+            "citizen-icon": "drift",
+            "citizen-heading": "drift",
+            "citizen-description": "drift",
+            "citizen-link": "drift",
+            "lab-icon": "match",
+            "lab-heading": "drift",
+            "lab-description": "drift",
+            "lab-link": "drift",
+            "model-icon": "drift",
+            "model-heading": "drift",
+            "model-description": "drift",
+            "model-link": "drift",
+            "research-heading": "drift",
+            "research-empty": "drift",
+            "research-all": "drift",
+            "evidence-ground": "drift",
+            "research-ground": "match"
+          },
+          "artifactHash": null
+        },
+        {
+          "at": "2026-10-02T11:21:58.461Z",
+          "score": 0.8955,
+          "worstIds": [
+            "download",
+            "model-link",
+            "citizen-link"
+          ],
+          "blockingReasons": [
+            "region download (control) is contradicted (structure 78%, detail added 13%): this control differs from the comp: inspect its lettering and visible shape separately against the crop and the measured readings; preserve the region's control classification",
+            "control login-nav drifts to 64% (structure 65%, color 77%): open .impeccable/review/diff/hero/regions/login-nav.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+            "control install-guide drifts to 64% (structure 68%, color 60%): open .impeccable/review/diff/hero/regions/install-guide.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+            "control citizen-link drifts to 55% (structure 62%, color 55%): open .impeccable/review/diff/hero/regions/citizen-link.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+            "control lab-link drifts to 58% (structure 65%, color 51%): open .impeccable/review/diff/hero/regions/lab-link.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+            "control model-link drifts to 53% (structure 60%, color 55%): open .impeccable/review/diff/hero/regions/model-link.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification"
+          ],
+          "regionVerdicts": {
+            "nav": "match",
+            "brand": "drift",
+            "research-nav": "drift",
+            "dashboard-nav": "drift",
+            "login-nav": "drift",
+            "register-nav": "drift",
+            "atlas": "match",
+            "headline": "drift",
+            "intro": "drift",
+            "download": "contradicted",
+            "release-status": "drift",
+            "install-guide": "drift",
+            "purpose-frame": "match",
+            "purpose-title": "drift",
+            "citizen-row": "drift",
+            "operator-row": "drift",
+            "research-row": "drift",
+            "map-tools": "drift",
+            "north": "drift",
+            "scale": "drift",
+            "map-caption": "drift",
+            "legend": "drift",
+            "evidence-heading": "drift",
+            "evidence-intro": "drift",
+            "citizen-icon": "drift",
+            "citizen-heading": "drift",
+            "citizen-description": "drift",
+            "citizen-link": "drift",
+            "lab-icon": "match",
+            "lab-heading": "drift",
+            "lab-description": "drift",
+            "lab-link": "drift",
+            "model-icon": "drift",
+            "model-heading": "drift",
+            "model-description": "drift",
+            "model-link": "drift",
+            "research-heading": "drift",
+            "research-empty": "drift",
+            "research-all": "drift",
+            "evidence-ground": "match",
+            "research-ground": "match"
+          },
+          "artifactHash": null
+        },
+        {
+          "at": "2026-10-02T11:22:28.560Z",
+          "score": 0.8958,
+          "worstIds": [
+            "model-link",
+            "citizen-link",
+            "lab-link"
+          ],
+          "blockingReasons": [
+            "control login-nav drifts to 64% (structure 65%, color 77%): open .impeccable/review/diff/hero/regions/login-nav.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+            "control download drifts to 59% (structure 80%, color 54%): open .impeccable/review/diff/hero/regions/download.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+            "control install-guide drifts to 64% (structure 68%, color 60%): open .impeccable/review/diff/hero/regions/install-guide.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+            "control citizen-link drifts to 55% (structure 62%, color 55%): open .impeccable/review/diff/hero/regions/citizen-link.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+            "control lab-link drifts to 58% (structure 65%, color 51%): open .impeccable/review/diff/hero/regions/lab-link.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification",
+            "control model-link drifts to 53% (structure 60%, color 55%): open .impeccable/review/diff/hero/regions/model-link.png and compare its lettering and visible shape separately; use the measured readings and preserve the region's control classification"
+          ],
+          "regionVerdicts": {
+            "nav": "match",
+            "brand": "drift",
+            "research-nav": "drift",
+            "dashboard-nav": "drift",
+            "login-nav": "drift",
+            "register-nav": "drift",
+            "atlas": "match",
+            "headline": "drift",
+            "intro": "drift",
+            "download": "drift",
+            "release-status": "drift",
+            "install-guide": "drift",
+            "purpose-frame": "match",
+            "purpose-title": "drift",
+            "citizen-row": "drift",
+            "operator-row": "drift",
+            "research-row": "drift",
+            "map-tools": "drift",
+            "north": "drift",
+            "scale": "drift",
+            "map-caption": "drift",
+            "legend": "drift",
+            "evidence-heading": "drift",
+            "evidence-intro": "drift",
+            "citizen-icon": "drift",
+            "citizen-heading": "drift",
+            "citizen-description": "drift",
+            "citizen-link": "drift",
+            "lab-icon": "match",
+            "lab-heading": "drift",
+            "lab-description": "drift",
+            "lab-link": "drift",
+            "model-icon": "drift",
+            "model-heading": "drift",
+            "model-description": "drift",
+            "model-link": "drift",
+            "research-heading": "drift",
+            "research-empty": "drift",
+            "research-all": "drift",
+            "evidence-ground": "match",
+            "research-ground": "match"
+          },
+          "artifactHash": null
+        }
+      ]
+    },
+    "sections": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "motion": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "responsive": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "review": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    }
+  },
+  "finish": null,
+  "sessionId": "01a0fc2f-e929-7093-afee-43fdb2892d5e",
+  "plates": {
+    "atlas": {
+      "id": "atlas",
+      "file": "assets/plates/atlas.png",
+      "status": "ok",
+      "assetHash": "6ce6501ddf02a45f05d29fa70cf39b7263065f139e8144f66ec2e5cb17825200",
+      "regionHash": "53a792c31f4c1c1c297f6ec3d4a2d116e49b7145623fb7d7b673edd88fcc8939",
+      "referenceHash": "83e27cbeb35d4fe79226dbbd7add9ecf640b55e3e573f43ee24c1a1fff78cc3d",
+      "reference": {
+        "policy": "plate-reference-v2",
+        "excludedPixels": 255634,
+        "totalPixels": 966210,
+        "remainingPixels": 710576,
+        "excludedFraction": 0.26457395390236077,
+        "fullyExcluded": false,
+        "regions": [
+          {
+            "id": "headline",
+            "kind": "text",
+            "cropPx": {
+              "x": 64,
+              "y": 75,
+              "w": 553,
+              "h": 128
+            },
+            "pixels": 70784
+          },
+          {
+            "id": "intro",
+            "kind": "text",
+            "cropPx": {
+              "x": 66,
+              "y": 218,
+              "w": 585,
+              "h": 52
+            },
+            "pixels": 30420
+          },
+          {
+            "id": "download",
+            "kind": "control",
+            "cropPx": {
+              "x": 66,
+              "y": 297,
+              "w": 282,
+              "h": 52
+            },
+            "pixels": 14664
+          },
+          {
+            "id": "release-status",
+            "kind": "text",
+            "cropPx": {
+              "x": 371,
+              "y": 300,
+              "w": 183,
+              "h": 22
+            },
+            "pixels": 4026
+          },
+          {
+            "id": "install-guide",
+            "kind": "control",
+            "cropPx": {
+              "x": 371,
+              "y": 324,
+              "w": 134,
+              "h": 24
+            },
+            "pixels": 3216
+          },
+          {
+            "id": "purpose-frame",
+            "kind": "chrome",
+            "cropPx": {
+              "x": 66,
+              "y": 373,
+              "w": 575,
+              "h": 176
+            },
+            "pixels": 101200
+          },
+          {
+            "id": "purpose-title",
+            "kind": "text",
+            "cropPx": {
+              "x": 89,
+              "y": 386,
+              "w": 270,
+              "h": 24
+            },
+            "pixels": 6480
+          },
+          {
+            "id": "citizen-row",
+            "kind": "control",
+            "cropPx": {
+              "x": 89,
+              "y": 426,
+              "w": 530,
+              "h": 28
+            },
+            "pixels": 14840
+          },
+          {
+            "id": "operator-row",
+            "kind": "control",
+            "cropPx": {
+              "x": 89,
+              "y": 468,
+              "w": 530,
+              "h": 28
+            },
+            "pixels": 14840
+          },
+          {
+            "id": "research-row",
+            "kind": "control",
+            "cropPx": {
+              "x": 89,
+              "y": 511,
+              "w": 530,
+              "h": 28
+            },
+            "pixels": 14840
+          },
+          {
+            "id": "map-tools",
+            "kind": "chrome",
+            "cropPx": {
+              "x": 1439,
+              "y": 38,
+              "w": 36,
+              "h": 112
+            },
+            "pixels": 4032
+          },
+          {
+            "id": "north",
+            "kind": "chrome",
+            "cropPx": {
+              "x": 39,
+              "y": 564,
+              "w": 21,
+              "h": 46
+            },
+            "pixels": 966
+          },
+          {
+            "id": "scale",
+            "kind": "chrome",
+            "cropPx": {
+              "x": 87,
+              "y": 592,
+              "w": 72,
+              "h": 18
+            },
+            "pixels": 1296
+          },
+          {
+            "id": "map-caption",
+            "kind": "text",
+            "cropPx": {
+              "x": 182,
+              "y": 596,
+              "w": 218,
+              "h": 18
+            },
+            "pixels": 3924
+          },
+          {
+            "id": "legend",
+            "kind": "chrome",
+            "cropPx": {
+              "x": 1301,
+              "y": 503,
+              "w": 173,
+              "h": 122
+            },
+            "pixels": 21106
+          }
+        ],
+        "ignoredContainers": []
+      },
+      "compHash": "3c67699d334afcdf8b87ab099532f626c658b136530a82f62167a60b1334c393",
+      "size": "1920x819",
+      "score": 0.8617
+    }
+  }
+}

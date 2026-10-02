@@ -1,0 +1,68 @@
+{
+  "title": "Water atlas: choose the landing layout",
+  "question": "Which composition should carry forward? You can also describe changes or combine elements. No implementation starts before this visual review.",
+  "options": [
+    {
+      "thesis": "Community reporting, wastewater work and research share one clear geographic index.",
+      "palette": [
+        "#f3f1e7",
+        "#123e43",
+        "#537872",
+        "#c45e3c"
+      ],
+      "materials": [
+        "cartographic linework",
+        "archival paper",
+        "precise legends"
+      ],
+      "risk": "Illustrative geography must never be mistaken for live monitoring data.",
+      "id": "atlas-original",
+      "label": "Atlas with integrated purpose index",
+      "comp": ".impeccable/mocks/decision/assigned.png",
+      "viewport": "Geography carries the introduction and a compact purpose index."
+    },
+    {
+      "thesis": "Community reporting, wastewater work and research share one clear geographic index.",
+      "palette": [
+        "#f3f1e7",
+        "#123e43",
+        "#537872",
+        "#c45e3c"
+      ],
+      "materials": [
+        "cartographic linework",
+        "archival paper",
+        "precise legends"
+      ],
+      "risk": "Illustrative geography must never be mistaken for live monitoring data.",
+      "id": "atlas-directory",
+      "label": "Atlas with right-side directory",
+      "comp": ".impeccable/mocks/atlas-directory.png",
+      "viewport": "A broad river-basin sheet anchors a dedicated release and navigation legend."
+    },
+    {
+      "thesis": "Community reporting, wastewater work and research share one clear geographic index.",
+      "palette": [
+        "#f3f1e7",
+        "#123e43",
+        "#537872",
+        "#c45e3c"
+      ],
+      "materials": [
+        "cartographic linework",
+        "archival paper",
+        "precise legends"
+      ],
+      "risk": "Illustrative geography must never be mistaken for live monitoring data.",
+      "id": "atlas-rail",
+      "label": "Atlas with navigation rail",
+      "comp": ".impeccable/mocks/atlas-rail.png",
+      "viewport": "A persistent left index and a horizontal release bar organize the geographic spread."
+    }
+  ],
+  "steer": true,
+  "buildPath": {
+    "value": "comp",
+    "toggle": true
+  }
+}

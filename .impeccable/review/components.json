@@ -1,0 +1,794 @@
+{
+  "schemaVersion": 3,
+  "stage": "components",
+  "id": "components",
+  "title": "Plan and asset review",
+  "comp": {
+    "path": ".impeccable/mocks/atlas-purpose-index.png",
+    "width": 1505,
+    "height": 1045
+  },
+  "specSha256": "731b3201c7b5e28124a178de8636038bf8d6d8a3d9306bfe1e845e087116aa84",
+  "components": [
+    {
+      "id": "nav",
+      "name": "Nav",
+      "kind": "chrome",
+      "role": "plan",
+      "box": {
+        "x": 0,
+        "y": 0,
+        "w": 1,
+        "h": 0.0498
+      },
+      "note": "Ivory navigation strip with bottom border",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "brand",
+      "name": "Brand",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.0432,
+        "y": 0.0134,
+        "w": 0.1163,
+        "h": 0.0258
+      },
+      "note": "Monash WWTP project name",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "research-nav",
+      "name": "Research nav",
+      "kind": "control",
+      "role": "plan",
+      "box": {
+        "x": 0.6731,
+        "y": 0.0115,
+        "w": 0.0478,
+        "h": 0.0249
+      },
+      "note": "Research link",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "dashboard-nav",
+      "name": "Dashboard nav",
+      "kind": "control",
+      "role": "plan",
+      "box": {
+        "x": 0.7342,
+        "y": 0.0115,
+        "w": 0.0498,
+        "h": 0.0249
+      },
+      "note": "Dashboard link",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "login-nav",
+      "name": "Login nav",
+      "kind": "control",
+      "role": "plan",
+      "box": {
+        "x": 0.8066,
+        "y": 0.0115,
+        "w": 0.0319,
+        "h": 0.0249
+      },
+      "note": "Log in link",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "register-nav",
+      "name": "Register nav",
+      "kind": "control",
+      "role": "plan",
+      "box": {
+        "x": 0.8551,
+        "y": 0.0057,
+        "w": 0.1017,
+        "h": 0.0383
+      },
+      "note": "Create account outlined link",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "headline",
+      "name": "Headline",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.0425,
+        "y": 0.1215,
+        "w": 0.3674,
+        "h": 0.1225
+      },
+      "note": "Understand water. Report what you see. in two lines",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "intro",
+      "name": "Intro",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.0439,
+        "y": 0.2584,
+        "w": 0.3887,
+        "h": 0.0498
+      },
+      "note": "Citizen observations, wastewater monitoring and research — with their evidence kept distinct.",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "download",
+      "name": "Download",
+      "kind": "control",
+      "role": "plan",
+      "box": {
+        "x": 0.0439,
+        "y": 0.334,
+        "w": 0.1874,
+        "h": 0.0498
+      },
+      "note": "Disabled rust Download Android APK button",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "release-status",
+      "name": "Release status",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.2465,
+        "y": 0.3368,
+        "w": 0.1216,
+        "h": 0.0211
+      },
+      "note": "Android release coming soon",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "install-guide",
+      "name": "Install guide",
+      "kind": "control",
+      "role": "plan",
+      "box": {
+        "x": 0.2465,
+        "y": 0.3598,
+        "w": 0.089,
+        "h": 0.023
+      },
+      "note": "Installation guide link",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "purpose-frame",
+      "name": "Purpose frame",
+      "kind": "chrome",
+      "role": "plan",
+      "box": {
+        "x": 0.0439,
+        "y": 0.4067,
+        "w": 0.3821,
+        "h": 0.1684
+      },
+      "note": "Ivory purpose index outlined panel with horizontal row rules",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "purpose-title",
+      "name": "Purpose title",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.0591,
+        "y": 0.4191,
+        "w": 0.1794,
+        "h": 0.023
+      },
+      "note": "Explore the map by purpose",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "citizen-row",
+      "name": "Citizen row",
+      "kind": "control",
+      "role": "plan",
+      "box": {
+        "x": 0.0591,
+        "y": 0.4574,
+        "w": 0.3522,
+        "h": 0.0268
+      },
+      "note": "CitizenFlood: Community observations from the public.",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "operator-row",
+      "name": "Operator row",
+      "kind": "control",
+      "role": "plan",
+      "box": {
+        "x": 0.0591,
+        "y": 0.4976,
+        "w": 0.3522,
+        "h": 0.0268
+      },
+      "note": "Operator workspace: Wastewater operations and monitoring.",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "research-row",
+      "name": "Research row",
+      "kind": "control",
+      "role": "plan",
+      "box": {
+        "x": 0.0591,
+        "y": 0.5388,
+        "w": 0.3522,
+        "h": 0.0268
+      },
+      "note": "Research: Illustrative model outputs and research.",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "map-tools",
+      "name": "Map tools",
+      "kind": "chrome",
+      "role": "plan",
+      "box": {
+        "x": 0.9561,
+        "y": 0.0861,
+        "w": 0.0239,
+        "h": 0.1072
+      },
+      "note": "Decorative concept zoom and layer controls; omit from production unless map is interactive",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "north",
+      "name": "North",
+      "kind": "chrome",
+      "role": "plan",
+      "box": {
+        "x": 0.0259,
+        "y": 0.5895,
+        "w": 0.014,
+        "h": 0.044
+      },
+      "note": "Small compass north indicator",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "scale",
+      "name": "Scale",
+      "kind": "chrome",
+      "role": "plan",
+      "box": {
+        "x": 0.0578,
+        "y": 0.6163,
+        "w": 0.0478,
+        "h": 0.0172
+      },
+      "note": "Unnumbered map scale decoration",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "map-caption",
+      "name": "Map caption",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.1209,
+        "y": 0.6201,
+        "w": 0.1449,
+        "h": 0.0172
+      },
+      "note": "Illustrative geography — not live monitoring.",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "legend",
+      "name": "Legend",
+      "kind": "chrome",
+      "role": "plan",
+      "box": {
+        "x": 0.8645,
+        "y": 0.5311,
+        "w": 0.115,
+        "h": 0.1167
+      },
+      "note": "Ivory map legend panel with colored swatches and water/land labels",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "evidence-heading",
+      "name": "Evidence heading",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.0432,
+        "y": 0.6976,
+        "w": 0.2512,
+        "h": 0.0392
+      },
+      "note": "Three kinds of evidence",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "evidence-intro",
+      "name": "Evidence intro",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.489,
+        "y": 0.6957,
+        "w": 0.4465,
+        "h": 0.0431
+      },
+      "note": "Different types of information help us see a fuller picture of water in our environment. Each has a distinct purpose, and we keep their evidence separate.",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "citizen-icon",
+      "name": "Citizen icon",
+      "kind": "chrome",
+      "role": "plan",
+      "box": {
+        "x": 0.0432,
+        "y": 0.7656,
+        "w": 0.0605,
+        "h": 0.088
+      },
+      "note": "Blue circle with simple community icon",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "citizen-heading",
+      "name": "Citizen heading",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.1216,
+        "y": 0.7742,
+        "w": 0.1774,
+        "h": 0.0258
+      },
+      "note": "Community observations",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "citizen-description",
+      "name": "Citizen description",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.1216,
+        "y": 0.8096,
+        "w": 0.2093,
+        "h": 0.0402
+      },
+      "note": "Reports from people in the community, such as photos and notes about water in their local area.",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "citizen-link",
+      "name": "Citizen link",
+      "kind": "control",
+      "role": "plan",
+      "box": {
+        "x": 0.1216,
+        "y": 0.866,
+        "w": 0.1003,
+        "h": 0.023
+      },
+      "note": "Go to CitizenFlood link",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "lab-icon",
+      "name": "Lab icon",
+      "kind": "chrome",
+      "role": "plan",
+      "box": {
+        "x": 0.3635,
+        "y": 0.7656,
+        "w": 0.0605,
+        "h": 0.088
+      },
+      "note": "Green circle with simple flask icon",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "lab-heading",
+      "name": "Lab heading",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.4452,
+        "y": 0.7742,
+        "w": 0.1894,
+        "h": 0.0258
+      },
+      "note": "Laboratory measurements",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "lab-description",
+      "name": "Lab description",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.4452,
+        "y": 0.8096,
+        "w": 0.2113,
+        "h": 0.0402
+      },
+      "note": "Waste water and water quality measurements from operational monitoring.",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "lab-link",
+      "name": "Lab link",
+      "kind": "control",
+      "role": "plan",
+      "box": {
+        "x": 0.4452,
+        "y": 0.866,
+        "w": 0.1316,
+        "h": 0.023
+      },
+      "note": "Go to operator workspace link",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "model-icon",
+      "name": "Model icon",
+      "kind": "chrome",
+      "role": "plan",
+      "box": {
+        "x": 0.6777,
+        "y": 0.7656,
+        "w": 0.0605,
+        "h": 0.088
+      },
+      "note": "Rust circle with simple chart icon",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "model-heading",
+      "name": "Model heading",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.7608,
+        "y": 0.7742,
+        "w": 0.1821,
+        "h": 0.0258
+      },
+      "note": "Illustrative model outputs",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "model-description",
+      "name": "Model description",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.7608,
+        "y": 0.8096,
+        "w": 0.202,
+        "h": 0.0402
+      },
+      "note": "Model outputs used for research and exploration, not real-time monitoring.",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "model-link",
+      "name": "Model link",
+      "kind": "control",
+      "role": "plan",
+      "box": {
+        "x": 0.7608,
+        "y": 0.866,
+        "w": 0.0837,
+        "h": 0.023
+      },
+      "note": "Go to research link",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "research-heading",
+      "name": "Research heading",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.0432,
+        "y": 0.9407,
+        "w": 0.093,
+        "h": 0.0373
+      },
+      "note": "Research",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "research-empty",
+      "name": "Research empty",
+      "kind": "text",
+      "role": "plan",
+      "box": {
+        "x": 0.1874,
+        "y": 0.9522,
+        "w": 0.1761,
+        "h": 0.0211
+      },
+      "note": "Approved publications will appear here.",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "research-all",
+      "name": "Research all",
+      "kind": "control",
+      "role": "plan",
+      "box": {
+        "x": 0.8711,
+        "y": 0.9502,
+        "w": 0.087,
+        "h": 0.0258
+      },
+      "note": "View all research link",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "evidence-ground",
+      "name": "Evidence ground",
+      "kind": "chrome",
+      "role": "plan",
+      "box": {
+        "x": 0,
+        "y": 0.6641,
+        "w": 1,
+        "h": 0.2536
+      },
+      "note": "Ivory evidence section ground with two column divider rules",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "research-ground",
+      "name": "Research ground",
+      "kind": "chrome",
+      "role": "plan",
+      "box": {
+        "x": 0,
+        "y": 0.9177,
+        "w": 1,
+        "h": 0.0823
+      },
+      "note": "Ivory research strip with top horizontal rule",
+      "medium": "code",
+      "preview": {
+        "kind": "comp-crop"
+      },
+      "codeDrawn": true,
+      "dependencies": []
+    },
+    {
+      "id": "atlas",
+      "name": "Atlas",
+      "kind": "plate",
+      "role": "asset",
+      "box": {
+        "x": 0,
+        "y": 0.0498,
+        "w": 1,
+        "h": 0.6144
+      },
+      "note": "Illustrative topographic river basin artwork, muted green hills, blue waterways and coast, light calm left area; excludes text and UI overlays",
+      "medium": "raster",
+      "preview": {
+        "kind": "image",
+        "path": "assets/plates/atlas.png"
+      },
+      "dependencies": []
+    }
+  ],
+  "codeRegions": []
+}

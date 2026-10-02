@@ -57,7 +57,7 @@ with sync_playwright() as playwright:
     page.on("pageerror", lambda error: errors.append(str(error)))
     page.on("console", lambda message: errors.append(message.text) if message.type == "error" else None)
     page.route("**/*", intercept)
-    page.goto(origin + "/", wait_until="networkidle")
+    page.goto(origin + "/dashboard", wait_until="networkidle")
     page.locator(".maplibregl-canvas").wait_for()
     page.locator(".maplibregl-ctrl-attrib").get_by_text("Synthetic attribution").wait_for()
     assert page.evaluate("window.__xss") is None

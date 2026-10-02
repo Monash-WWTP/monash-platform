@@ -1,0 +1,328 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-02T13:53:42.400971+00:00",
+  "title": "Design System: Public water atlas",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "tonalRamp": [
+          "oklch(15% 0.012 110)",
+          "oklch(27% 0.012 110)",
+          "oklch(39% 0.012 110)",
+          "oklch(51% 0.012 110)",
+          "oklch(63% 0.012 110)",
+          "oklch(75% 0.012 110)",
+          "oklch(87% 0.012 110)",
+          "oklch(95% 0.012 110)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "tonalRamp": [
+          "oklch(15% 0.012 235)",
+          "oklch(27% 0.012 235)",
+          "oklch(39% 0.012 235)",
+          "oklch(51% 0.012 235)",
+          "oklch(63% 0.012 235)",
+          "oklch(75% 0.012 235)",
+          "oklch(87% 0.012 235)",
+          "oklch(95% 0.012 235)"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "tonalRamp": [
+          "oklch(15% 0.012 110)",
+          "oklch(27% 0.012 110)",
+          "oklch(39% 0.012 110)",
+          "oklch(51% 0.012 110)",
+          "oklch(63% 0.012 110)",
+          "oklch(75% 0.012 110)",
+          "oklch(87% 0.012 110)",
+          "oklch(95% 0.012 110)"
+        ]
+      },
+      "link": {
+        "role": "primary",
+        "displayName": "Link",
+        "tonalRamp": [
+          "oklch(15% 0.055 235)",
+          "oklch(27% 0.055 235)",
+          "oklch(39% 0.055 235)",
+          "oklch(51% 0.055 235)",
+          "oklch(63% 0.055 235)",
+          "oklch(75% 0.055 235)",
+          "oklch(87% 0.055 235)",
+          "oklch(95% 0.055 235)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "tonalRamp": [
+          "oklch(15% 0.012 110)",
+          "oklch(27% 0.012 110)",
+          "oklch(39% 0.012 110)",
+          "oklch(51% 0.012 110)",
+          "oklch(63% 0.012 110)",
+          "oklch(75% 0.012 110)",
+          "oklch(87% 0.012 110)",
+          "oklch(95% 0.012 110)"
+        ]
+      },
+      "release": {
+        "role": "primary",
+        "displayName": "Release",
+        "tonalRamp": [
+          "oklch(15% 0.055 35)",
+          "oklch(27% 0.055 35)",
+          "oklch(39% 0.055 35)",
+          "oklch(51% 0.055 35)",
+          "oklch(63% 0.055 35)",
+          "oklch(75% 0.055 35)",
+          "oklch(87% 0.055 35)",
+          "oklch(95% 0.055 35)"
+        ]
+      },
+      "release-text": {
+        "role": "primary",
+        "displayName": "Release Text",
+        "tonalRamp": [
+          "oklch(15% 0.012 35)",
+          "oklch(27% 0.012 35)",
+          "oklch(39% 0.012 35)",
+          "oklch(51% 0.012 35)",
+          "oklch(63% 0.012 35)",
+          "oklch(75% 0.012 35)",
+          "oklch(87% 0.012 35)",
+          "oklch(95% 0.012 35)"
+        ]
+      },
+      "focus": {
+        "role": "primary",
+        "displayName": "Focus",
+        "tonalRamp": [
+          "oklch(15% 0.055 35)",
+          "oklch(27% 0.055 35)",
+          "oklch(39% 0.055 35)",
+          "oklch(51% 0.055 35)",
+          "oklch(63% 0.055 35)",
+          "oklch(75% 0.055 35)",
+          "oklch(87% 0.055 35)",
+          "oklch(95% 0.055 35)"
+        ]
+      },
+      "citizen": {
+        "role": "secondary",
+        "displayName": "Citizen",
+        "tonalRamp": [
+          "oklch(15% 0.055 235)",
+          "oklch(27% 0.055 235)",
+          "oklch(39% 0.055 235)",
+          "oklch(51% 0.055 235)",
+          "oklch(63% 0.055 235)",
+          "oklch(75% 0.055 235)",
+          "oklch(87% 0.055 235)",
+          "oklch(95% 0.055 235)"
+        ]
+      },
+      "laboratory": {
+        "role": "secondary",
+        "displayName": "Laboratory",
+        "tonalRamp": [
+          "oklch(15% 0.055 170)",
+          "oklch(27% 0.055 170)",
+          "oklch(39% 0.055 170)",
+          "oklch(51% 0.055 170)",
+          "oklch(63% 0.055 170)",
+          "oklch(75% 0.055 170)",
+          "oklch(87% 0.055 170)",
+          "oklch(95% 0.055 170)"
+        ]
+      },
+      "model": {
+        "role": "secondary",
+        "displayName": "Model",
+        "tonalRamp": [
+          "oklch(15% 0.055 35)",
+          "oklch(27% 0.055 35)",
+          "oklch(39% 0.055 35)",
+          "oklch(51% 0.055 35)",
+          "oklch(63% 0.055 35)",
+          "oklch(75% 0.055 35)",
+          "oklch(87% 0.055 35)",
+          "oklch(95% 0.055 35)"
+        ]
+      },
+      "citizen-soft": {
+        "role": "secondary",
+        "displayName": "Citizen Soft",
+        "tonalRamp": [
+          "oklch(15% 0.012 235)",
+          "oklch(27% 0.012 235)",
+          "oklch(39% 0.012 235)",
+          "oklch(51% 0.012 235)",
+          "oklch(63% 0.012 235)",
+          "oklch(75% 0.012 235)",
+          "oklch(87% 0.012 235)",
+          "oklch(95% 0.012 235)"
+        ]
+      },
+      "laboratory-soft": {
+        "role": "secondary",
+        "displayName": "Laboratory Soft",
+        "tonalRamp": [
+          "oklch(15% 0.012 170)",
+          "oklch(27% 0.012 170)",
+          "oklch(39% 0.012 170)",
+          "oklch(51% 0.012 170)",
+          "oklch(63% 0.012 170)",
+          "oklch(75% 0.012 170)",
+          "oklch(87% 0.012 170)",
+          "oklch(95% 0.012 170)"
+        ]
+      },
+      "model-soft": {
+        "role": "secondary",
+        "displayName": "Model Soft",
+        "tonalRamp": [
+          "oklch(15% 0.012 35)",
+          "oklch(27% 0.012 35)",
+          "oklch(39% 0.012 35)",
+          "oklch(51% 0.012 35)",
+          "oklch(63% 0.012 35)",
+          "oklch(75% 0.012 35)",
+          "oklch(87% 0.012 35)",
+          "oklch(95% 0.012 35)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Atlas display",
+        "purpose": "Atlas opening heading."
+      },
+      "body": {
+        "displayName": "Reading body",
+        "purpose": "Public instructions and research prose."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "illustration-zoom",
+        "value": "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Illustration scaling; removed for reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "medium",
+        "value": "1100px"
+      },
+      {
+        "name": "narrow",
+        "value": "700px"
+      }
+    ],
+    "sources": [
+      "apps/dashboard/src/pages/public/public.css",
+      "apps/dashboard/src/pages/public/LandingPage.tsx",
+      "apps/dashboard/src/pages/public/PublicLayout.tsx",
+      "apps/dashboard/dist/index.html"
+    ],
+    "tonalRampProvenance": "Synthesized OKLCH preview ramps; canonical implementation colors remain in DESIGN.md frontmatter."
+  },
+  "components": [
+    {
+      "name": "Release action",
+      "kind": "button",
+      "refersTo": "button-release",
+      "description": "Release action from the public portal.",
+      "html": "<button class=\"ds-demo ds-release\">Download Android APK</button>",
+      "css": ".ds-release{font-family:Gelasio,Georgia,serif;background:#b5715e;color:#fff8ed;border:0;border-radius:3px;min-height:52px;padding:0 24px;font-size:18px;cursor:pointer}.ds-demo:focus-visible{outline:3px solid #b55336;outline-offset:5px}"
+    },
+    {
+      "name": "Copy link",
+      "kind": "button",
+      "refersTo": "button-copy",
+      "description": "Copy link from the public portal.",
+      "html": "<button class=\"ds-demo ds-copy\">Copy link</button>",
+      "css": ".ds-copy{font-family:Gelasio,Georgia,serif;padding:12px 18px;border:1px solid #b5c0be;background:#f2f1e9;color:#0a2230;cursor:pointer}.ds-demo:focus-visible{outline:3px solid #b55336;outline-offset:5px}"
+    },
+    {
+      "name": "Account link",
+      "kind": "button",
+      "refersTo": "account-link",
+      "description": "Account link from the public portal.",
+      "html": "<a class=\"ds-demo ds-account\" href=\"#register\">Create account</a>",
+      "css": ".ds-account{font-family:Gelasio,Georgia,serif;display:inline-block;padding:9px 27px;border:1px solid #416171;border-radius:2px;color:#0a2230;font-size:14px;text-decoration:none}.ds-account:hover{text-decoration:underline}.ds-demo:focus-visible{outline:3px solid #b55336;outline-offset:5px}"
+    },
+    {
+      "name": "Atlas control",
+      "kind": "button",
+      "refersTo": "atlas-control",
+      "description": "Atlas control from the public portal.",
+      "html": "<button class=\"ds-demo ds-tool\" aria-label=\"Zoom illustration in\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 5v14M5 12h14\"/></svg></button>",
+      "css": ".ds-tool{border:1px solid #b5c0be;background:#f7f6ee;color:#0a2230;width:36px;height:36px;display:grid;place-items:center;cursor:pointer}.ds-tool:hover{background:#e0e9e1}.ds-tool:disabled{color:#657b82}.ds-demo:focus-visible{outline:3px solid #b55336;outline-offset:5px}"
+    },
+    {
+      "name": "Purpose panel",
+      "kind": "card",
+      "refersTo": "purpose-panel",
+      "description": "Purpose panel from the public portal.",
+      "html": "<div class=\"ds-panel\"><h2>Explore the map by purpose</h2><a class=\"ds-demo ds-row\" href=\"#download\"><span></span><strong>CitizenFlood</strong><span>Community observations from the public.</span></a></div>",
+      "css": ".ds-panel{font-family:Gelasio,Georgia,serif;background:#f7f6eede;border:1px solid #9caeb3;padding:10px 22px 4px;color:#0a2230}.ds-panel h2{font-size:18px;font-weight:400;margin:0;padding-bottom:10px;border-bottom:1px solid #b5c0be}.ds-row{display:flex;align-items:center;gap:22px;min-height:42px;color:#0a2230;text-decoration:none;font-size:14px}.ds-row>span:first-child{width:22px;height:22px;border-radius:50%;background:#246391;flex-shrink:0}.ds-row:hover{background:#e7ece5}.ds-demo:focus-visible{outline:3px solid #b55336;outline-offset:5px}"
+    },
+    {
+      "name": "Public navigation",
+      "kind": "nav",
+      "refersTo": "account-link",
+      "description": "Public navigation from the public portal.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Public navigation\"><a class=\"ds-demo\" href=\"#research\">Research</a><a class=\"ds-demo\" href=\"#dashboard\">Dashboard</a><a class=\"ds-demo\" href=\"#login\">Log in</a></nav>",
+      "css": ".ds-nav{font-family:Gelasio,Georgia,serif;display:flex;gap:38px;padding:18px;background:#f7f6ee;border-bottom:1px solid #b5c0be;font-size:14px;flex-wrap:wrap}.ds-nav a{color:#0a2230;text-decoration:none}.ds-nav a:hover{text-decoration:underline}.ds-demo:focus-visible{outline:3px solid #b55336;outline-offset:5px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Public water atlas",
+    "overview": "The public water atlas pairs explicitly illustrative cartography with the calm reading rhythm of an academic publication. Warm paper, dark marine ink and Gelasio serif text give public instructions and research a coherent editorial voice.\n\nLabelled community, laboratory and model treatments keep evidence visibly distinct. Public reading pages reuse that voice through generous margins, restrained rules and readable prose. This system records the public portal; the operator dashboard has a separate incumbent interface.",
+    "keyCharacteristics": [
+      "Warm paper and marine ink",
+      "Editorial serif hierarchy",
+      "Labelled evidence colors",
+      "Flat ruled surfaces",
+      "Visible keyboard focus"
+    ],
+    "rules": [
+      {
+        "name": "Evidence Labels",
+        "body": "Color accompanies a text label; community observations, laboratory measurements and illustrative model outputs remain distinct.",
+        "section": "colors"
+      },
+      {
+        "name": "Editorial Hierarchy",
+        "body": "Use regular serif headings and size to establish hierarchy; reserve semibold for navigation identity and concise emphasis.",
+        "section": "typography"
+      },
+      {
+        "name": "Flat Surfaces",
+        "body": "Use paper tones and thin rules to separate surfaces; public components do not use cast shadows.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do pair evidence colors with readable labels.",
+      "Do label illustrative geography and model outputs accurately.",
+      "Do preserve keyboard focus and reduced motion."
+    ],
+    "donts": [
+      "Don't imply the illustration is live monitoring.",
+      "Don't import operator dashboard styling into the public atlas by default.",
+      "Don't invent publication, release or institutional endorsement claims."
+    ]
+  }
+}

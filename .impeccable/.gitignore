@@ -1,0 +1,11 @@
+config.local.json
+*.log
+
+# Regenerable local review images; durable summaries live in docs/product.
+review/diff/
+review/hero*.png
+review/incumbent-dashboard.png
+build/font-match/
+build/crops/
+build/comp-grid.png
+build/scaffold/
