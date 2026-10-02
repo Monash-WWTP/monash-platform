@@ -1,0 +1,26 @@
+# Render Blueprint — FastAPI backend for the WWTP dashboard.
+# Deploy: New + → Blueprint → pick this repo. Then set the prompted env vars
+# (DATABASE_URL, CORS_ORIGINS) in the Render dashboard.
+services:
+  - type: web
+    name: wwtp-api
+    runtime: python
+    plan: free
+    # install the simulation package first so backend's "wwtp-sim"
+    # dependency resolves locally instead of from PyPI
+    buildCommand: pip install ./simulation && pip install ./backend
+    startCommand: uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.11"
+      - key: DATABASE_URL
+        sync: false # set in dashboard: Supabase session pooler URI
+      - key: CORS_ORIGINS
+        sync: false # set in dashboard: your Vercel URL
+      - key: SUPABASE_URL
+        value: https://eaxekwlmvpvftpgxiwlu.supabase.co
+      - key: SUPABASE_KEY
+        value: sb_publishable_3-3Y9gvsPaJvErjgB80s6A__xFEcU1j
+      - key: WWTP_OPERATOR_EMAILS
+        sync: false # comma-separated, confirmed operator email addresses

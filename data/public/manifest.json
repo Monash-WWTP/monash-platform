@@ -1,0 +1,59 @@
+{
+  "dataset": "Petaling WWTP effluent monitoring",
+  "version": "1.1.0",
+  "generated_at": "2026-06-26T07:32:34+00:00",
+  "source": "https://eaxekwlmvpvftpgxiwlu.supabase.co",
+  "source_commit": "2611757dc7b46797569ba3821a6a8a8807b047df",
+  "license": "CC-BY-4.0",
+  "tables": {
+    "stations": {
+      "rows": 1,
+      "columns": [
+        "code",
+        "name",
+        "stp_type",
+        "category",
+        "latitude",
+        "longitude",
+        "created_at"
+      ]
+    },
+    "effluent_samples": {
+      "rows": 154,
+      "columns": [
+        "id",
+        "station_code",
+        "sample_date",
+        "sampling",
+        "sample_point",
+        "bod",
+        "bod_bdl",
+        "cod",
+        "cod_bdl",
+        "nh3n",
+        "nh3n_bdl",
+        "no3n",
+        "no3n_bdl",
+        "ph",
+        "ph_bdl",
+        "oil_grease",
+        "oil_grease_bdl",
+        "tss",
+        "tss_bdl",
+        "temperature",
+        "compliance",
+        "source_year",
+        "created_at"
+      ]
+    },
+    "emission_factors": {
+      "rows": 8,
+      "columns": [
+        "process_type",
+        "ef_ch4",
+        "ef_n2o",
+        "source"
+      ]
+    }
+  }
+}

@@ -1,0 +1,21 @@
+[project]
+name = "monash-platform-workspace"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = ["wwtp-sim", "wwtp-backend"]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+wwtp-sim = { workspace = true }
+wwtp-backend = { workspace = true }
+
+[tool.uv.workspace]
+members = ["packages/simulation", "services/api"]
+
+[dependency-groups]
+dev = ["pytest>=8.0", "httpx>=0.27"]
+research = [
+    "matplotlib>=3.10,<4",
+]
