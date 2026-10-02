@@ -22,3 +22,13 @@ change data endpoints or chart values; lint and production build pass after
 the changes. The dependency audit reported 22 advisories on the inherited
 lockfile and requires a separate dependency review rather than an automatic
 major-version update during source import.
+
+## CitizenFlood
+
+The mobile app was copied from `citizenflood` commit `5a80700`. Its committed
+`pubspec.lock` is byte-identical; the two uncommitted changes in the legacy
+checkout were not copied or modified. The successor copy changes only
+`android/gradle.properties`: Gradle's inherited 8 GB heap and 4 GB metaspace
+caused a local OOM kill before it produced an APK. The successor limits the
+heap to 2 GB, metaspace to 1 GB, and Gradle workers to two. The import test
+requires all other imported mobile files to match their source blobs.

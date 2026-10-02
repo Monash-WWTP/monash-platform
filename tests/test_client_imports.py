@@ -5,6 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ROWS = json.loads((ROOT / "docs/migration/source-inventory.json").read_text())["files"]
+MOBILE_ADAPTATIONS = {"android/gradle.properties"}
 DASHBOARD_ADAPTATIONS = {
     "frontend/src/components/comparison/ComparisonView.tsx",
     "frontend/src/components/dashboard/TrendsChart.tsx",
@@ -37,3 +38,21 @@ def test_dashboard_import_keeps_legacy_data_routes():
     assert "'/api/plants'" in client
     assert "supabase.from('stations')" in monitoring
     assert "'/api/v1/" not in client
+
+
+def test_citizenflood_snapshot_matches_pinned_app():
+    rows = [r for r in ROWS if r["source_repo"] == "citizenflood" and
+            r["disposition"] == "imported"]
+    assert rows
+    for row in rows:
+        target = ROOT / row["target_path"]
+        assert target.is_file(), str(target)
+        if row["source_path"] not in MOBILE_ADAPTATIONS:
+            assert hashlib.sha256(target.read_bytes()).hexdigest() == row["source_sha256"]
+    assert {r["source_path"] for r in rows if
+            hashlib.sha256((ROOT / r["target_path"]).read_bytes()).hexdigest()
+            != r["source_sha256"]} == MOBILE_ADAPTATIONS
+    lock = ROOT / "apps/citizenflood/pubspec.lock"
+    assert hashlib.sha256(lock.read_bytes()).hexdigest() == next(
+        r["source_sha256"] for r in rows if r["source_path"] == "pubspec.lock"
+    )

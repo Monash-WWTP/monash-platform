@@ -1,0 +1,35 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/
+.vscode/
+
+# Android
+android/.gradle/
+android/local.properties
+android/key.properties
+*.keystore
+*.jks
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+
+# Secrets / env
+.env
+.env.*
+lib/secrets.dart
+
+# OS / tooling
+.DS_Store
+.superpowers/
+
+# Supabase keys (local only)
+env.json
+supabase/.temp/
