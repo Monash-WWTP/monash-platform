@@ -1,0 +1,1687 @@
+{
+  "components": {
+    "schemas": {
+      "CompareOut": {
+        "properties": {
+          "runs": {
+            "items": {
+              "$ref": "#/components/schemas/RunOut"
+            },
+            "title": "Runs",
+            "type": "array"
+          },
+          "timeseries": {
+            "items": {
+              "$ref": "#/components/schemas/TimeseriesOut"
+            },
+            "title": "Timeseries",
+            "type": "array"
+          }
+        },
+        "required": [
+          "runs",
+          "timeseries"
+        ],
+        "title": "CompareOut",
+        "type": "object"
+      },
+      "CompareRequest": {
+        "properties": {
+          "run_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 4,
+            "minItems": 2,
+            "title": "Run Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "run_ids"
+        ],
+        "title": "CompareRequest",
+        "type": "object"
+      },
+      "ComplianceLimitOut": {
+        "properties": {
+          "limit_value": {
+            "title": "Limit Value",
+            "type": "number"
+          },
+          "metric": {
+            "title": "Metric",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "metric",
+          "limit_value",
+          "unit"
+        ],
+        "title": "ComplianceLimitOut",
+        "type": "object"
+      },
+      "ErrorBody": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "details": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "request_id"
+        ],
+        "title": "ErrorBody",
+        "type": "object"
+      },
+      "ErrorEnvelope": {
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "title": "ErrorEnvelope",
+        "type": "object"
+      },
+      "ExceedanceOut": {
+        "properties": {
+          "end_day": {
+            "title": "End Day",
+            "type": "integer"
+          },
+          "factors": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Factors",
+            "type": "array"
+          },
+          "limit_value": {
+            "title": "Limit Value",
+            "type": "number"
+          },
+          "metric": {
+            "title": "Metric",
+            "type": "string"
+          },
+          "peak_ratio": {
+            "title": "Peak Ratio",
+            "type": "number"
+          },
+          "peak_value": {
+            "title": "Peak Value",
+            "type": "number"
+          },
+          "start_day": {
+            "title": "Start Day",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "metric",
+          "start_day",
+          "end_day",
+          "peak_value",
+          "limit_value",
+          "peak_ratio",
+          "factors"
+        ],
+        "title": "ExceedanceOut",
+        "type": "object"
+      },
+      "ForecastIn": {
+        "properties": {
+          "demand": {
+            "default": "normal",
+            "enum": [
+              "low",
+              "normal",
+              "high"
+            ],
+            "title": "Demand",
+            "type": "string"
+          },
+          "demand_change_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": -100.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Demand Change Pct"
+          },
+          "demand_multiplier": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Demand Multiplier"
+          },
+          "influent": {
+            "$ref": "#/components/schemas/InfluentIn"
+          },
+          "rainfall_mm_day": {
+            "anyOf": [
+              {
+                "maximum": 200.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rainfall Mm Day"
+          },
+          "weather": {
+            "default": "normal",
+            "enum": [
+              "dry",
+              "normal",
+              "wet"
+            ],
+            "title": "Weather",
+            "type": "string"
+          }
+        },
+        "title": "ForecastIn",
+        "type": "object"
+      },
+      "InfluentIn": {
+        "properties": {
+          "ammonia": {
+            "default": 35.0,
+            "title": "Ammonia",
+            "type": "number"
+          },
+          "bod": {
+            "default": 220.0,
+            "title": "Bod",
+            "type": "number"
+          },
+          "cod": {
+            "default": 480.0,
+            "title": "Cod",
+            "type": "number"
+          },
+          "flow": {
+            "default": 40.0,
+            "title": "Flow",
+            "type": "number"
+          },
+          "tkn": {
+            "default": 40.0,
+            "minimum": 0.0,
+            "title": "Tkn",
+            "type": "number"
+          },
+          "tss": {
+            "default": 240.0,
+            "title": "Tss",
+            "type": "number"
+          }
+        },
+        "title": "InfluentIn",
+        "type": "object"
+      },
+      "MaintenanceEventIn": {
+        "properties": {
+          "availability_pct": {
+            "default": 50.0,
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Availability Pct",
+            "type": "number"
+          },
+          "duration_days": {
+            "maximum": 180.0,
+            "minimum": 1.0,
+            "title": "Duration Days",
+            "type": "integer"
+          },
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          },
+          "unit_type": {
+            "enum": [
+              "pump",
+              "aeration",
+              "clarifier"
+            ],
+            "title": "Unit Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "unit_type",
+          "start_date",
+          "duration_days"
+        ],
+        "title": "MaintenanceEventIn",
+        "type": "object"
+      },
+      "ModelOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "model_id": {
+            "title": "Model Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "model_id",
+          "name",
+          "version",
+          "description"
+        ],
+        "title": "ModelOut",
+        "type": "object"
+      },
+      "OperatingParametersIn": {
+        "properties": {
+          "aeration_availability": {
+            "default": 100.0,
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Aeration Availability",
+            "type": "number"
+          },
+          "capacity_mld": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Mld"
+          },
+          "ch4_recovered_kg_m3": {
+            "default": 0.0,
+            "minimum": 0.0,
+            "title": "Ch4 Recovered Kg M3",
+            "type": "number"
+          },
+          "clarifier_availability": {
+            "default": 100.0,
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Clarifier Availability",
+            "type": "number"
+          },
+          "n2o_recovered_kg_m3": {
+            "default": 0.0,
+            "minimum": 0.0,
+            "title": "N2O Recovered Kg M3",
+            "type": "number"
+          },
+          "pump_availability": {
+            "default": 100.0,
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Pump Availability",
+            "type": "number"
+          }
+        },
+        "title": "OperatingParametersIn",
+        "type": "object"
+      },
+      "PlantDetailOut": {
+        "properties": {
+          "capacity_mld": {
+            "title": "Capacity Mld",
+            "type": "number"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "compliance_limits": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ComplianceLimitOut"
+            },
+            "title": "Compliance Limits",
+            "type": "array"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "latitude": {
+            "title": "Latitude",
+            "type": "number"
+          },
+          "longitude": {
+            "title": "Longitude",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "units": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PlantUnitOut"
+            },
+            "title": "Units",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "latitude",
+          "longitude",
+          "capacity_mld",
+          "description"
+        ],
+        "title": "PlantDetailOut",
+        "type": "object"
+      },
+      "PlantOut": {
+        "properties": {
+          "capacity_mld": {
+            "title": "Capacity Mld",
+            "type": "number"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "latitude": {
+            "title": "Latitude",
+            "type": "number"
+          },
+          "longitude": {
+            "title": "Longitude",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "latitude",
+          "longitude",
+          "capacity_mld",
+          "description"
+        ],
+        "title": "PlantOut",
+        "type": "object"
+      },
+      "PlantUnitOut": {
+        "properties": {
+          "baseline_availability": {
+            "title": "Baseline Availability",
+            "type": "number"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "unit_type": {
+            "title": "Unit Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "unit_type",
+          "name",
+          "baseline_availability"
+        ],
+        "title": "PlantUnitOut",
+        "type": "object"
+      },
+      "RunOut": {
+        "examples": [
+          {
+            "created_at": "2026-01-01T00:00:00",
+            "decision_use_permitted": false,
+            "exceedances": [],
+            "horizon": "3_months",
+            "id": 1,
+            "kpis": {
+              "compliance_pct": 100.0
+            },
+            "model_id": "effluent_v1",
+            "model_version": "1.4.0",
+            "plant_id": 1,
+            "scenario_id": 1,
+            "scenario_name": "Synthetic baseline",
+            "status": "completed",
+            "validation_status": "illustrative_unvalidated"
+          }
+        ],
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "decision_use_permitted": {
+            "const": false,
+            "default": false,
+            "title": "Decision Use Permitted",
+            "type": "boolean"
+          },
+          "exceedances": {
+            "items": {
+              "$ref": "#/components/schemas/ExceedanceOut"
+            },
+            "title": "Exceedances",
+            "type": "array"
+          },
+          "horizon": {
+            "title": "Horizon",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "kpis": {
+            "additionalProperties": true,
+            "title": "Kpis",
+            "type": "object"
+          },
+          "model_id": {
+            "title": "Model Id",
+            "type": "string"
+          },
+          "model_version": {
+            "title": "Model Version",
+            "type": "string"
+          },
+          "plant_id": {
+            "title": "Plant Id",
+            "type": "integer"
+          },
+          "scenario_id": {
+            "title": "Scenario Id",
+            "type": "integer"
+          },
+          "scenario_name": {
+            "title": "Scenario Name",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "validation_status": {
+            "const": "illustrative_unvalidated",
+            "default": "illustrative_unvalidated",
+            "title": "Validation Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "scenario_id",
+          "scenario_name",
+          "plant_id",
+          "horizon",
+          "model_id",
+          "model_version",
+          "status",
+          "kpis",
+          "exceedances",
+          "created_at"
+        ],
+        "title": "RunOut",
+        "type": "object"
+      },
+      "RunRequest": {
+        "properties": {
+          "model_id": {
+            "default": "effluent_v1",
+            "title": "Model Id",
+            "type": "string"
+          }
+        },
+        "title": "RunRequest",
+        "type": "object"
+      },
+      "ScenarioIn": {
+        "examples": [
+          {
+            "forecast": {
+              "demand": "normal",
+              "weather": "normal"
+            },
+            "horizon": "3_months",
+            "is_baseline": false,
+            "maintenance": [
+              {
+                "availability_pct": 50,
+                "duration_days": 7,
+                "start_date": "2026-01-01",
+                "unit_type": "aeration"
+              }
+            ],
+            "name": "Synthetic aeration maintenance",
+            "operating_parameters": {
+              "capacity_mld": 10
+            }
+          }
+        ],
+        "properties": {
+          "forecast": {
+            "$ref": "#/components/schemas/ForecastIn"
+          },
+          "horizon": {
+            "default": "3_months",
+            "enum": [
+              "1_month",
+              "3_months",
+              "6_months"
+            ],
+            "title": "Horizon",
+            "type": "string"
+          },
+          "is_baseline": {
+            "default": false,
+            "title": "Is Baseline",
+            "type": "boolean"
+          },
+          "maintenance": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/MaintenanceEventIn"
+            },
+            "title": "Maintenance",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "operating_parameters": {
+            "$ref": "#/components/schemas/OperatingParametersIn"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "ScenarioIn",
+        "type": "object"
+      },
+      "ScenarioOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "forecast": {
+            "additionalProperties": true,
+            "title": "Forecast",
+            "type": "object"
+          },
+          "horizon": {
+            "title": "Horizon",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "is_baseline": {
+            "title": "Is Baseline",
+            "type": "boolean"
+          },
+          "latest_run_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Run Id"
+          },
+          "maintenance": {
+            "items": {},
+            "title": "Maintenance",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "operating_parameters": {
+            "additionalProperties": true,
+            "title": "Operating Parameters",
+            "type": "object"
+          },
+          "plant_id": {
+            "title": "Plant Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "plant_id",
+          "name",
+          "horizon",
+          "forecast",
+          "maintenance",
+          "operating_parameters",
+          "is_baseline",
+          "created_at"
+        ],
+        "title": "ScenarioOut",
+        "type": "object"
+      },
+      "TimeseriesOut": {
+        "properties": {
+          "compliance_limits": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Compliance Limits",
+            "type": "object"
+          },
+          "dates": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Dates",
+            "type": "array"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "integer"
+          },
+          "series": {
+            "additionalProperties": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "title": "Series",
+            "type": "object"
+          }
+        },
+        "required": [
+          "run_id",
+          "dates",
+          "series",
+          "compliance_limits"
+        ],
+        "title": "TimeseriesOut",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "title": "Monash WWTP Platform API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/compare": {
+      "post": {
+        "operationId": "compare_runs_api_v1_compare_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompareRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompareOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Compare Runs",
+        "tags": [
+          "simulations"
+        ]
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "operationId": "health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/api/v1/metrics": {
+      "get": {
+        "operationId": "get_metrics_api_v1_metrics_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Get Metrics",
+        "tags": [
+          "simulations"
+        ]
+      }
+    },
+    "/api/v1/models": {
+      "get": {
+        "operationId": "get_models_api_v1_models_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ModelOut"
+                  },
+                  "title": "Response Get Models Api V1 Models Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Get Models",
+        "tags": [
+          "simulations"
+        ]
+      }
+    },
+    "/api/v1/plants": {
+      "get": {
+        "operationId": "list_plants_api_v1_plants_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PlantOut"
+                  },
+                  "title": "Response List Plants Api V1 Plants Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "List Plants",
+        "tags": [
+          "plants"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}": {
+      "get": {
+        "operationId": "get_plant_api_v1_plants__plant_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantDetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Get Plant",
+        "tags": [
+          "plants"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}/scenarios": {
+      "get": {
+        "operationId": "list_scenarios_api_v1_plants__plant_id__scenarios_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ScenarioOut"
+                  },
+                  "title": "Response List Scenarios Api V1 Plants  Plant Id  Scenarios Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Scenarios",
+        "tags": [
+          "scenarios"
+        ]
+      },
+      "post": {
+        "operationId": "create_scenario_api_v1_plants__plant_id__scenarios_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScenarioIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScenarioOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Scenario",
+        "tags": [
+          "scenarios"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}": {
+      "get": {
+        "operationId": "get_run_api_v1_runs__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Run",
+        "tags": [
+          "simulations"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}/timeseries": {
+      "get": {
+        "operationId": "get_run_timeseries_api_v1_runs__run_id__timeseries_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeseriesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Run Timeseries",
+        "tags": [
+          "simulations"
+        ]
+      }
+    },
+    "/api/v1/scenarios/{scenario_id}": {
+      "delete": {
+        "operationId": "delete_scenario_api_v1_scenarios__scenario_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scenario_id",
+            "required": true,
+            "schema": {
+              "title": "Scenario Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Scenario",
+        "tags": [
+          "scenarios"
+        ]
+      },
+      "get": {
+        "operationId": "get_scenario_api_v1_scenarios__scenario_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scenario_id",
+            "required": true,
+            "schema": {
+              "title": "Scenario Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScenarioOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Scenario",
+        "tags": [
+          "scenarios"
+        ]
+      },
+      "put": {
+        "operationId": "update_scenario_api_v1_scenarios__scenario_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scenario_id",
+            "required": true,
+            "schema": {
+              "title": "Scenario Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScenarioIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScenarioOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Scenario",
+        "tags": [
+          "scenarios"
+        ]
+      }
+    },
+    "/api/v1/scenarios/{scenario_id}/run": {
+      "post": {
+        "operationId": "run_scenario_api_v1_scenarios__scenario_id__run_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scenario_id",
+            "required": true,
+            "schema": {
+              "title": "Scenario Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Run Scenario",
+        "tags": [
+          "simulations"
+        ]
+      }
+    }
+  }
+}

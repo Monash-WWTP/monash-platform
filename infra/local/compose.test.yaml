@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: monash_test
+      POSTGRES_USER: monash_test
+      POSTGRES_PASSWORD: monash_test
+    ports:
+      - "127.0.0.1:5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U monash_test -d monash_test"]
+      interval: 2s
+      retries: 20
+    volumes:
+      - monash_test_data:/var/lib/postgresql/data
+
+volumes:
+  monash_test_data:
