@@ -1,0 +1,16 @@
+.worktrees/
+.venv/
+node_modules/
+build/
+dist/
+.dart_tool/
+.flutter-plugins*
+.coverage/
+.pytest_cache/
+__pycache__/
+.codegraph/
+.superpowers/
+env.json
+*.db
+*.sqlite
+*.parquet
