@@ -20,7 +20,7 @@ Potential generated text must be reviewed against PRODUCT.md: no unsupported liv
 
 The user selected layout 1 in the ChatGPT iOS chat. Its approved copy is `.impeccable/mocks/atlas-purpose-index.png`, with approval recorded in its sidecar. Build state advanced through comps and spec; the plates check reports only the required production-plan/asset review pending.
 
-Measured inventory: `.impeccable/build/spec.json` (41 regions; one raster artwork; text and controls semantic). Headline font ranked as Gelasio 400 at the measured cap height. Production artwork: `assets/plates/atlas.png`, regenerated from the approved crop with UI removed and prompt provenance embedded.
+Measured inventory: `docs/design/portal/spec.json` (41 regions; one raster artwork; text and controls semantic). Headline font ranked as Gelasio 400 at the measured cap height. Production artwork: `assets/plates/atlas.png`, regenerated from the approved crop with UI removed and prompt provenance embedded.
 
 Asset review session: `6ba81dc3e01f9f248d79718aac2856a7fc8cfa477c0167d77ec6ba73e74918ab`; local review URL initially http://127.0.0.1:40867/. Remote iOS access cannot use localhost. A structured chat question presents the actual artwork and semantic production plan; its answer is pending. Do not fabricate a review receipt or silently bypass the component-review gate.
 
@@ -53,3 +53,7 @@ Verification: 9 frontend metadata tests, ESLint, TypeScript/production build, pu
 Remaining product work: real shared identity in both clients, successor API cutover, production APK signing and distribution, approved publication content, and standalone server deployment/restore/release verification. This checkpoint delivers the public portal source, not those production services.
 
 Fresh review disposition after fixes: “ship this portal scope”; no remaining material findings. Reviewer independently reran 9 frontend tests and inspected refreshed captures and changed contracts. DESIGN.md records the actual public visual system; it does not extend the legacy operator UI's styling.
+
+## CI path correction — 2026-10-03
+
+The inventory job passed the source manifest but failed the repository guard because design JSON was tracked under a directory named `build`. Local verification had run before these ignored paths were force-added, so it missed the committed-state failure. Durable design records now live in `docs/design/portal/`; the policy is unchanged and local Impeccable runtime copies remain ignored. Repository checks are rerun on the staged file set before push.
