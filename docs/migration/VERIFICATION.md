@@ -5,7 +5,7 @@ Date: 2026-10-02. Code reviewed at `17c032581dc91256a40122b36af4f377c8f2039d`; f
 | Check | Result |
 | --- | --- |
 | Full pinned Git-tree/path/hash inventory | 207 files accounted for; every mapped target exists |
-| Root policy/import/public-data tests plus API/simulation suite | 57 passed after the launcher fix (56 before it), 6 inherited warnings |
+| Root policy/import/public-data tests plus API/simulation suite | 57 passed after the launcher fix (56 before it), 7 inherited warnings in the final run |
 | PostgreSQL 16 migration upgrade and `alembic check` | Passed; no upgrade operations detected |
 | OpenAPI export and tracked snapshot diff | No drift |
 | Dashboard `npm ci`, lint, TypeScript/production build | Passed; large bundle warning remains |
