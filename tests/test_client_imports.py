@@ -9,6 +9,7 @@ ROWS = json.loads((ROOT / "docs/migration/source-inventory.json").read_text())["
 MOBILE_ADAPTATIONS = {"android/gradle.properties", "README.md"}
 DASHBOARD_ADAPTATIONS = {
     "frontend/README.md",
+    "frontend/vercel.json",
     "frontend/src/main.tsx",
     "frontend/src/pages/WorkspacePage.tsx",
     "frontend/package.json",

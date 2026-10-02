@@ -52,3 +52,7 @@ Final review found the inherited mobile launcher had Git mode 100644 although it
 ## Public portal route adaptations
 
 The successor now owns public routes at `/`; `src/main.tsx` uses lazy operator route loading under `/dashboard`. `src/pages/MapPage.tsx` and `src/pages/WorkspacePage.tsx` update plant and back-to-map navigation. Legacy plant paths redirect through a new component. The import regression allowlist explicitly records these files; original source hashes and inactive legacy references are retained. `package.json` and its lock add tsx for metadata validation tests. New public routes do not change monitoring endpoints or simulation values.
+
+## Vercel successor deployment
+
+`apps/dashboard/vercel.json` now specifies the Vite build/output and an SPA fallback after the inherited legacy `/api` proxy. The existing Render target is retained during client cutover. Root deployment settings use `apps/dashboard`; `.vercelignore` restricts uploads to the frontend and excludes local secrets/dependencies/build output. Vercel project state and local OIDC credentials are ignored. This deployment does not establish shared identity or successor API integration.

@@ -1,0 +1,10 @@
+# Publish only the dashboard frontend from this monorepo.
+/*
+!/apps/
+/apps/*
+!/apps/dashboard/
+/apps/dashboard/node_modules/
+/apps/dashboard/dist/
+/apps/dashboard/.vercel/
+/apps/dashboard/.env*
+/apps/dashboard/*.local
