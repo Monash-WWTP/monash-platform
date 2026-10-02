@@ -21,9 +21,9 @@ export default function DownloadPage() {
     <main id="public-main" className="public-reading">
       <h1>CitizenFlood for Android</h1>
       <p className="reading-intro">
-        Report what you observe in your local area. Use the same platform
-        account across CitizenFlood and the dashboard when shared accounts
-        become available.
+        Report what you observe in your local area using the existing live
+        CitizenFlood service. Shared accounts with the dashboard are not
+        available yet.
       </p>
       <section className="release-details" aria-labelledby="release-title">
         <h2 id="release-title">
@@ -73,8 +73,7 @@ export default function DownloadPage() {
         <h2>Installation guide</h2>
         <ol>
           <li>
-            On an Android device, download the published APK from this page once
-            a release is available.
+            On an Android device, download the published APK from this page.
           </li>
           <li>
             Open the downloaded file. Android may ask you to allow installation
@@ -85,8 +84,8 @@ export default function DownloadPage() {
             Your browser cannot install the app silently.
           </li>
           <li>
-            Open CitizenFlood and sign in when the shared account service is
-            available.
+            Open CitizenFlood. The current app starts an anonymous session;
+            email sign-in is available within the app.
           </li>
         </ol>
         <p>
@@ -103,8 +102,7 @@ export default function DownloadPage() {
           files are for Android; they cannot be installed on an iPhone.
         </p>
         <p>
-          On a desktop or iPhone, open this website on your Android device when
-          a release is available.
+          On a desktop or iPhone, open this website on your Android device.
         </p>
       </section>
       <button className="copy-link" onClick={copyLink}>

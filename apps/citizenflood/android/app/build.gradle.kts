@@ -4,6 +4,19 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+val releaseStore = System.getenv("CITIZENFLOOD_KEYSTORE")
+val releaseAlias = System.getenv("CITIZENFLOOD_KEY_ALIAS")
+val releaseStorePassword = System.getenv("CITIZENFLOOD_STORE_PASSWORD")
+val releaseKeyPassword = System.getenv("CITIZENFLOOD_KEY_PASSWORD")
+val releaseConfigured = listOf(releaseStore, releaseAlias, releaseStorePassword, releaseKeyPassword).all { !it.isNullOrBlank() }
+if (!releaseConfigured) {
+    gradle.taskGraph.whenReady {
+        if (allTasks.any { it.project == project && it.name.contains("release", ignoreCase = true) }) {
+            throw GradleException("Release signing is required. Use the documented release builder; debug signing is never a release fallback.")
+        }
+    }
+}
+
 android {
     namespace = "au.edu.monash.citizenflood"
     compileSdk = flutter.compileSdkVersion
@@ -25,11 +38,20 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (releaseConfigured) {
+            create("release") {
+                storeFile = file(releaseStore!!)
+                keyAlias = releaseAlias
+                storePassword = releaseStorePassword
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            if (releaseConfigured) signingConfig = signingConfigs.getByName("release")
         }
     }
 }

@@ -8,7 +8,7 @@ Current blockers:
 
 - Identity, reporting/monitoring contracts, client cutover and privacy reconciliation remain planned.
 - The inherited npm audit findings were remediated locally (MapLibre upgrade, removal of unused umbrella dependency, compatible lockfile updates). The current audit is clean; require the CI audit and browser release checks before deployment.
-- Mobile release signing is inherited debug signing; production signing/distribution is pending.
+- Mobile release signing uses a project-owned key; see `android-direct-release.md` for custody and verification.
 - Simulation remains illustrative and unvalidated; scientific decision use is prohibited.
 - Software licensing and actual CODEOWNERS assignments need owner decisions.
 
@@ -37,7 +37,7 @@ For updates:
 
 The full React operator bundles remain sizeable; public entry JavaScript is split from those routes. This static deployment is portable to a standalone TLS server later; provide SPA deep-link fallback and independent API/identity origins at cutover.
 
-## APK publication state
+## APK publication state before the direct-release work
 
 No public production APK is published. Current CI compiles a debug APK against synthetic values; inherited `android/app/build.gradle.kts` also signs release mode with a debug key. Neither constitutes a production release. The installed local Flutter SDK is now 3.47.5; CI remains pinned to verified 3.44.7, so public builds must use a deliberate, recorded toolchain rather than silently changing it.
 
@@ -70,3 +70,7 @@ npx --yes vercel@62.2.0 deploy --prod --yes --scope lai-jien-wengs-projects
 The remote project root/build settings must match the values above. Verify deployment is READY, then check unauthenticated public routes and local assets. Never infer public accessibility from a protected deployment URL. Keep API/identity/database hosting separate and use independent public APK object storage when the signed artifact is ready.
 
 GitHub automatic deployment is not connected: Vercel could not access the private `Monash-WWTP/monash-platform` organization repository. Grant the Vercel GitHub integration access to this repository, then connect this same Vercel project and select `apps/dashboard`. Manual CLI production publishing already works. No account token has been committed or copied into GitHub Actions secrets.
+
+## Current direct Android release, 2026-10-03
+
+CitizenFlood 1.0.0 (versionCode 2) is signed with the project release identity and publicly hosted at the immutable URL recorded in `android-release-1.0.0.json`. Unauthenticated download size and SHA-256 matched the verified APK. Fresh Android 16 emulator installation, live-backend startup and same-version reinstall passed; physical-device and cross-version update tests remain unperformed. No synthetic reports were submitted. The dashboard release manifest activates the download link. Shared accounts/standalone API remain future work. See `android-direct-release.md` for signing custody and reproduction.

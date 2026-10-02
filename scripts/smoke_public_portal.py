@@ -1,5 +1,6 @@
 """Public portal contract check with external requests blocked; no live data."""
 import argparse
+import json
 from pathlib import Path
 from urllib.parse import urlparse
 from playwright.sync_api import sync_playwright
@@ -7,7 +8,9 @@ from playwright.sync_api import sync_playwright
 p = argparse.ArgumentParser(description=__doc__)
 p.add_argument('--url', default='http://127.0.0.1:5173')
 p.add_argument('--screenshots')
+p.add_argument('--release-manifest', type=Path, default=Path(__file__).resolve().parents[1] / 'apps/dashboard/src/releases/current.json')
 a = p.parse_args()
+release = json.loads(a.release_manifest.read_text()) if a.release_manifest.exists() else None
 origin = a.url.rstrip('/')
 with sync_playwright() as pw:
     browser = pw.chromium.launch(executable_path='/usr/bin/google-chrome', headless=True)
@@ -32,10 +35,17 @@ with sync_playwright() as pw:
     assert page.get_by_role('link', name='Skip to content').evaluate('(e) => e === document.activeElement')
     page.keyboard.press('Enter')
     assert page.evaluate('window.location.hash') == '#public-main'
-    assert not page.get_by_role('button', name='Download Android APK').is_enabled()
-    assert page.locator('a[href$=".apk"]').count() == 0
+    if release:
+        assert page.get_by_role('link', name='Download Android APK').get_attribute('href') == release['artifactUrl']
+    else:
+        assert not page.get_by_role('button', name='Download Android APK').is_enabled()
+        assert page.locator('a[href$=".apk"]').count() == 0
     page.get_by_role('link', name='Installation guide', exact=True).click()
     page.get_by_role('heading', name='CitizenFlood for Android').wait_for()
+    if release:
+        assert page.get_by_role('link', name='Download Android APK').get_attribute('href') == release['artifactUrl']
+        page.get_by_text(release['sha256'], exact=True).wait_for()
+        page.get_by_text(release['versionName'], exact=True).wait_for()
     page.get_by_role('button', name='Copy download page link').click()
     page.get_by_role('status').get_by_text('Link copied.').wait_for()
     page.goto(origin + '/research')

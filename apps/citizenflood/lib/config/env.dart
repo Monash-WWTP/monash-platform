@@ -1,4 +1,5 @@
-/// Secrets are injected at build time via --dart-define so they never live in source.
+/// Public client configuration is injected at build time. APK values are extractable;
+/// never supply private service credentials.
 class Env {
   static const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
   static const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');

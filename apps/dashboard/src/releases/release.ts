@@ -1,3 +1,4 @@
+import manifest from "./current.json";
 export interface Release {
   versionName: string;
   versionCode: number;
@@ -57,5 +58,5 @@ export function parseRelease(input: unknown): Release | null {
     artifactUrl: r.artifactUrl,
   };
 }
-// Publish only after signing and install/update verification.
-export const currentRelease: Release | null = null;
+// Derived from the verified, publicly hosted signed artifact.
+export const currentRelease = parseRelease(manifest);

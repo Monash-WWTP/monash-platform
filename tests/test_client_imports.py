@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ROWS = json.loads((ROOT / "docs/migration/source-inventory.json").read_text())["files"]
-MOBILE_ADAPTATIONS = {"android/gradle.properties", "README.md"}
+MOBILE_ADAPTATIONS = {"android/gradle.properties", "android/app/build.gradle.kts", "lib/config/env.dart", "README.md"}
 DASHBOARD_ADAPTATIONS = {
     "frontend/README.md",
     "frontend/vercel.json",
