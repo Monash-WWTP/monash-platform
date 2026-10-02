@@ -1,12 +1,28 @@
 {
-  "project_id": "appgprj_6abfdf3a7f348191ac477aeafba728d7",
-  "url": "https://monash-water-platform.jienweng-lai.chatgpt.site",
+  "hosting": "vercel",
+  "url": "https://monash-water-platform.vercel.app",
   "access": "public",
+  "project_id": "prj_2vi2LdbT4bHHoIowFhRLmpxi0NoV",
+  "team_id": "team_Rx6wYiwPothqxgVdI55KUni9",
+  "project_name": "monash-water-platform",
+  "root_directory": "apps/dashboard",
   "source_repository": "https://github.com/Monash-WWTP/monash-platform",
   "source_path": "apps/dashboard",
-  "source_commit": "be45563",
-  "site_source_commit": "f71f197177313973b36ed237838a00ec45db3c01",
-  "version_id": "appgprj_6abfdf3a7f348191ac477aeafba728d7~appgver_d39ea85e244c8191a7cfdacf3f235246",
-  "deployment_id": "appgdep_6abfdffd61588191af06e20c53c04aaf",
-  "published_date": "2026-10-03"
+  "source_commit": "a60d150",
+  "deployment_id": "dpl_7Jk53NQZ9scfkz6HcxgYWZfris1t",
+  "deployment_url": "https://monash-water-platform-e5hwbcjkh-lai-jien-wengs-projects.vercel.app",
+  "published_date": "2026-10-03",
+  "git_auto_deploy": "not connected: private organization repository access unavailable",
+  "previous_sites_deployment": {
+    "project_id": "appgprj_6abfdf3a7f348191ac477aeafba728d7",
+    "url": "https://monash-water-platform.jienweng-lai.chatgpt.site",
+    "access": "public",
+    "source_repository": "https://github.com/Monash-WWTP/monash-platform",
+    "source_path": "apps/dashboard",
+    "source_commit": "be45563",
+    "site_source_commit": "f71f197177313973b36ed237838a00ec45db3c01",
+    "version_id": "appgprj_6abfdf3a7f348191ac477aeafba728d7~appgver_d39ea85e244c8191a7cfdacf3f235246",
+    "deployment_id": "appgdep_6abfdffd61588191af06e20c53c04aaf",
+    "published_date": "2026-10-03"
+  }
 }

@@ -61,3 +61,9 @@ The inventory job passed the source manifest but failed the repository guard bec
 ## Public hosting — 2026-10-03
 
 Website deployment succeeded at https://monash-water-platform.jienweng-lai.chatgpt.site with public access. Hosting source/version identities are in `docs/operations/public-site.json`; website hosting does not supply backend or identity services. APK release remains blocked on the intended operational configuration and project signing identity, requested from the user. Download availability is still honest.
+
+## Hosting preference change — 2026-10-03
+
+The user selected Vercel. Primary production URL is now https://monash-water-platform.vercel.app. The successor project is separate from the legacy dashboard. Deployment reached READY; frontend source commit `a60d150`. Private GitHub organization integration remains unconnected; deployment currently uses authenticated CLI. Shared identity and APK release remain pending.
+
+Unauthenticated production HTTP checks passed for `/`, `/download`, `/research`, `/dashboard` and map artwork. The public production-browser contract passes on Vercel, including deep links, clipboard handoff, skip link, mobile legend and overflow. Its interception now returns a synthetic unavailable API for same-origin `/api` calls, ensuring hosting proxies cannot make the test depend on or access operational data.

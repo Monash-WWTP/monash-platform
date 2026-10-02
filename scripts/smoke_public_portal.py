@@ -1,6 +1,7 @@
 """Public portal contract check with external requests blocked; no live data."""
 import argparse
 from pathlib import Path
+from urllib.parse import urlparse
 from playwright.sync_api import sync_playwright
 
 p = argparse.ArgumentParser(description=__doc__)
@@ -15,7 +16,16 @@ with sync_playwright() as pw:
     page.set_default_timeout(5000)
     errors = []
     page.on('pageerror', lambda e: errors.append(str(e)))
-    page.route('**/*', lambda r: r.continue_() if r.request.url.startswith(origin + '/') else r.abort())
+    def intercept(route):
+        # Same-origin hosting may proxy /api to a live backend. Keep this public
+        # route check independent of operational data and backend availability.
+        if urlparse(route.request.url).path.startswith('/api/'):
+            route.fulfill(status=503, json={'error': 'Synthetic unavailable API'})
+        elif route.request.url.startswith(origin + '/'):
+            route.continue_()
+        else:
+            route.abort()
+    page.route('**/*', intercept)
     page.goto(origin, wait_until='networkidle')
     page.get_by_role('heading', name='Understand water. Report what you see.').wait_for()
     page.keyboard.press('Tab')

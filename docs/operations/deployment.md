@@ -20,7 +20,7 @@ Before cutover, restore both databases and objects into an isolated environment.
 
 Release/cutover also needs health and dependency checks, error/latency/resource monitoring, structured logs with request IDs and redaction, authorization sampling, data reconciliation and load testing. Retain a pre-cutover backup and compatible prior artifacts; rehearse rollback and migration reversibility before disabling direct legacy writes. The [roadmap](../migration/ROADMAP.md) owns the sequencing.
 
-## Public website — published 2026-10-03
+## Previous Sites deployment — 2026-10-03
 
 Public URL: https://monash-water-platform.jienweng-lai.chatgpt.site
 
@@ -46,3 +46,27 @@ Required inputs: the intended operational backend/identity contract and approved
 Once these are supplied, configure release signing, build and verify the signed APK, derive its version/minimum Android/size/SHA-256 metadata, install and update-test it, place the immutable APK on public HTTPS storage, and activate the validated website release manifest. The current download page already supports version metadata, release notes and checksum display. Hosting credentials or private GitHub repository links do not make an APK publicly downloadable.
 
 References: [Flutter Android release guide](https://docs.flutter.dev/deployment/android), [Android signing](https://developer.android.com/studio/publish/app-signing), [Android developer verification](https://developer.android.com/developer-verification/guides). Check applicable target-region installation requirements at release time.
+
+## Primary website: Vercel — 2026-10-03
+
+URL: https://monash-water-platform.vercel.app
+
+The user chose Vercel as primary hosting. This is a new `monash-water-platform` project under the authenticated `lai-jien-wengs-projects` team; the legacy `wwtp-dashboard` project and domain are preserved. Project/deployment IDs and exact frontend source commit are recorded in `public-site.json`. The earlier Sites deployment remains a previous snapshot; future hosting changes target Vercel.
+
+Vercel configuration:
+
+- Root directory: `apps/dashboard`; framework: Vite; Node: 22.x.
+- Install: `npm ci`; build: `npm run build`; output: `dist`.
+- The inherited `/api/:path*` rewrite to `https://wwtp-api.onrender.com/api/:path*` is preserved during legacy client migration; the following SPA fallback serves public/plant deep links. This proxy does not run the successor API or establish shared accounts.
+- `.vercelignore` anchors unrelated directories to the repository root. Unanchored names such as `research/` would incorrectly remove the frontend's `src/research` directory. Local dependencies, outputs, env files and signing material are excluded. Vercel local project state and OIDC env files are ignored by Git.
+
+Deploy from the repository root using authenticated Vercel CLI:
+
+```sh
+npx --yes vercel@62.2.0 link --project monash-water-platform --scope lai-jien-wengs-projects
+npx --yes vercel@62.2.0 deploy --prod --yes --scope lai-jien-wengs-projects
+```
+
+The remote project root/build settings must match the values above. Verify deployment is READY, then check unauthenticated public routes and local assets. Never infer public accessibility from a protected deployment URL. Keep API/identity/database hosting separate and use independent public APK object storage when the signed artifact is ready.
+
+GitHub automatic deployment is not connected: Vercel could not access the private `Monash-WWTP/monash-platform` organization repository. Grant the Vercel GitHub integration access to this repository, then connect this same Vercel project and select `apps/dashboard`. Manual CLI production publishing already works. No account token has been committed or copied into GitHub Actions secrets.
