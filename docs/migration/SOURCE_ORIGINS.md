@@ -23,3 +23,5 @@ An authorized custodian can retrieve each exact blob from the existing controlle
 ## Verification
 
 CI can run `python scripts/check_import_inventory.py --verify-targets` without source checkouts. This verifies recorded dispositions and destinations. A full origin audit additionally supplies all three `--source NAME=PATH` arguments; it compares every pinned Git-tree path/hash. Source parity tests enforce unchanged client files with explicitly listed adaptations. The public CSVs/manifest and all mapped inactive references retain their original bytes. New research outputs are not fabricated as imported source.
+
+The approved architecture/repository design and foundation plan under `docs/superpowers/` are additional planning artifacts copied unchanged from dashboard design commit `42e635cf9f55c89a22b5ee6c905f81fa80231e01`. They postdate the pinned application source inventory. The original design status wording is preserved; current delivery status is in ROADMAP.md and the verification report.
