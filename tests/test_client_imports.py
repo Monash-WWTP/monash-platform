@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 from pathlib import Path
 
 
@@ -20,6 +21,10 @@ DASHBOARD_ADAPTATIONS = {
     "frontend/src/components/ui/button.tsx",
     "frontend/src/components/ui/tabs.tsx",
 }
+
+
+def test_mobile_documented_launcher_is_executable():
+    assert os.access(ROOT / "apps/citizenflood/scripts/run.sh", os.X_OK), "documented launcher must execute on a fresh checkout"
 
 
 def test_dashboard_snapshot_matches_pinned_frontend():

@@ -46,3 +46,5 @@ The imported audit failed with 17 runtime advisory entries (one critical). Remov
 The relevant MapLibre sanitizer fix is described in the [official advisory](https://github.com/maplibre/maplibre-gl-js/security/advisories/GHSA-jrc7-96c5-q579). Browser release QA remains required for live integrations.
 
 MapLibre v6 also needs a bundled worker. The synthetic browser check exposed missing worker loading; `MapPage.tsx` now imports `maplibre-gl-worker.mjs?worker&url` and calls `setWorkerUrl`, following the [official Vite installation guidance](https://maplibre.org/maplibre-gl-js/docs/). The production browser smoke verifies this worker and sanitizer behavior with no live application data.
+
+Final review found the inherited mobile launcher had Git mode 100644 although its README calls it directly. The successor commits mode 100755; script bytes remain identical. An executable-permission regression check fails on the inherited mode and passes after correction.
