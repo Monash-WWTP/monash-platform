@@ -1,0 +1,74 @@
+name: monash-staging
+services:
+  database:
+    image: postgres:16.13
+    environment:
+      POSTGRES_DB: monash
+      POSTGRES_USER: monash
+      POSTGRES_PASSWORD: ${APP_DB_PASSWORD:?generate local staging secrets}
+    ports: ['127.0.0.1:5544:5432']
+    volumes: [application_db:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U monash -d monash']
+      interval: 3s
+      retries: 30
+    restart: unless-stopped
+  identity-db:
+    image: postgres:16.13
+    environment:
+      POSTGRES_DB: authentik
+      POSTGRES_USER: authentik
+      POSTGRES_PASSWORD: ${IDENTITY_DB_PASSWORD:?generate local staging secrets}
+    volumes: [identity_db:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U authentik -d authentik']
+      interval: 3s
+      retries: 30
+    restart: unless-stopped
+  identity-server: &identity
+    image: ghcr.io/goauthentik/server:2026.8.3
+    command: server
+    environment: &identity-env
+      AUTHENTIK_SECRET_KEY: ${IDENTITY_SECRET:?generate local staging secrets}
+      AUTHENTIK_POSTGRESQL__HOST: identity-db
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${IDENTITY_DB_PASSWORD}
+      AUTHENTIK_EMAIL__HOST: mail
+      AUTHENTIK_EMAIL__PORT: '1025'
+      AUTHENTIK_EMAIL__FROM: accounts@monash.localhost
+      AUTHENTIK_BOOTSTRAP_PASSWORD: ${IDENTITY_ADMIN_PASSWORD}
+      AUTHENTIK_BOOTSTRAP_TOKEN: ${IDENTITY_BOOTSTRAP_TOKEN}
+      AUTHENTIK_BOOTSTRAP_EMAIL: admin@monash.localhost
+    ports: ['127.0.0.1:9100:9000']
+    volumes: [identity_data:/data]
+    depends_on:
+      identity-db: {condition: service_healthy}
+    restart: unless-stopped
+  identity-worker:
+    <<: *identity
+    command: worker
+    ports: []
+  mail:
+    image: axllent/mailpit:v1.27.1
+    ports: ['127.0.0.1:8125:8025']
+    restart: unless-stopped
+  storage:
+    image: dxflrs/garage:v2.3.0
+    command: ['/garage', 'server', '--single-node', '--default-bucket']
+    environment:
+      GARAGE_DEFAULT_ACCESS_KEY: ${STORAGE_ACCESS_KEY:?generate local staging secrets}
+      GARAGE_DEFAULT_SECRET_KEY: ${STORAGE_SECRET_KEY:?generate local staging secrets}
+      GARAGE_DEFAULT_BUCKET: citizen-photos
+    volumes:
+      - ./garage.toml.local:/etc/garage.toml:ro
+      - storage_metadata:/var/lib/garage/meta
+      - storage_data:/var/lib/garage/data
+    ports: ['127.0.0.1:3900:3900']
+    restart: unless-stopped
+volumes:
+  application_db:
+  identity_db:
+  identity_data:
+  storage_metadata:
+  storage_data:

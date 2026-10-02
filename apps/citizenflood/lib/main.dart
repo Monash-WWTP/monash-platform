@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'services/account_session.dart';
 
 import 'config/env.dart';
 import 'theme/app_theme.dart';
@@ -9,17 +9,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Env.assertConfigured();
 
-  await Supabase.initialize(
-    url: Env.supabaseUrl,
-    // The Supabase "anon public" key is the publishable key in newer SDKs.
-    publishableKey: Env.supabaseAnonKey,
-  );
-
-  // Ensure every citizen has an identity (required by our insert policy).
-  final auth = Supabase.instance.client.auth;
-  if (auth.currentUser == null) {
-    await auth.signInAnonymously();
-  }
+  await AccountSession.instance.initialize();
 
   runApp(const CitizenFloodApp());
 }

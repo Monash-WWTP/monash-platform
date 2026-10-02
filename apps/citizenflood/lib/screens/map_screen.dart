@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -67,9 +68,10 @@ class _MapScreenState extends State<MapScreen> {
             ],
             if (r.photoPath != null) ...[
               const SizedBox(height: 16),
-              FutureBuilder<String>(
-                future: _repo.photoUrl(r.photoPath!),
+              FutureBuilder<Uint8List>(
+                future: _repo.photoBytes(r.photoPath!),
                 builder: (_, snapshot) {
+                  if (snapshot.hasError) return const Text('Photo unavailable');
                   if (!snapshot.hasData) {
                     return const SizedBox(
                       height: 80,
@@ -78,7 +80,7 @@ class _MapScreenState extends State<MapScreen> {
                   }
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
+                    child: Image.memory(
                       snapshot.data!,
                       height: 220,
                       width: double.infinity,

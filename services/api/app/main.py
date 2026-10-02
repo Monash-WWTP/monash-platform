@@ -6,7 +6,7 @@ from starlette.exceptions import HTTPException
 from .config import settings
 from .http.errors import ApiError, ErrorEnvelope, error_response, http_error_code
 from .http.request_id import assign_request_id
-from .routers import plants, scenarios, simulations
+from .routers import plants, scenarios, simulations, readiness, auth, monitoring, reports
 
 app = FastAPI(title="Monash WWTP Platform API", version="1.0.0")
 app.middleware("http")(assign_request_id)
@@ -23,7 +23,7 @@ standard_errors = {
     404: {"model": ErrorEnvelope},
     422: {"model": ErrorEnvelope},
 }
-for router in (plants.router, scenarios.router, simulations.router):
+for router in (plants.router, scenarios.router, simulations.router, readiness.router, auth.router, monitoring.router, reports.router):
     app.include_router(router, prefix="/api/v1", responses=standard_errors)
 
 

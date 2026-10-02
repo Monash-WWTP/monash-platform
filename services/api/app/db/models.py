@@ -70,8 +70,9 @@ class Scenario(Base):
     is_baseline: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
+    archived: Mapped[bool] = mapped_column(Boolean, default=False)
     plant: Mapped[Plant] = relationship(back_populates="scenarios")
-    runs: Mapped[list[SimulationRun]] = relationship(back_populates="scenario", cascade="all, delete-orphan")
+    runs: Mapped[list[SimulationRun]] = relationship(back_populates="scenario")
 
 
 class SimulationRun(Base):
@@ -89,4 +90,11 @@ class SimulationRun(Base):
     timeseries: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
+    input_snapshot: Mapped[dict] = mapped_column(JSON, default=dict)
+    plant_snapshot: Mapped[dict] = mapped_column(JSON, default=dict)
+    scenario_snapshot: Mapped[dict] = mapped_column(JSON, default=dict)
+    artifact_digest: Mapped[str] = mapped_column(String, default="historical_unknown")
+    validation_status: Mapped[str] = mapped_column(String, default="illustrative_unvalidated")
+    error_code: Mapped[str | None] = mapped_column(String)
+    parent_run_id: Mapped[int | None] = mapped_column(ForeignKey("simulation_runs.id"))
     scenario: Mapped[Scenario] = relationship(back_populates="runs")

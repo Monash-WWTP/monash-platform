@@ -14,6 +14,6 @@ def test_openapi_snapshot_matches_running_contract():
     assert SNAPSHOT.read_text() == json.dumps(app.openapi(), indent=2, sort_keys=True) + "\n"
 
 
-def test_disposable_database_is_at_initial_revision():
+def test_disposable_database_is_at_current_revision():
     with engine.connect() as connection:
-        assert MigrationContext.configure(connection).get_current_revision() == "0001_initial"
+        assert MigrationContext.configure(connection).get_current_revision() == "c04995eb0733"

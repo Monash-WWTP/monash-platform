@@ -3,13 +3,31 @@ from typing import Literal
 
 class Settings(BaseSettings):
     database_url: str
-    app_env: Literal["development", "test", "production"] = "development"
+    app_env: Literal["development", "test", "staging", "production"] = "development"
     # Comma-separated allowed origins in prod, e.g. "https://wwtp.vercel.app".
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
     supabase_url: str = "https://eaxekwlmvpvftpgxiwlu.supabase.co"
     supabase_key: str = "sb_publishable_3-3Y9gvsPaJvErjgB80s6A__xFEcU1j"
     # Only these confirmed Supabase Auth users may change scenarios or run models.
     wwtp_operator_emails: str = ""
+
+    auth_mode: Literal["legacy", "oidc"] = "legacy"
+    oidc_issuer: str = ""
+    oidc_discovery_url: str = ""
+    oidc_jwks_url: str = ""
+    oidc_mobile_issuer: str = ""
+    oidc_client_id: str = "monash-web"
+    oidc_operator_client_id: str = "monash-operator"
+    oidc_mobile_client_id: str = "citizen-mobile"
+    oidc_client_secret: str = ""
+    oidc_callback_url: str = "http://localhost:8180/api/v1/auth/callback"
+    web_origin: str = "http://localhost:8180"
+    session_secure: bool = True
+    storage_endpoint: str = ""
+    storage_access_key: str = ""
+    storage_secret_key: str = ""
+    storage_bucket: str = "citizen-photos"
+    storage_region: str = "garage"
 
     @property
     def cors_origins_list(self) -> list[str]:

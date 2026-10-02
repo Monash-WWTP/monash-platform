@@ -28,6 +28,7 @@ android {
     }
 
     defaultConfig {
+        manifestPlaceholders["appAuthRedirectScheme"] = "au.edu.monash.citizenflood"
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "au.edu.monash.citizenflood"
         // You can update the following values to match your application needs.

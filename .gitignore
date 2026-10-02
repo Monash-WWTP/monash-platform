@@ -19,3 +19,6 @@ env.json
 .env*
 !.env.example
 !.env.sample
+
+# Private local staging custody and backups
+infra/staging/*.local

@@ -6,9 +6,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ROWS = json.loads((ROOT / "docs/migration/source-inventory.json").read_text())["files"]
-MOBILE_ADAPTATIONS = {"android/gradle.properties", "android/app/build.gradle.kts", "lib/config/env.dart", "README.md"}
+MOBILE_ADAPTATIONS = {"android/gradle.properties", "android/app/build.gradle.kts", "lib/config/env.dart", "README.md", "android/app/src/debug/AndroidManifest.xml", "lib/main.dart", "lib/screens/map_screen.dart", "lib/screens/profile_screen.dart", "lib/screens/report_form_screen.dart", "lib/services/report_repository.dart", "pubspec.lock", "pubspec.yaml"}
 DASHBOARD_ADAPTATIONS = {
     "frontend/README.md",
+    "frontend/src/api/client.ts", "frontend/src/api/monitoring.ts",
+    "frontend/src/components/auth/OperatorAccess.tsx", "frontend/vite.config.ts",
+    "frontend/src/lib/supabase.ts",
     "frontend/vercel.json",
     "frontend/src/main.tsx",
     "frontend/src/pages/WorkspacePage.tsx",
@@ -44,12 +47,12 @@ def test_dashboard_snapshot_matches_pinned_frontend():
             != r["source_sha256"]} == DASHBOARD_ADAPTATIONS
 
 
-def test_dashboard_import_keeps_legacy_data_routes():
+def test_dashboard_uses_native_versioned_api():
     client = (ROOT / "apps/dashboard/src/api/client.ts").read_text()
     monitoring = (ROOT / "apps/dashboard/src/api/monitoring.ts").read_text()
-    assert "'/api/plants'" in client
-    assert "supabase.from('stations')" in monitoring
-    assert "'/api/v1/" not in client
+    assert "'/api/v1/plants'" in client
+    assert "/api/v1/monitoring/stations" in monitoring
+    assert "supabase" not in client + monitoring
 
 
 def test_citizenflood_snapshot_matches_pinned_app():
@@ -64,7 +67,6 @@ def test_citizenflood_snapshot_matches_pinned_app():
     assert {r["source_path"] for r in rows if
             hashlib.sha256((ROOT / r["target_path"]).read_bytes()).hexdigest()
             != r["source_sha256"]} == MOBILE_ADAPTATIONS
-    lock = ROOT / "apps/citizenflood/pubspec.lock"
-    assert hashlib.sha256(lock.read_bytes()).hexdigest() == next(
-        r["source_sha256"] for r in rows if r["source_path"] == "pubspec.lock"
-    )
+    dependencies = (ROOT / "apps/citizenflood/pubspec.yaml").read_text()
+    assert "flutter_appauth:" in dependencies and "flutter_secure_storage:" in dependencies
+    assert "supabase_flutter:" not in dependencies

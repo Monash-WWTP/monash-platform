@@ -2,9 +2,11 @@
 
 import json
 from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
+from urllib.request import Request as URLRequest, urlopen
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Request
+from sqlalchemy.orm import Session
+from .db.session import get_db
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from .config import settings
@@ -14,8 +16,19 @@ _bearer = HTTPBearer(auto_error=False)
 
 def require_operator(
     credentials: HTTPAuthorizationCredentials | None = Depends(_bearer),
+    request: Request = None,
+    db: Session = Depends(get_db),
 ) -> str:
     """Validate the Supabase session with Auth and enforce the server allowlist."""
+    if settings.auth_mode == 'oidc':
+        from .identity.dependencies import require_account, require_mfa
+        from .http.errors import ApiError
+        account = require_account(request, db)
+        if 'scenario:operate' not in account.capabilities:
+            raise ApiError(403, 'capability_required', 'Operator access is required')
+        require_mfa(account)
+        return account.id
+
     if credentials is None or credentials.scheme.lower() != "bearer":
         raise HTTPException(
             status_code=401,
@@ -30,7 +43,7 @@ def require_operator(
             detail="Operator access is not configured on this server.",
         )
 
-    req = Request(
+    req = URLRequest(
         f"{settings.supabase_url.rstrip('/')}/auth/v1/user",
         headers={
             "apikey": settings.supabase_key,

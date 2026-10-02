@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import '../models/report.dart';
 import '../services/location_service.dart';
 import '../services/report_repository.dart';
+import '../services/account_session.dart';
+import 'package:uuid/uuid.dart';
 
 class ReportFormScreen extends StatefulWidget {
   const ReportFormScreen({super.key, required this.category});
@@ -26,6 +28,8 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
   CapturedLocation? _position;
   String? _locationError;
   bool _submitting = false;
+  String? _retryKey;
+  Report? _retryReport;
 
   bool get _isNumeric => widget.category.isNumeric;
 
@@ -59,6 +63,9 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
   }
 
   Future<void> _submit() async {
+    if (!AccountSession.instance.signedIn) {
+      try { await AccountSession.instance.signIn(); } catch (_) { _snack('Sign in with a verified account to submit.'); return; }
+    }
     // Validate the reading first.
     double? value;
     if (_isNumeric) {
@@ -84,8 +91,7 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
         final ext = _photo!.name.split('.').last;
         photoPath = await _repo.uploadPhoto(bytes, ext);
       }
-      await _repo.submit(
-        Report(
+      _retryReport ??= Report(
           category: widget.category,
           readingValue: _isNumeric ? value : null,
           readingUnit: _isNumeric ? widget.category.unit : null,
@@ -98,8 +104,9 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
           locationAccuracyM: _position!.accuracyM,
           observedAt: DateTime.now().toUtc(),
           photoPath: photoPath,
-        ),
-      );
+        );
+      _retryKey ??= const Uuid().v4();
+      await _repo.submit(_retryReport!, idempotencyKey: _retryKey);
       if (!mounted) return;
       _snack('Reading submitted for review — thank you!');
       Navigator.of(context).pop();
