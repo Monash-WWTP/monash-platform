@@ -49,12 +49,16 @@ def classify(repo: str, path: str) -> tuple[str, str | None, str | None]:
             return "imported", f"apps/dashboard/{path.removeprefix('frontend/')}", None
         if path.startswith("public-data/"):
             return "imported", f"data/public/{path.removeprefix('public-data/')}", None
+        if path in ("data-to-upload/2023.csv", "data-to-upload/2024.csv", "data-to-upload/2025.csv"):
+            return "restricted", None, "Raw source CSV is outside the explicit public-data license; retain in controlled legacy checkout pending rights review."
+        if path == "data-to-upload/00_ghg_modelling.py":
+            return "legacy_reference", "legacy/research/00_ghg_modelling.py", None
         if path.startswith("data-to-upload/"):
             return "imported", f"research/data-preparation/{path.removeprefix('data-to-upload/')}", None
         if path.startswith("notebooks/"):
             return "imported", f"research/notebooks/{path.removeprefix('notebooks/')}", None
         if path == "scripts/export_public_dataset.py":
-            return "imported", "research/data-preparation/export_public_dataset.py", None
+            return "legacy_reference", "legacy/scripts/dashboard/export_public_dataset.py", None
         if path.startswith("scripts/"):
             return "legacy_reference", f"legacy/scripts/dashboard/{path.removeprefix('scripts/')}", None
         if path.startswith("supabase/"):
@@ -112,6 +116,20 @@ def validate(manifest: dict, sources: dict[str, Path], verify_targets: bool) -> 
     assert manifest["source_commits"] == COMMITS
     rows = manifest["files"]
     assert len({(r["source_repo"], r["source_path"]) for r in rows}) == len(rows)
+    targets = [r["target_path"] for r in rows if r.get("target_path")]
+    assert len(targets) == len(set(targets)), "duplicate target paths"
+    for row in rows:
+        assert row["source_repo"] in COMMITS
+        assert row["source_commit"] == COMMITS[row["source_repo"]]
+        assert len(row["source_sha256"]) == 64 and all(c in "0123456789abcdef" for c in row["source_sha256"])
+        disposition, target, reason = classify(row["source_repo"], row["source_path"])
+        assert (row["disposition"], row.get("target_path"), row.get("reason")) == (disposition, target, reason), f"unclassified or stale disposition: {row['source_path']}"
+        if target:
+            assert not Path(target).is_absolute() and ".." not in Path(target).parts
+            if verify_targets:
+                assert (ROOT / target).is_file(), f"missing import: {target}"
+    if not sources:
+        return
     for name, commit in COMMITS.items():
         repo = sources[name]
         expected = set(tracked_paths(repo, commit))
@@ -131,13 +149,14 @@ def validate(manifest: dict, sources: dict[str, Path], verify_targets: bool) -> 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", action="append", required=True, metavar="NAME=PATH")
+    parser.add_argument("--source", action="append", default=[], metavar="NAME=PATH")
     parser.add_argument("--generate", action="store_true")
     parser.add_argument("--verify-targets", action="store_true")
     args = parser.parse_args()
     sources = {name: Path(path) for name, path in (item.split("=", 1) for item in args.source)}
-    assert set(sources) == set(COMMITS), f"required sources: {set(COMMITS)}"
+    assert not sources or set(sources) == set(COMMITS), f"required sources: {set(COMMITS)}"
     if args.generate:
+        assert sources, "generation requires all pinned source checkouts"
         MANIFEST.parent.mkdir(parents=True, exist_ok=True)
         MANIFEST.write_text(json.dumps(build_manifest(sources), indent=2, sort_keys=True) + "\n")
     validate(json.loads(MANIFEST.read_text()), sources, args.verify_targets)

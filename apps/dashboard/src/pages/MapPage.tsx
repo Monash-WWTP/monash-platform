@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import maplibregl from 'maplibre-gl'
+import * as maplibregl from 'maplibre-gl'
+import mapWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import { useNavigate } from 'react-router-dom'
 import { ChevronsLeft, ChevronsRight, X } from 'lucide-react'
 
@@ -10,6 +11,7 @@ import StationDashboard from '@/components/monitoring/StationDashboard'
 
 // OpenFreeMap Liberty: free vector style with 3D building extrusions.
 const MAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty'
+maplibregl.setWorkerUrl(mapWorkerUrl)
 
 function observationPopupContent(observation: CommunityWastewaterObservation): HTMLElement {
   const content = document.createElement('div')

@@ -5,8 +5,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ROWS = json.loads((ROOT / "docs/migration/source-inventory.json").read_text())["files"]
-MOBILE_ADAPTATIONS = {"android/gradle.properties"}
+MOBILE_ADAPTATIONS = {"android/gradle.properties", "README.md"}
 DASHBOARD_ADAPTATIONS = {
+    "frontend/README.md",
+    "frontend/package.json",
+    "frontend/package-lock.json",
+    "frontend/src/pages/MapPage.tsx",
     "frontend/src/components/comparison/ComparisonView.tsx",
     "frontend/src/components/dashboard/TrendsChart.tsx",
     "frontend/src/components/monitoring/StationDashboard.tsx",

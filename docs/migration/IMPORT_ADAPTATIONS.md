@@ -32,3 +32,17 @@ checkout were not copied or modified. The successor copy changes only
 caused a local OOM kill before it produced an APK. The successor limits the
 heap to 2 GB, metaspace to 1 GB, and Gradle workers to two. The import test
 requires all other imported mobile files to match their source blobs.
+
+## Documentation and research relocation
+
+Active app READMEs now describe successor paths and current integrations; original READMEs remain under `docs/legacy/*/APP_README.md`. The public data dictionary has relocated license/helper/attribution links. The notebook reads the pinned local snapshot instead of a moving remote main branch and has cleared stored outputs. Its scientific summaries are unchanged. The Python lock now includes an optional research plotting group.
+
+Three raw CSVs were reclassified as restricted after checking the license scope. The unsupported final-effluent GHG helper and unrestricted live exporter were reclassified as inactive legacy references. No public CSV values or original snapshot manifest were changed.
+
+## Dashboard dependency remediation
+
+The imported audit failed with 17 runtime advisory entries (one critical). Removed the unused `deck.gl` umbrella package; the actual imports use `@deck.gl/react` and `@deck.gl/layers`. Upgraded MapLibre from 5.24.0 to 6.11.2 and changed `MapPage.tsx` to its namespace import because v6 has no default export. Compatible `npm audit fix` updates resolve the remaining packages. Both `package.json` and lockfile are explicit import adaptations. The audit, TypeScript build and lint pass after these changes; CI now rejects high/critical runtime advisories.
+
+The relevant MapLibre sanitizer fix is described in the [official advisory](https://github.com/maplibre/maplibre-gl-js/security/advisories/GHSA-jrc7-96c5-q579). Browser release QA remains required for live integrations.
+
+MapLibre v6 also needs a bundled worker. The synthetic browser check exposed missing worker loading; `MapPage.tsx` now imports `maplibre-gl-worker.mjs?worker&url` and calls `setWorkerUrl`, following the [official Vite installation guidance](https://maplibre.org/maplibre-gl-js/docs/). The production browser smoke verifies this worker and sanitizer behavior with no live application data.

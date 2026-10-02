@@ -2,6 +2,7 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+import pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,6 +24,8 @@ def test_every_pinned_source_file_has_one_disposition():
 
 
 def test_inventory_matches_pinned_git_trees():
+    if not all(Path(f"/home/jienweng/projects/{name}").is_dir() for name in ("citizenflood", "wwtp-dashboard", "monash-platform-api")):
+        pytest.skip("full origin audit requires the three local pinned source checkouts")
     result = subprocess.run(
         [sys.executable, str(CHECKER),
          "--source", "citizenflood=/home/jienweng/projects/citizenflood",

@@ -16,3 +16,6 @@ members = ["packages/simulation", "services/api"]
 
 [dependency-groups]
 dev = ["pytest>=8.0", "httpx>=0.27"]
+research = [
+    "matplotlib>=3.10,<4",
+]

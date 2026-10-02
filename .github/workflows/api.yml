@@ -1,0 +1,35 @@
+name: api
+on: [push, pull_request]
+permissions:
+  contents: read
+
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: monash_test
+          POSTGRES_USER: monash_test
+          POSTGRES_PASSWORD: monash_test
+        ports: ['5433:5432']
+        options: >-
+          --health-cmd "pg_isready -U monash_test -d monash_test"
+          --health-interval 2s --health-retries 20
+    env:
+      DATABASE_URL: postgresql+psycopg://monash_test:monash_test@127.0.0.1:5433/monash_test
+      TEST_DATABASE_URL: postgresql+psycopg://monash_test:monash_test@127.0.0.1:5433/monash_test
+      APP_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: '3.12'
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run --locked alembic -c services/api/alembic.ini upgrade head
+      - run: uv run --locked alembic -c services/api/alembic.ini check
+      - run: uv run --locked pytest -q services/api/tests packages/simulation/wwtp_sim/tests
+      - run: uv run --locked python scripts/export_openapi.py
+      - run: git diff --exit-code -- services/api/openapi.json

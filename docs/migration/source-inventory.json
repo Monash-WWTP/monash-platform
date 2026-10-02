@@ -625,36 +625,36 @@
       "source_sha256": "46863acbf7f2ce622e0bd53e3a3388ed8b9f377d993a892331a82536f27b2fb5"
     },
     {
-      "disposition": "imported",
+      "disposition": "legacy_reference",
       "source_commit": "202b72e",
       "source_path": "data-to-upload/00_ghg_modelling.py",
       "source_repo": "dashboard",
       "source_sha256": "a5f4bee1dedac57aea5c7db8dab379e28466be55be5a83deb7590d93ab42f49c",
-      "target_path": "research/data-preparation/00_ghg_modelling.py"
+      "target_path": "legacy/research/00_ghg_modelling.py"
     },
     {
-      "disposition": "imported",
+      "disposition": "restricted",
+      "reason": "Raw source CSV is outside the explicit public-data license; retain in controlled legacy checkout pending rights review.",
       "source_commit": "202b72e",
       "source_path": "data-to-upload/2023.csv",
       "source_repo": "dashboard",
-      "source_sha256": "93c4c75537ff6ade7795cd6205fa259c0e3d1d377ab952046d0e425f9ff67f9e",
-      "target_path": "research/data-preparation/2023.csv"
+      "source_sha256": "93c4c75537ff6ade7795cd6205fa259c0e3d1d377ab952046d0e425f9ff67f9e"
     },
     {
-      "disposition": "imported",
+      "disposition": "restricted",
+      "reason": "Raw source CSV is outside the explicit public-data license; retain in controlled legacy checkout pending rights review.",
       "source_commit": "202b72e",
       "source_path": "data-to-upload/2024.csv",
       "source_repo": "dashboard",
-      "source_sha256": "1b5d2b5b5795025c5d2f71c1838cf3529bb8fdbcd11e9dd001cd900f68017327",
-      "target_path": "research/data-preparation/2024.csv"
+      "source_sha256": "1b5d2b5b5795025c5d2f71c1838cf3529bb8fdbcd11e9dd001cd900f68017327"
     },
     {
-      "disposition": "imported",
+      "disposition": "restricted",
+      "reason": "Raw source CSV is outside the explicit public-data license; retain in controlled legacy checkout pending rights review.",
       "source_commit": "202b72e",
       "source_path": "data-to-upload/2025.csv",
       "source_repo": "dashboard",
-      "source_sha256": "57b6c5a293087ddd7710f75588e14143b08298b4598b08ba4e986fb1836ed9dd",
-      "target_path": "research/data-preparation/2025.csv"
+      "source_sha256": "57b6c5a293087ddd7710f75588e14143b08298b4598b08ba4e986fb1836ed9dd"
     },
     {
       "disposition": "imported",
@@ -1089,12 +1089,12 @@
       "target_path": "docs/legacy/dashboard/render.yaml"
     },
     {
-      "disposition": "imported",
+      "disposition": "legacy_reference",
       "source_commit": "202b72e",
       "source_path": "scripts/export_public_dataset.py",
       "source_repo": "dashboard",
       "source_sha256": "9d33a30ef983c4c89ebc5cda2461fb5c261ae0cc6eaa80a2b5cf209c4aedf627",
-      "target_path": "research/data-preparation/export_public_dataset.py"
+      "target_path": "legacy/scripts/dashboard/export_public_dataset.py"
     },
     {
       "disposition": "legacy_reference",

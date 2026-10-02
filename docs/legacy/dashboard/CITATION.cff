@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this dataset, please cite it as below."
+title: "Petaling WWTP Effluent Monitoring & GHG Emission Intensities Dataset"
+abstract: >-
+  Final-effluent lab monitoring results (BOD, COD, NH3-N, NO3-N, pH, oil & grease,
+  TSS, temperature, EQA 2009 compliance) for the PETALING-MAWAR (PTG248) sewage
+  treatment plant, 2023-2025, with derived CH4 and N2O greenhouse-gas emission
+  intensities (kg CO2-eq/m3).
+type: dataset
+version: "1.0.0"
+date-released: "2026-06-26"
+license: CC-BY-4.0
+url: "https://github.com/JienWeng/wwtp-dashboard"
+repository-code: "https://github.com/JienWeng/wwtp-dashboard"
+keywords:
+  - wastewater treatment
+  - effluent quality
+  - greenhouse gas emissions
+  - water quality monitoring
+  - EQA 2009
+authors:
+  - family-names: Lai
+    given-names: Jien Weng
+    affiliation: "Monash University Malaysia"
+  - family-names: Chow
+    given-names: Ming Fai
+    affiliation: "Monash University Malaysia"
+# After connecting the repo to Zenodo and cutting a release, add the minted DOI:
+# identifiers:
+#   - type: doi
+#     value: "10.5281/zenodo.XXXXXXX"
+#     description: "Concept DOI (all versions)"

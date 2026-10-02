@@ -1,0 +1,9 @@
+process_type,ef_ch4,ef_n2o,source
+GENERAL,0.0121,0.0093,"Integrated EF, centralized aerobic plant (Tables 5.6/5.8)"
+SBR,0.01,0.0202,Process-specific EF (Tables 5.6/5.8)
+AAO,0.0142,0.00466,Process-specific EF (Tables 5.6/5.8)
+AO,0.0083,0.0068,Process-specific EF (Tables 5.6/5.8)
+OXIDATION DITCH,0.0096,0.00641,Process-specific EF (Tables 5.6/5.8)
+AERATION TANK,0.0152,0.00166,Process-specific EF (Tables 5.6/5.8)
+ANAMMOX,0.02,0.02,Process-specific EF (Tables 5.6/5.8)
+AGS,0.0033,0.0033,Process-specific EF (Tables 5.6/5.8)
