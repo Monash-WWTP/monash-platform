@@ -20,8 +20,9 @@
   "verification": {
     "signature": "passed; expected project signer",
     "anonymousDownload": "HTTP 200; size and SHA-256 match",
-    "androidRuntime": "Fresh Android 16/API36 x86_64 emulator: install, launch and same-version reinstall passed; no reports submitted; no Flutter/AndroidRuntime error observed",
+    "androidRuntime": "Fresh Android 16/API36 x86_64 emulator: install, launch and same-version reinstall passed; no reports submitted; no Flutter/AndroidRuntime error observed; real map returned no readings and profile showed anonymous session with optional email sign-in",
     "physicalDevice": "not tested",
     "crossVersionUpdate": "not tested: first release"
-  }
+  },
+  "sourceCommit": "1d33cfc"
 }

@@ -8,9 +8,9 @@
   "root_directory": "apps/dashboard",
   "source_repository": "https://github.com/Monash-WWTP/monash-platform",
   "source_path": "apps/dashboard",
-  "source_commit": "a60d150",
-  "deployment_id": "dpl_7Jk53NQZ9scfkz6HcxgYWZfris1t",
-  "deployment_url": "https://monash-water-platform-e5hwbcjkh-lai-jien-wengs-projects.vercel.app",
+  "source_commit": "1d33cfc",
+  "deployment_id": "dpl_3tcfuBZN3tCux3UhDaRtKmG5eR17",
+  "deployment_url": "https://monash-water-platform-ivavz1n3b-lai-jien-wengs-projects.vercel.app",
   "published_date": "2026-10-03",
   "git_auto_deploy": "not connected: private organization repository access unavailable",
   "previous_sites_deployment": {
