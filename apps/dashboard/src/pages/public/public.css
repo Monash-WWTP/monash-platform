@@ -1,22 +1,16 @@
-@font-face {
-  font-family: Manrope;
-  src: url("/fonts/Manrope.ttf") format("truetype");
-  font-weight: 200 800;
-  font-display: swap;
-}
 .public-portal {
-  --ink: #202724;
-  --muted: #58635d;
-  --rule: #dbe2dd;
-  --green: #146346;
-  --soft: #f2f6f3;
-  background: #fff;
-  color: var(--ink);
+  --ink: var(--brand-ink);
+  --muted: var(--brand-muted);
+  --rule: var(--brand-rule);
+  --green: var(--brand-green);
+  --soft: var(--brand-soft);
+  background: var(--brand-white);
+  color: var(--brand-ink);
   font-family: Manrope, sans-serif;
   min-height: 100vh;
   line-height: 1.65;
   caret-color: var(--green);
-  scrollbar-color: #8aab99 #f2f6f3;
+  scrollbar-color: #8aab99 var(--brand-soft);
 }
 .public-portal * {
   box-sizing: border-box;
@@ -70,7 +64,7 @@
   left: 20px;
   z-index: 10;
   padding: 12px;
-  background: #fff;
+  background: var(--brand-white);
 }
 .skip-link:focus {
   top: 8px;
@@ -85,7 +79,7 @@
   justify-content: space-between;
   gap: 24px;
   border-bottom: 1px solid var(--rule);
-  background: #fff;
+  background: var(--brand-white);
 }
 .public-header a {
   color: var(--ink);
@@ -123,14 +117,14 @@
   border: 0;
   border-radius: 8px;
   background: var(--green);
-  color: #fff;
+  color: var(--brand-white);
   font-size: 15px;
   font-weight: 700;
   text-decoration: none;
   transition: background 0.18s ease;
 }
 .public-portal .apk-button:hover {
-  background: #0c4d35;
+  background: var(--brand-green-hover);
   text-decoration: none;
 }
 .section-label {

@@ -2,33 +2,50 @@
 @import 'maplibre-gl/dist/maplibre-gl.css';
 @import 'tw-animate-css';
 
-/* shadcn/ui — stock neutral preset (light) */
+@font-face {
+  font-family: Manrope;
+  src: url('/fonts/Manrope.ttf') format('truetype');
+  font-weight: 200 800;
+  font-display: swap;
+}
+
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --brand-ink: #202724;
+  --brand-muted: #58635d;
+  --brand-rule: #dbe2dd;
+  --brand-green: #146346;
+  --brand-green-hover: #0c4d35;
+  --brand-soft: #f2f6f3;
+  --brand-white: #fff;
+  --status-danger: #a13d35;
+  --status-warning: #805314;
+  --status-success: var(--brand-green);
+
+  --radius: 0.5rem;
+  --background: var(--brand-white);
+  --foreground: var(--brand-ink);
+  --card: var(--brand-white);
+  --card-foreground: var(--brand-ink);
+  --popover: var(--brand-white);
+  --popover-foreground: var(--brand-ink);
+  --primary: var(--brand-green);
+  --primary-foreground: var(--brand-white);
+  --secondary: var(--brand-soft);
+  --secondary-foreground: var(--brand-ink);
+  --muted: var(--brand-soft);
+  --muted-foreground: var(--brand-muted);
+  --accent: var(--brand-soft);
+  --accent-foreground: var(--brand-ink);
+  --destructive: var(--status-danger);
+  --destructive-foreground: var(--brand-white);
+  --border: var(--brand-rule);
+  --input: var(--brand-rule);
+  --ring: var(--brand-green);
+  --chart-1: var(--brand-green);
+  --chart-2: var(--brand-ink);
+  --chart-3: #527668;
+  --chart-4: #7c6242;
+  --chart-5: #84968b;
 }
 
 @theme inline {
@@ -67,6 +84,15 @@
     border-color: var(--border);
     outline-color: color-mix(in oklab, var(--ring) 50%, transparent);
   }
+
+  body {
+    font-family: Manrope, sans-serif;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 3px;
+  }
 }
 
 html,
@@ -79,5 +105,4 @@ body,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
 }

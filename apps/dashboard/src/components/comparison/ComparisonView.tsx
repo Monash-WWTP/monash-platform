@@ -7,8 +7,7 @@ import { useWorkspaceStore } from '../../stores/scenarioStore'
 import { Card, Select } from '../ui'
 import { CHART } from '../dashboard/chartPalette'
 
-// shadcn neutral-preset chart palette
-const PALETTE = ['#2a9d90', '#e76e50', '#274754', '#e8c468']
+const PALETTE = [CHART.series, CHART.series2, CHART.series3, CHART.series4]
 const COMPARE_METRICS = ['bod', 'cod', 'tss', 'ammonia', 'phosphorus', 'turbidity']
 
 export default function ComparisonView({ plantId }: { plantId: number }) {

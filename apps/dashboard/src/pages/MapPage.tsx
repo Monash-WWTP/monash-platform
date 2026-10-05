@@ -8,6 +8,7 @@ import { usePlants } from '../api/hooks'
 import { useCommunityWastewaterObservations, useStations } from '@/api/monitoring'
 import type { CommunityWastewaterObservation, Station } from '@/api/monitoring-types'
 import StationDashboard from '@/components/monitoring/StationDashboard'
+import { CHART } from '@/components/dashboard/chartPalette'
 
 // OpenFreeMap Liberty: free vector style with 3D building extrusions.
 const MAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty'
@@ -38,7 +39,7 @@ function observationPopupContent(observation: CommunityWastewaterObservation): H
   const provenance = document.createElement('p')
   provenance.style.margin = '8px 0 0'
   provenance.style.fontSize = '12px'
-  provenance.style.color = '#52525b'
+  provenance.style.color = CHART.axis
   provenance.textContent =
     'Approved for display by a moderator. This is a community report, not a laboratory result.'
   content.append(provenance)
@@ -91,7 +92,7 @@ export default function MapPage() {
               type: 'fill-extrusion',
               minzoom: 14,
               paint: {
-                'fill-extrusion-color': '#9aa7bd',
+                'fill-extrusion-color': '#9aac9f',
                 'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 8],
                 'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
                 'fill-extrusion-opacity': 0.75,
@@ -125,10 +126,10 @@ export default function MapPage() {
       el.className = 'cursor-pointer'
       el.innerHTML = `
         <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
-          <div style="width:14px;height:14px;border-radius:50%;background:#18181b;
+          <div style="width:14px;height:14px;border-radius:50%;background:${CHART.series};
             border:2.5px solid #ffffff;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>
-          <div style="background:#ffffff;color:#18181b;font-size:11px;font-weight:600;
-            padding:2px 7px;border-radius:6px;border:1px solid #e4e4e7;box-shadow:0 1px 2px rgba(0,0,0,0.08);white-space:nowrap;">${plant.name}</div>
+          <div style="background:#ffffff;color:${CHART.axis};font-size:11px;font-weight:600;
+            padding:2px 7px;border-radius:6px;border:1px solid ${CHART.grid};box-shadow:0 1px 2px rgba(0,0,0,0.08);white-space:nowrap;">${plant.name}</div>
         </div>`
       el.addEventListener('click', () => {
         // cinematic zoom into the station, then open its dashboard panel
@@ -187,7 +188,7 @@ export default function MapPage() {
       marker.style.height = '26px'
       marker.style.border = '2px solid white'
       marker.style.borderRadius = '50%'
-      marker.style.backgroundColor = '#7c3aed'
+      marker.style.backgroundColor = CHART.series
       marker.style.color = 'white'
       marker.style.fontSize = '12px'
       marker.style.fontWeight = '700'
@@ -289,7 +290,7 @@ export default function MapPage() {
               type="checkbox"
               checked={showCommunityObservations}
               onChange={(event) => setShowCommunityObservations(event.target.checked)}
-              className="size-4 accent-violet-600"
+              className="size-4 accent-[#146346]"
             />
             Approved community wastewater
           </label>

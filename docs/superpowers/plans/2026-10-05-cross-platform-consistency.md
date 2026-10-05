@@ -44,11 +44,11 @@
 - Consumes: canonical `DESIGN.md` colors and self-hosted `/fonts/Manrope.ttf`.
 - Produces: browser custom properties `--brand-ink`, `--brand-muted`, `--brand-rule`, `--brand-green`, `--brand-green-hover`, `--brand-soft`, and `--brand-white`; shadcn semantic variables map to those values. Public styles consume the same properties. `CHART` is the shared chart semantic palette.
 
-- [ ] **Step 1: Write failing token contract tests** asserting the canonical hex values, Manrope application, dashboard variable mapping, and that public CSS consumes the shared properties.
-- [ ] **Step 2: Run `npm --prefix apps/dashboard test -- --test-name-pattern='canonical browser tokens'`; confirm it fails because the browser token contract is not present.**
-- [ ] **Step 3: Implement the root semantic tokens, Manrope font application, public variable consumption, chart palette, and map marker colors using the agreed canonical values.**
-- [ ] **Step 4: Run the focused token tests and full dashboard tests; confirm all pass.**
-- [ ] **Step 5: Run dashboard lint and production build; confirm both pass.**
+- [x] **Step 1: Write failing token contract tests** asserting the canonical hex values, Manrope application, dashboard variable mapping, and that public CSS consumes the shared properties.
+- [x] **Step 2: Run `npm --prefix apps/dashboard test -- --test-name-pattern='canonical browser tokens'`; confirm it fails because the browser token contract is not present.**
+- [x] **Step 3: Implement the root semantic tokens, Manrope font application, public variable consumption, chart palette, and map marker colors using the agreed canonical values.**
+- [x] **Step 4: Run the focused token tests and full dashboard tests; confirm all pass.**
+- [x] **Step 5: Run dashboard lint and production build; confirm both pass.**
 
 ### Task 2: Android palette and category icon system
 
