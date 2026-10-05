@@ -18,12 +18,7 @@ class _MapScreenState extends State<MapScreen> {
   late Future<List<Report>> _future = _repo.recent();
   final _mapController = MapController();
 
-  Color _pinColor(ReportCategory c) => switch (c) {
-    ReportCategory.rainfall => const Color(0xFF3399FF),
-    ReportCategory.waterLevel => const Color(0xFF00AACC),
-    ReportCategory.temperature => const Color(0xFFFF6633),
-    ReportCategory.wastewater => const Color(0xFF8855CC),
-  };
+  Color _pinColor(BuildContext context) => Theme.of(context).colorScheme.primary;
 
   void _refresh() => setState(() => _future = _repo.recent());
 
@@ -43,7 +38,11 @@ class _MapScreenState extends State<MapScreen> {
           children: [
             Row(
               children: [
-                Text(r.category.emoji, style: const TextStyle(fontSize: 28)),
+                Icon(
+                  r.category.icon,
+                  color: _pinColor(context),
+                  semanticLabel: r.category.label,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -57,7 +56,7 @@ class _MapScreenState extends State<MapScreen> {
             Text(
               r.readingLabel,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: _pinColor(r.category),
+                color: _pinColor(context),
               ),
             ),
             const SizedBox(height: 4),
@@ -163,10 +162,17 @@ class _MapScreenState extends State<MapScreen> {
                             height: 40,
                             child: GestureDetector(
                               onTap: () => _showDetail(r),
-                              child: Icon(
-                                Icons.location_on,
-                                color: _pinColor(r.category),
-                                size: 40,
+                              child: Semantics(
+                                button: true,
+                                label: '${r.category.label} observation at map location',
+                                child: Tooltip(
+                                  message: r.category.label,
+                                  child: Icon(
+                                    r.category.icon,
+                                    color: _pinColor(context),
+                                    size: 32,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -193,9 +199,10 @@ class _MapScreenState extends State<MapScreen> {
                                 );
                                 _showDetail(r);
                               },
-                              leading: Text(
-                                r.category.emoji,
-                                style: const TextStyle(fontSize: 22),
+                              leading: Icon(
+                                r.category.icon,
+                                color: _pinColor(context),
+                                semanticLabel: r.category.label,
                               ),
                               title: Text(
                                 '${r.category.label} · ${r.readingLabel}',

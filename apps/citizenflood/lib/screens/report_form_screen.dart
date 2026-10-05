@@ -131,7 +131,17 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.category.emoji} ${widget.category.label}'),
+        title: Row(
+          children: [
+            Icon(
+              widget.category.icon,
+              semanticLabel: widget.category.label,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(width: 10),
+            Text(widget.category.label),
+          ],
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

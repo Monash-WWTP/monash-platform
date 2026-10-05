@@ -65,11 +65,11 @@
 - Consumes: the browser token contract from Task 1 and Flutter Material 3.
 - Produces: `ReportCategory.icon` (`IconData`) for Rainfall, Water level, Temperature, and Wastewater plant. `AppTheme` uses equivalent primary, neutral, surface, border, focus, and status color roles.
 
-- [ ] **Step 1: Write widget/model tests** that assert every category has a labeled, accessible Material icon in the category tile and that category icon mapping is distinct and non-empty.
-- [ ] **Step 2: Run the focused Flutter tests; confirm they fail because category tiles and form/map headings use emoji.**
-- [ ] **Step 3: Add the category icon mapping and replace emoji usage in category selection, report form title, map detail and map list. Give map markers the shared green action color and preserve category identification via the icon.**
-- [ ] **Step 4: Map the Flutter theme to canonical landing-page colors and matching neutral surfaces/radii while retaining Material navigation/control behavior.**
-- [ ] **Step 5: Run focused tests, full Flutter tests, and `flutter analyze`; confirm all pass.**
+- [x] **Step 1: Write widget/model tests** that assert every category has a labeled, accessible Material icon in the category tile and that category icon mapping is distinct and non-empty.
+- [x] **Step 2: Run the focused Flutter tests; confirm they fail because category tiles and form/map headings use emoji.**
+- [x] **Step 3: Add the category icon mapping and replace emoji usage in category selection, report form title, map detail and map list. Give map markers the shared green action color and preserve category identification via the icon.**
+- [x] **Step 4: Map the Flutter theme to canonical landing-page colors and matching neutral surfaces/radii while retaining Material navigation/control behavior.**
+- [x] **Step 5: Run focused tests, full Flutter tests, and `flutter analyze`; confirm all pass.**
 
 ### Task 3: Platform functionality and release resolution checklist
 

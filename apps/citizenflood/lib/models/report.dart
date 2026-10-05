@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 /// The kinds of site data a citizen can record.
 enum ReportCategory { rainfall, waterLevel, temperature, wastewater }
 
@@ -16,11 +18,11 @@ extension ReportCategoryX on ReportCategory {
     ReportCategory.wastewater => 'Wastewater plant',
   };
 
-  String get emoji => switch (this) {
-    ReportCategory.rainfall => '🌧️',
-    ReportCategory.waterLevel => '💧',
-    ReportCategory.temperature => '🌡️',
-    ReportCategory.wastewater => '🏭',
+  IconData get icon => switch (this) {
+    ReportCategory.rainfall => Icons.umbrella,
+    ReportCategory.waterLevel => Icons.waves,
+    ReportCategory.temperature => Icons.thermostat,
+    ReportCategory.wastewater => Icons.factory_outlined,
   };
 
   /// Numeric categories carry a measured value + unit. Wastewater carries a
