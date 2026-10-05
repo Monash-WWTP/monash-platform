@@ -63,4 +63,4 @@ The 2026-10-05 visual alignment updates the imported dashboard's `src/index.css`
 
 The follow-up status-color audit also updates dashboard severity badges and warnings to use shared semantic roles. It does not change status meaning or model results.
 
-The landing page now shows a cover preview rendered from page one of the supplied urban-water guideline. Its reference page presents citation and rights details beside a responsive browser PDF viewer with open and download actions. The cover image and public-page adaptations are recorded in the source inventory allowlist; the original PDF remains unchanged.
+The landing page now shows a cover preview rendered from page one of the supplied urban-water guideline. Its reference page presents citation and rights details beside a responsive browser PDF viewer with open and download actions. These are successor-native public pages and an added cover asset, outside the pinned legacy import inventory; the original PDF remains unchanged.
