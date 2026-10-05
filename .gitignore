@@ -14,3 +14,11 @@ env.json
 *.db
 *.sqlite
 *.parquet
+
+.vercel/
+.env*
+!.env.example
+!.env.sample
+
+# Private local staging custody and backups
+infra/staging/*.local

@@ -3,7 +3,7 @@ import ReactECharts from 'echarts-for-react'
 import { ArrowRight, FlaskConical } from 'lucide-react'
 
 import { useSamples, useSampleYears, type SampleFilters } from '@/api/monitoring'
-import { SAMPLE_METRICS, type Station } from '@/lib/supabase'
+import { SAMPLE_METRICS, type Station } from '@/api/monitoring-types'
 import { CHART } from '@/components/dashboard/chartPalette'
 import {
   Card,

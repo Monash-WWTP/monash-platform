@@ -3,7 +3,7 @@
 The dashboard source was copied from `wwtp-dashboard` commit `202b72e`.
 `npm ci` and `npm run build` passed on the pinned snapshot. Its `npm run lint`
 reported six inherited errors: five `react-refresh/only-export-components`
-and one `react-hooks/use-memo`. The successor copy makes only these changes:
+and one `react-hooks/use-memo`. The initial successor import made these changes:
 
 | Source path prefix `frontend/` | Adaptation |
 | --- | --- |
@@ -48,3 +48,11 @@ The relevant MapLibre sanitizer fix is described in the [official advisory](http
 MapLibre v6 also needs a bundled worker. The synthetic browser check exposed missing worker loading; `MapPage.tsx` now imports `maplibre-gl-worker.mjs?worker&url` and calls `setWorkerUrl`, following the [official Vite installation guidance](https://maplibre.org/maplibre-gl-js/docs/). The production browser smoke verifies this worker and sanitizer behavior with no live application data.
 
 Final review found the inherited mobile launcher had Git mode 100644 although its README calls it directly. The successor commits mode 100755; script bytes remain identical. An executable-permission regression check fails on the inherited mode and passes after correction.
+
+## Public portal route adaptations
+
+The successor now owns public routes at `/`; `src/main.tsx` uses lazy operator route loading under `/dashboard`. `src/pages/MapPage.tsx` and `src/pages/WorkspacePage.tsx` update plant and back-to-map navigation. Legacy plant paths redirect through a new component. The import regression allowlist explicitly records these files; original source hashes and inactive legacy references are retained. `package.json` and its lock add tsx for metadata validation tests. New public routes do not change monitoring endpoints or simulation values.
+
+## Vercel successor deployment
+
+`apps/dashboard/vercel.json` now specifies the Vite build/output and an SPA fallback after the inherited legacy `/api` proxy. The existing Render target is retained during client cutover. Root deployment settings use `apps/dashboard`; `.vercelignore` restricts uploads to the frontend and excludes local secrets/dependencies/build output. Vercel project state and local OIDC credentials are ignored. This deployment does not establish shared identity or successor API integration.

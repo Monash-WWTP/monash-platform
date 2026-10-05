@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-04T08:49:06.382398+00:00",
+  "title": "Design System: Monash Water public portal",
+  "extensions": {
+    "shadows": [],
+    "motion": [
+      {
+        "name": "primary-background",
+        "value": "background .18s ease",
+        "purpose": "Primary hover; removed for reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact",
+        "value": "900px"
+      },
+      {
+        "name": "stacked",
+        "value": "640px"
+      }
+    ],
+    "focus": {
+      "value": "3px solid #146346",
+      "offset": "4px"
+    },
+    "sourceEvidence": [
+      "apps/dashboard/src/pages/public/public.css",
+      "apps/dashboard/src/pages/public/LandingPage.tsx",
+      "apps/dashboard/src/pages/public/DownloadPage.tsx",
+      "apps/dashboard/src/pages/public/PublicLayout.tsx",
+      "apps/dashboard/src/pages/public/AccountPage.tsx",
+      ".impeccable/review/monash-redesign-download-desktop.png"
+    ],
+    "scope": "Public portal only.",
+    "colorMeta": {
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "tonalRamp": [
+          "oklch(15% 0.01141 167.73)",
+          "oklch(26.43% 0.01141 167.73)",
+          "oklch(37.86% 0.01141 167.73)",
+          "oklch(49.29% 0.01141 167.73)",
+          "oklch(60.71% 0.01141 167.73)",
+          "oklch(72.14% 0.01141 167.73)",
+          "oklch(83.57% 0.01141 167.73)",
+          "oklch(95% 0.01141 167.73)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "tonalRamp": [
+          "oklch(15% 0.01655 161.97)",
+          "oklch(26.43% 0.01655 161.97)",
+          "oklch(37.86% 0.01655 161.97)",
+          "oklch(49.29% 0.01655 161.97)",
+          "oklch(60.71% 0.01655 161.97)",
+          "oklch(72.14% 0.01655 161.97)",
+          "oklch(83.57% 0.01655 161.97)",
+          "oklch(95% 0.01655 161.97)"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "tonalRamp": [
+          "oklch(15% 0.01007 155.08)",
+          "oklch(26.43% 0.01007 155.08)",
+          "oklch(37.86% 0.01007 155.08)",
+          "oklch(49.29% 0.01007 155.08)",
+          "oklch(60.71% 0.01007 155.08)",
+          "oklch(72.14% 0.01007 155.08)",
+          "oklch(83.57% 0.01007 155.08)",
+          "oklch(95% 0.01007 155.08)"
+        ]
+      },
+      "green": {
+        "role": "primary",
+        "displayName": "Green",
+        "tonalRamp": [
+          "oklch(15% 0.08806 163.23)",
+          "oklch(26.43% 0.08806 163.23)",
+          "oklch(37.86% 0.08806 163.23)",
+          "oklch(49.29% 0.08806 163.23)",
+          "oklch(60.71% 0.08806 163.23)",
+          "oklch(72.14% 0.08806 163.23)",
+          "oklch(83.57% 0.08806 163.23)",
+          "oklch(95% 0.08806 163.23)"
+        ]
+      },
+      "green-hover": {
+        "role": "primary",
+        "displayName": "Green Hover",
+        "tonalRamp": [
+          "oklch(15% 0.07517 162.80)",
+          "oklch(26.43% 0.07517 162.80)",
+          "oklch(37.86% 0.07517 162.80)",
+          "oklch(49.29% 0.07517 162.80)",
+          "oklch(60.71% 0.07517 162.80)",
+          "oklch(72.14% 0.07517 162.80)",
+          "oklch(83.57% 0.07517 162.80)",
+          "oklch(95% 0.07517 162.80)"
+        ]
+      },
+      "soft": {
+        "role": "neutral",
+        "displayName": "Soft",
+        "tonalRamp": [
+          "oklch(15% 0.00579 153.78)",
+          "oklch(26.43% 0.00579 153.78)",
+          "oklch(37.86% 0.00579 153.78)",
+          "oklch(49.29% 0.00579 153.78)",
+          "oklch(60.71% 0.00579 153.78)",
+          "oklch(72.14% 0.00579 153.78)",
+          "oklch(83.57% 0.00579 153.78)",
+          "oklch(95% 0.00579 153.78)"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "White",
+        "tonalRamp": [
+          "oklch(15% 0.00000 89.88)",
+          "oklch(26.43% 0.00000 89.88)",
+          "oklch(37.86% 0.00000 89.88)",
+          "oklch(49.29% 0.00000 89.88)",
+          "oklch(60.71% 0.00000 89.88)",
+          "oklch(72.14% 0.00000 89.88)",
+          "oklch(83.57% 0.00000 89.88)",
+          "oklch(95% 0.00000 89.88)"
+        ]
+      }
+    },
+    "tonalRampProvenance": "Synthesized OKLCH preview ramps; frontmatter colors remain canonical implementation values."
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Extracted public portal primitive.",
+      "html": "<a class=\"ds-control ds-primary\" href=\"#download\">Download APK</a>",
+      "css": ".ds-primary{font-family:Manrope,sans-serif;display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:14px 25px;border:0;border-radius:8px;background:#146346;color:#fff;font-size:15px;font-weight:700;line-height:1.65;text-decoration:none;transition:background .18s ease}.ds-primary:hover{background:#0c4d35}.ds-primary:disabled{opacity:.55;cursor:default}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}.ds-control:focus-visible{outline:3px solid #146346;outline-offset:4px}"
+    },
+    {
+      "name": "Text action",
+      "kind": "button",
+      "refersTo": "button-text",
+      "description": "Extracted public portal primitive.",
+      "html": "<button class=\"ds-control ds-text\">Copy download link</button>",
+      "css": ".ds-text{font-family:Manrope,sans-serif;background:none;border:0;color:#146346;padding:8px 0;font-size:12px;font-weight:650;cursor:pointer}.ds-text:hover{text-decoration:underline}.ds-control:focus-visible{outline:3px solid #146346;outline-offset:4px}"
+    },
+    {
+      "name": "Account link",
+      "kind": "button",
+      "refersTo": "account-link",
+      "description": "Extracted public portal primitive.",
+      "html": "<a class=\"ds-control ds-account\" href=\"#register\">Create account</a>",
+      "css": ".ds-account{font-family:Manrope,sans-serif;display:inline-block;color:#202724;padding:10px 17px;border:1px solid #dbe2dd;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none}.ds-account:hover{color:#146346;text-decoration:underline}.ds-control:focus-visible{outline:3px solid #146346;outline-offset:4px}"
+    },
+    {
+      "name": "Public navigation",
+      "kind": "nav",
+      "refersTo": "account-link",
+      "description": "Extracted public portal primitive.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Main navigation\"><a class=\"ds-control\" href=\"#download\">Download app</a><a class=\"ds-control\" href=\"#research\">Research</a><a class=\"ds-control\" href=\"#login\">Log in</a></nav>",
+      "css": ".ds-nav{font-family:Manrope,sans-serif;display:flex;flex-wrap:wrap;gap:27px;font-size:13px;font-weight:600}.ds-nav a{color:#202724;text-decoration:none}.ds-nav a:hover{color:#146346;text-decoration:underline}@media(max-width:640px){.ds-nav{font-size:12px;gap:18px}}.ds-control:focus-visible{outline:3px solid #146346;outline-offset:4px}"
+    },
+    {
+      "name": "App information card",
+      "kind": "card",
+      "refersTo": "app-card",
+      "description": "Extracted public portal primitive. Text portion; shipping card also carries the actual app icon.",
+      "html": "<a class=\"ds-control ds-app\" href=\"#download\"><strong>CitizenFlood</strong><span>Your observations, recorded in the field.</span><span class=\"ds-app-link\">View the Android app</span></a>",
+      "css": ".ds-app{font-family:Manrope,sans-serif;display:flex;flex-direction:column;gap:10px;background:#f2f6f3;color:#202724;border-radius:14px;padding:36px 27px;text-decoration:none}.ds-app strong{font-size:22px;letter-spacing:-.025em}.ds-app span{font-size:13px;color:#58635d}.ds-app .ds-app-link{font-size:12px;font-weight:700;color:#146346}.ds-app:hover .ds-app-link{text-decoration:underline}.ds-control:focus-visible{outline:3px solid #146346;outline-offset:4px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Practical app listing",
+    "overview": "Monash Water\u2019s public portal uses the user-approved practical app listing: white ground, charcoal text and deep green actions. Self-hosted Manrope, clear heading sizes and generous section spacing make download instructions and public reading straightforward.\n\nThis records the public portal only. Actual app imagery represents the published Android release with a release-specific caption. Shared account copy distinguishes local staging from the legacy public APK before account actions.",
+    "keyCharacteristics": [
+      "White, charcoal and deep green",
+      "Self-hosted Manrope hierarchy",
+      "Flat surfaces and thin dividers",
+      "Rounded rectangular actions",
+      "Visible keyboard focus"
+    ],
+    "rules": [
+      {
+        "name": "The Action Color Rule",
+        "body": "Use deep green to identify actions and focus consistently.",
+        "section": "colors"
+      },
+      {
+        "name": "The Direct Heading Rule",
+        "body": "Let a meaningful heading establish each section without an ornamental label above it.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Surfaces Rule",
+        "body": "Use tonal fills and thin rules to separate public surfaces.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use deep green for primary actions and links.",
+      "Do tie release facts and screenshot captions to the actual published artifact.",
+      "Do explain account scope before the account action.",
+      "Do preserve visible keyboard focus and reduced motion."
+    ],
+    "donts": [
+      "Don't add decorative eyebrows above headings.",
+      "Don't invent release metrics, research results or institutional endorsements.",
+      "Don't imply the public legacy APK already uses the local shared identity service."
+    ]
+  }
+}

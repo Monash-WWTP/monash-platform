@@ -1,0 +1,28 @@
+{
+  "versionName": "1.0.0",
+  "versionCode": 2,
+  "minAndroid": "7.0",
+  "publishedAt": "2026-10-03",
+  "byteSize": 54900396,
+  "sha256": "0758566e48f6c10f9b2ade33caf45dcc598084b5c680be2d132c808d8594c214",
+  "artifactUrl": "https://monash-citizenflood-downloads.vercel.app/releases/1.0.0-2/citizenflood.apk",
+  "notes": [
+    "First directly distributed signed Android release using the existing live backend.",
+    "Shared platform accounts and standalone API migration are not included."
+  ],
+  "certificateSha256": "7ba47c172b87ecd1c06f39f5a200bb6f892f2073ab1de9a76056893d8c143ee9",
+  "packageId": "au.edu.monash.citizenflood",
+  "flutterVersion": "3.44.7",
+  "hostingProject": "monash-citizenflood-downloads",
+  "hostingProjectId": "prj_75oNv9KuMCaqxVkQRyZHvFO2sTjF",
+  "deploymentId": "dpl_9BDRtAL6X8DR3mj7p9zWKnPB357q",
+  "backendOrigin": "https://eaxekwlmvpvftpgxiwlu.supabase.co",
+  "verification": {
+    "signature": "passed; expected project signer",
+    "anonymousDownload": "HTTP 200; size and SHA-256 match",
+    "androidRuntime": "Fresh Android 16/API36 x86_64 emulator: install, launch and same-version reinstall passed; no reports submitted; no Flutter/AndroidRuntime error observed; real map returned no readings and profile showed anonymous session with optional email sign-in",
+    "physicalDevice": "not tested",
+    "crossVersionUpdate": "not tested: first release"
+  },
+  "sourceCommit": "1d33cfc"
+}

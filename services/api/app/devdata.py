@@ -6,7 +6,7 @@ from .db.session import SessionLocal
 
 
 def main() -> None:
-    if settings.app_env == "production":
+    if settings.app_env not in {"development", "test"}:
         raise RuntimeError("development fixtures are forbidden in production")
     with SessionLocal.begin() as db:
         if db.query(Plant).filter(Plant.code == "DEMO001").first():

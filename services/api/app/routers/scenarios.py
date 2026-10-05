@@ -28,7 +28,7 @@ def list_scenarios(
     db: Session = Depends(get_db),
     _operator: str = Depends(require_operator),
 ):
-    scenarios = db.query(Scenario).filter(Scenario.plant_id == plant_id).order_by(Scenario.id).all()
+    scenarios = db.query(Scenario).filter(Scenario.plant_id == plant_id, Scenario.archived.is_(False)).order_by(Scenario.id).all()
     return [_to_out(db, s) for s in scenarios]
 
 
@@ -63,7 +63,7 @@ def get_scenario(
     _operator: str = Depends(require_operator),
 ):
     scenario = db.get(Scenario, scenario_id)
-    if not scenario:
+    if not scenario or scenario.archived:
         raise ApiError(404, "scenario_not_found", "Scenario not found")
     return _to_out(db, scenario)
 
@@ -76,7 +76,7 @@ def update_scenario(
     _operator: str = Depends(require_operator),
 ):
     scenario = db.get(Scenario, scenario_id)
-    if not scenario:
+    if not scenario or scenario.archived:
         raise ApiError(404, "scenario_not_found", "Scenario not found")
     scenario.name = body.name
     scenario.horizon = body.horizon
@@ -96,7 +96,7 @@ def delete_scenario(
     _operator: str = Depends(require_operator),
 ):
     scenario = db.get(Scenario, scenario_id)
-    if not scenario:
+    if not scenario or scenario.archived:
         raise ApiError(404, "scenario_not_found", "Scenario not found")
-    db.delete(scenario)
+    scenario.archived = True
     db.commit()

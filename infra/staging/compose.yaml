@@ -1,0 +1,114 @@
+name: monash-staging
+services:
+  database:
+    image: postgres:16.13
+    environment:
+      POSTGRES_DB: monash
+      POSTGRES_USER: monash
+      POSTGRES_PASSWORD: ${APP_DB_PASSWORD:?generate local staging secrets}
+    ports: ['127.0.0.1:5544:5432']
+    volumes: [application_db:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U monash -d monash']
+      interval: 3s
+      retries: 30
+    restart: unless-stopped
+  identity-db:
+    image: postgres:16.13
+    environment:
+      POSTGRES_DB: authentik
+      POSTGRES_USER: authentik
+      POSTGRES_PASSWORD: ${IDENTITY_DB_PASSWORD:?generate local staging secrets}
+    volumes: [identity_db:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U authentik -d authentik']
+      interval: 3s
+      retries: 30
+    restart: unless-stopped
+  identity-server: &identity
+    image: ghcr.io/goauthentik/server:2026.8.3
+    command: server
+    environment: &identity-env
+      IDENTITY_EVENT_SECRET: ${IDENTITY_EVENT_SECRET:?generate local staging secrets}
+      MONASH_EVENT_ISSUER: http://localhost:9100/
+      MONASH_EVENT_ENDPOINT: http://api:8000/api/v1/identity/events
+      AUTHENTIK_SECRET_KEY: ${IDENTITY_SECRET:?generate local staging secrets}
+      AUTHENTIK_POSTGRESQL__HOST: identity-db
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${IDENTITY_DB_PASSWORD}
+      AUTHENTIK_EMAIL__HOST: mail
+      AUTHENTIK_EMAIL__PORT: '1025'
+      AUTHENTIK_EMAIL__FROM: accounts@monash.localhost
+      AUTHENTIK_BOOTSTRAP_PASSWORD: ${IDENTITY_ADMIN_PASSWORD}
+      AUTHENTIK_BOOTSTRAP_TOKEN: ${IDENTITY_BOOTSTRAP_TOKEN}
+      AUTHENTIK_BOOTSTRAP_EMAIL: admin@monash.localhost
+    ports: ['127.0.0.1:9100:9000']
+    volumes: [identity_data:/data]
+    depends_on:
+      identity-db: {condition: service_healthy}
+    restart: unless-stopped
+  identity-worker:
+    <<: *identity
+    command: worker
+    ports: []
+  mail:
+    image: axllent/mailpit:v1.27.1
+    ports: ['127.0.0.1:8125:8025']
+    restart: unless-stopped
+  storage:
+    image: dxflrs/garage:v2.3.0
+    command: ['/garage', 'server', '--single-node', '--default-bucket']
+    environment:
+      GARAGE_DEFAULT_ACCESS_KEY: ${STORAGE_ACCESS_KEY:?generate local staging secrets}
+      GARAGE_DEFAULT_SECRET_KEY: ${STORAGE_SECRET_KEY:?generate local staging secrets}
+      GARAGE_DEFAULT_BUCKET: citizen-photos
+    volumes:
+      - ./garage.toml.local:/etc/garage.toml:ro
+      - storage_metadata:/var/lib/garage/meta
+      - storage_data:/var/lib/garage/data
+    ports: ['127.0.0.1:3900:3900']
+    restart: unless-stopped
+  migrate:
+    image: monash-api:local
+    profiles: [api]
+    command: [uv, run, --no-sync, alembic, -c, services/api/alembic.ini, upgrade, head]
+    environment: &api-env
+      DATABASE_URL: postgresql+psycopg://monash:${APP_DB_PASSWORD}@database:5432/monash
+      APP_ENV: staging
+      AUTH_MODE: oidc
+      OIDC_ISSUER: http://localhost:9100/
+      OIDC_DISCOVERY_URL: http://localhost:9100/application/o/monash-web/.well-known/openid-configuration
+      OIDC_JWKS_URL: http://localhost:9100/application/o/monash-web/jwks/
+      OIDC_BACKCHANNEL_ORIGIN: http://identity-server:9000
+      OIDC_CLIENT_SECRET: ${MONASH_WEB_SECRET}
+      IDENTITY_EVENT_SECRET: ${IDENTITY_EVENT_SECRET:?generate local staging secrets}
+      OIDC_CALLBACK_URL: http://localhost:8180/api/v1/auth/callback
+      WEB_ORIGIN: http://localhost:8180
+      SESSION_SECURE: 'false'
+      CORS_ORIGINS: http://localhost:8180
+      STORAGE_ENDPOINT: http://storage:3900
+      STORAGE_ACCESS_KEY: ${STORAGE_ACCESS_KEY}
+      STORAGE_SECRET_KEY: ${STORAGE_SECRET_KEY}
+    depends_on:
+      database: {condition: service_healthy}
+  api:
+    image: monash-api:local
+    profiles: [api]
+    environment: *api-env
+    ports: ['127.0.0.1:8181:8000']
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      identity-server: {condition: service_started}
+      storage: {condition: service_started}
+    healthcheck:
+      test: [CMD, /workspace/.venv/bin/python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/ready',timeout=3)"]
+      interval: 5s
+      retries: 15
+    restart: unless-stopped
+volumes:
+  application_db:
+  identity_db:
+  identity_data:
+  storage_metadata:
+  storage_data:

@@ -1,91 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import '../services/account_session.dart';
+import '../services/platform_api.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
-
   @override
-  Widget build(BuildContext context) {
-    final user = Supabase.instance.client.auth.currentUser;
-    final isAnonymous = user?.isAnonymous ?? true;
-
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        const SizedBox(height: 8),
-        const CircleAvatar(radius: 36, child: Icon(Icons.person, size: 36)),
-        const SizedBox(height: 12),
-        Center(
-          child: Text(
-            isAnonymous
-                ? 'Reporting anonymously'
-                : (user?.email ?? 'Signed in'),
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-        ),
-        const SizedBox(height: 24),
-        Card(
-          child: ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const Text('About CitizenFlood'),
-            subtitle: const Text(
-              'Report flooding, rain, and water levels in your area. '
-              'Your reports help researchers and your community stay safe.',
-            ),
-          ),
-        ),
-        if (isAnonymous)
-          Card(
-            child: ListTile(
-              leading: const Icon(Icons.mail_outline),
-              title: const Text('Sign in with email (optional)'),
-              subtitle: const Text(
-                'Optional — lets you keep your reports if you change phones.',
-              ),
-              onTap: () => _promptEmailSignIn(context),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Future<void> _promptEmailSignIn(BuildContext context) async {
-    final controller = TextEditingController();
-    final email = await showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Sign in with email'),
-        content: TextField(
-          controller: controller,
-          keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(hintText: 'you@example.com'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: const Text('Send link'),
-          ),
-        ],
-      ),
-    );
-    if (email == null || email.isEmpty) return;
-    try {
-      await Supabase.instance.client.auth.signInWithOtp(email: email);
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Check your email for a sign-in link.')),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Could not send link: $e')));
-      }
-    }
-  }
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: AccountSession.instance,
+    builder: (context, _) => ListView(padding:const EdgeInsets.all(16),children:[
+      const CircleAvatar(radius:36,child:Icon(Icons.person)),
+      const SizedBox(height:16),
+      Text(AccountSession.instance.signedIn ? 'Signed in to Monash Water' : 'Sign in to submit reports',
+        textAlign:TextAlign.center,style:Theme.of(context).textTheme.titleMedium),
+      const SizedBox(height:16),
+      const Text('Use the same verified account as the dashboard. Citizen accounts do not grant operator access.'),
+      if (AccountSession.instance.signedIn)
+        FutureBuilder<dynamic>(future:PlatformApi().request('/api/v1/auth/me'),builder:(context,snapshot)=>
+          ListTile(title:Text(snapshot.data?['email'] ?? 'Loading account…'))),
+      FilledButton(onPressed:() async {
+        try {
+          if (AccountSession.instance.signedIn) { await AccountSession.instance.signOut(); }
+          else { await AccountSession.instance.signIn(); }
+        } catch (_) {
+          if(context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Account service unavailable. Please try again.')));
+        }
+      },child:Text(AccountSession.instance.signedIn ? 'Sign out' : 'Sign in')),
+      const Card(child:ListTile(title:Text('About CitizenFlood'),subtitle:Text('Record your observations. Approved public locations are rounded for privacy. Reports are community observations, not laboratory measurements.'))),
+    ]));
 }

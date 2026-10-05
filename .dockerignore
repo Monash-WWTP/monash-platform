@@ -1,0 +1,13 @@
+**
+!pyproject.toml
+!uv.lock
+!packages/
+!packages/simulation/
+!packages/simulation/**
+!services/
+!services/api/
+!services/api/**
+**/__pycache__/
+**/.pytest_cache/
+**/*.local
+**/.env*

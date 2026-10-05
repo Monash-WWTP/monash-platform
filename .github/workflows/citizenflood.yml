@@ -23,5 +23,5 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
-      - run: flutter build apk --debug --dart-define=SUPABASE_URL=https://example.supabase.co --dart-define=SUPABASE_ANON_KEY=synthetic-ci-key
+      - run: flutter build apk --debug --dart-define-from-file=staging-config.example.json
       - run: test -s build/app/outputs/flutter-apk/app-debug.apk

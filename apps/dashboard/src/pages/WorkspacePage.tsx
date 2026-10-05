@@ -31,7 +31,7 @@ export default function WorkspacePage() {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground">
         Plant not found.
-        <Link to="/" className="text-primary underline">
+        <Link to="/dashboard" className="text-primary underline">
           Back to map
         </Link>
       </div>
@@ -42,7 +42,7 @@ export default function WorkspacePage() {
     <div className="flex h-full flex-col">
       <header className="flex items-center justify-between border-b border-border bg-card px-4 py-2.5">
         <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+          <Link to="/dashboard" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
             <ArrowLeft className="size-4" /> Map
           </Link>
           <div className="h-5 w-px bg-border" />

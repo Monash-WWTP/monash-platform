@@ -1,0 +1,205 @@
+{
+  "title": "Public portal: choose a visual direction",
+  "question": "Compare the public water atlas with the research-journal alternative. These are visual concepts, not released functionality.",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "Public water atlas",
+      "kicker": "THE ROLL",
+      "thesis": "Community reporting, wastewater work and research share one clear geographic index.",
+      "palette": [
+        "#f3f1e7",
+        "#123e43",
+        "#537872",
+        "#c45e3c"
+      ],
+      "materials": [
+        "cartographic linework",
+        "archival paper",
+        "precise legends"
+      ],
+      "viewport": "A wide annotated watershed drawing anchors a geographic index with a prominent APK download action.",
+      "risk": "Illustrative geography must never be mistaken for live monitoring data.",
+      "comp": ".impeccable/mocks/decision/assigned.png",
+      "raised": [
+        {
+          "from": "Dark developer console",
+          "raise": "Actions and evidence classes gain strict separation and visible focus."
+        },
+        {
+          "from": "Loteria tabla",
+          "raise": "Each audience gets an unmistakably named entry point."
+        },
+        {
+          "from": "Sleeping city fold",
+          "raise": "The geographic composition remains continuous across the opening."
+        },
+        {
+          "from": "Hand-processed film",
+          "raise": "Reading order becomes a deliberate sequence rather than a card collection."
+        },
+        {
+          "from": "Nixie laboratory counter",
+          "raise": "Version and release state are legible facts rather than decorative numbers."
+        },
+        {
+          "from": "CRT arcade",
+          "raise": "A limited palette assigns one consistent meaning to each accent."
+        }
+      ]
+    },
+    {
+      "id": "model-pick",
+      "label": "Research journal",
+      "kicker": "IMPECCABLE\u2019S PICK",
+      "thesis": "A carefully edited research portal introduces the tools through evidence and plain language.",
+      "palette": [
+        "#f7f5ee",
+        "#232f32",
+        "#476b70",
+        "#9d492f"
+      ],
+      "materials": [
+        "publication rules",
+        "editorial typography",
+        "wide margins"
+      ],
+      "viewport": "A strong masthead and asymmetric editorial contents place download and account actions beside a clear platform introduction.",
+      "risk": "Familiar academic editorial styling could make the mobile app feel secondary.",
+      "comp": ".impeccable/mocks/decision/model-pick.png"
+    },
+    {
+      "id": "digital-design-canon-dark-first-developer-console",
+      "label": "Dark developer console",
+      "thesis": "Translate the source grammar into the three platform journeys.",
+      "palette": [
+        "#181b20",
+        "#a8bac9"
+      ],
+      "materials": [
+        "panel seams"
+      ],
+      "viewport": "An isolated release action in a graphite panel index.",
+      "risk": "Dense tool grammar makes public onboarding harder.",
+      "verdict": "declined",
+      "case": "Public citizens identify less with developer tooling; panel navigation obscures the platform introduction.",
+      "kept": "Strict action separation."
+    },
+    {
+      "id": "vernacular-ephemera-loteria-tabla-night",
+      "label": "Loteria tabla",
+      "thesis": "Translate the source grammar into the three platform journeys.",
+      "palette": [
+        "#f2cd42",
+        "#d94769",
+        "#39a9a1"
+      ],
+      "materials": [
+        "numbered icon cards"
+      ],
+      "viewport": "A numbered table of downloads, workspace and research.",
+      "risk": "Game associations can weaken scientific interpretation.",
+      "verdict": "declined",
+      "case": "Citizen recognition and evidence clarity are weaker than the atlas.",
+      "kept": "Clearly named entry points."
+    },
+    {
+      "id": "dream-surreal-impossible-worlds-sleeping-city-fold",
+      "label": "Sleeping city fold",
+      "thesis": "Translate the source grammar into the three platform journeys.",
+      "palette": [
+        "#142346",
+        "#e1be74"
+      ],
+      "materials": [
+        "quilted geography"
+      ],
+      "viewport": "Folded districts lead to community reports and research.",
+      "risk": "Dream imagery can imply unsupported flood conditions.",
+      "verdict": "declined",
+      "case": "Surreal geography weakens both regional recognition and factual clarity.",
+      "kept": "Continuous geographic composition."
+    },
+    {
+      "id": "cinema-cinematography-editing-hand-processed-film-bloom",
+      "label": "Hand-processed film",
+      "thesis": "Translate the source grammar into the three platform journeys.",
+      "palette": [
+        "#252321",
+        "#b66b35"
+      ],
+      "materials": [
+        "film strips"
+      ],
+      "viewport": "A sequence of reporting, analysis and publications.",
+      "risk": "Photographic effects can disguise evidence quality.",
+      "verdict": "declined",
+      "case": "Film treatment is less identifiable and makes source status harder to scan.",
+      "kept": "Deliberate reading sequence."
+    },
+    {
+      "id": "signals-instruments-nixie-tube-laboratory-counter",
+      "label": "Nixie laboratory counter",
+      "thesis": "Translate the source grammar into the three platform journeys.",
+      "palette": [
+        "#201a16",
+        "#ef8b35"
+      ],
+      "materials": [
+        "glass counters"
+      ],
+      "viewport": "Release and account entry points occupy a laboratory counter index.",
+      "risk": "Glowing counters could resemble measured live values.",
+      "verdict": "declined",
+      "case": "Instrument symbolism is less familiar to citizens and obscures action hierarchy.",
+      "kept": "Precise release-state labeling."
+    },
+    {
+      "id": "medium-native-crt-arcade-pixel-glow",
+      "label": "CRT arcade",
+      "thesis": "Translate the source grammar into the three platform journeys.",
+      "palette": [
+        "#111120",
+        "#ffe576"
+      ],
+      "materials": [
+        "pixel grid"
+      ],
+      "viewport": "A strict tile index organizes the three platform journeys.",
+      "risk": "Arcade grammar trivializes civic reporting.",
+      "verdict": "declined",
+      "case": "Gaming identification and pixel text weaken audience fit and reading clarity.",
+      "kept": "Consistent limited-palette semantics."
+    }
+  ],
+  "reroll": {
+    "registers": [
+      "safer",
+      "bolder"
+    ]
+  },
+  "buildPath": {
+    "value": "comp",
+    "toggle": true
+  },
+  "canon": true,
+  "canonCard": {
+    "id": "canon",
+    "label": "Conventional platform portal",
+    "kicker": "",
+    "thesis": "A familiar product introduction leads directly to downloads, accounts and research.",
+    "palette": [
+      "#ffffff",
+      "#142b35",
+      "#236878"
+    ],
+    "materials": [
+      "clean grid",
+      "quiet panels"
+    ],
+    "viewport": "A straightforward introduction, visible primary download action and clear product navigation.",
+    "risk": "The composition deliberately resembles other software portals.",
+    "comp": ".impeccable/mocks/decision/canon.png"
+  },
+  "steer": true
+}

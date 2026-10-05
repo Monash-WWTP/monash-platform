@@ -122,6 +122,7 @@ class ScenarioOut(BaseModel):
 # ---------- runs ----------
 
 class RunRequest(BaseModel):
+    start_date: date | None = None
     model_id: str = "effluent_v1"
 
 
@@ -136,6 +137,10 @@ class ExceedanceOut(BaseModel):
 
 
 class RunOut(BaseModel):
+    input_snapshot: dict = Field(default_factory=dict)
+    artifact_digest: str = "historical_unknown"
+    error_code: str | None = None
+    parent_run_id: int | None = None
     id: int
     scenario_id: int
     scenario_name: str

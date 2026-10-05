@@ -1,0 +1,791 @@
+@font-face {
+  font-family: Manrope;
+  src: url("/fonts/Manrope.ttf") format("truetype");
+  font-weight: 200 800;
+  font-display: swap;
+}
+.public-portal {
+  --ink: #202724;
+  --muted: #58635d;
+  --rule: #dbe2dd;
+  --green: #146346;
+  --soft: #f2f6f3;
+  background: #fff;
+  color: var(--ink);
+  font-family: Manrope, sans-serif;
+  min-height: 100vh;
+  line-height: 1.65;
+  caret-color: var(--green);
+  scrollbar-color: #8aab99 #f2f6f3;
+}
+.public-portal * {
+  box-sizing: border-box;
+}
+.public-portal ::selection {
+  background: #cce6d8;
+  color: #143f2d;
+}
+.public-portal a {
+  color: var(--green);
+  text-underline-offset: 4px;
+}
+.public-portal a:hover {
+  text-decoration-thickness: 2px;
+}
+.public-portal :focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 4px;
+}
+.public-portal button {
+  font: inherit;
+  cursor: pointer;
+}
+.public-portal button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+.public-portal h1,
+.public-portal h2,
+.public-portal h3,
+.public-portal p {
+  margin: 0;
+}
+.public-portal h1,
+.public-portal h2,
+.public-portal h3 {
+  text-wrap: balance;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  font-weight: 650;
+}
+.public-portal a:has(svg),
+.public-portal button:has(svg) {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 20px;
+  z-index: 10;
+  padding: 12px;
+  background: #fff;
+}
+.skip-link:focus {
+  top: 8px;
+}
+.public-header {
+  max-width: 1440px;
+  margin: auto;
+  min-height: 84px;
+  padding: 18px 6%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid var(--rule);
+  background: #fff;
+}
+.public-header a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.public-brand {
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+}
+.public-header nav {
+  display: flex;
+  align-items: center;
+  gap: 27px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.public-header .account-link {
+  padding: 10px 17px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+}
+.public-header nav a:hover {
+  color: var(--green);
+  text-decoration: underline;
+}
+.public-portal .apk-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 14px 25px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--green);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.18s ease;
+}
+.public-portal .apk-button:hover {
+  background: #0c4d35;
+  text-decoration: none;
+}
+.section-label {
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.025em;
+}
+.download-page,
+.platform-home {
+  max-width: 1280px;
+  margin: auto;
+  padding: 0 6% 72px;
+}
+.download-topline {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 30px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.download-topline span {
+  border-left: 1px solid var(--rule);
+  padding-left: 14px;
+}
+.download-topline a {
+  text-decoration: none;
+}
+.download-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(250px, 0.75fr);
+  gap: 80px;
+  align-items: center;
+  padding: 48px 0 66px;
+}
+.app-identity {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.app-identity img {
+  width: 80px;
+  height: 80px;
+  border-radius: 18px;
+}
+.app-identity h1 {
+  font-size: 42px;
+  margin-top: 7px;
+}
+.app-summary {
+  font-size: 26px;
+  line-height: 1.4;
+  font-weight: 550;
+  letter-spacing: -0.025em;
+  margin-top: 29px !important;
+}
+.app-description {
+  max-width: 44ch;
+  color: var(--muted);
+  font-size: 15px;
+  margin-top: 17px !important;
+}
+.download-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 30px;
+}
+.download-action > span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.release-facts {
+  display: flex;
+  margin: 28px 0 0;
+  padding: 23px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  gap: 30px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.release-facts > div {
+  min-width: 0;
+}
+.release-facts dt {
+  color: var(--muted);
+  font-size: 11px;
+}
+.release-facts dd {
+  margin: 5px 0 0;
+  font-weight: 700;
+}
+.device-note {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  font-size: 12px;
+  color: var(--muted);
+  max-width: 46ch;
+  margin-top: 21px !important;
+}
+.device-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.text-button {
+  color: var(--green);
+  padding: 8px 0;
+  margin-top: 8px;
+  background: none;
+  border: 0;
+  font-size: 12px !important;
+  font-weight: 650;
+}
+.text-button:hover {
+  text-decoration: underline;
+}
+.copy-status {
+  font-size: 12px;
+  min-height: 20px;
+  color: var(--muted);
+}
+.app-preview {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.app-preview > img {
+  display: block;
+  width: 234px;
+  height: auto;
+  border: 1px solid var(--rule);
+  border-radius: 23px;
+}
+.app-preview figcaption {
+  margin-top: 14px;
+  max-width: 28ch;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+  text-align: center;
+}
+.installation {
+  border-top: 1px solid var(--rule);
+  padding: 46px 0 42px;
+}
+.section-heading h2 {
+  font-size: 29px;
+  margin-top: 9px;
+}
+.section-heading > p:last-child {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 13px;
+}
+.install-steps {
+  list-style: none;
+  padding: 0;
+  margin: 34px 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 36px;
+}
+.install-steps li {
+  display: flex;
+  gap: 14px;
+}
+.install-steps li > span {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  background: var(--soft);
+  color: var(--green);
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 750;
+}
+.install-steps h3 {
+  font-size: 15px;
+  margin: 4px 0 12px;
+}
+.install-steps p,
+.install-note {
+  font-size: 13px;
+  color: var(--muted);
+}
+.install-note {
+  margin-top: 28px !important;
+  max-width: 80ch;
+}
+.download-support {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 70px;
+  border-top: 1px solid var(--rule);
+  padding-top: 40px;
+}
+.download-support h2 {
+  font-size: 23px;
+  margin-bottom: 18px;
+}
+.download-support p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 12px 0;
+  max-width: 55ch;
+}
+.download-support a {
+  font-size: 13px;
+  font-weight: 650;
+}
+.release-disclosures details {
+  padding: 19px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.release-disclosures details:first-child {
+  padding-top: 0;
+}
+.release-disclosures summary {
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.release-disclosures ul {
+  font-size: 13px;
+  padding-left: 20px;
+  color: var(--muted);
+}
+.release-disclosures li + li {
+  margin-top: 10px;
+}
+.checksum {
+  display: block;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+  font-variant-numeric: tabular-nums;
+}
+.home-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.8fr);
+  gap: 64px;
+  align-items: center;
+  padding: 80px 0 74px;
+}
+.home-intro h1 {
+  font-size: clamp(36px, 4vw, 52px);
+  margin-top: 21px;
+  line-height: 1.18;
+  letter-spacing: -0.035em;
+}
+.home-lead {
+  font-size: 19px;
+  margin-top: 25px !important;
+  max-width: 43ch;
+}
+.home-description {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 15px !important;
+  max-width: 56ch;
+}
+.home-actions {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+.quiet-action {
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.home-release {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 15px !important;
+}
+.public-portal .home-app {
+  display: flex;
+  align-items: center;
+  gap: 19px;
+  padding: 36px 27px;
+  background: var(--soft);
+  border-radius: 14px;
+  text-decoration: none;
+  color: var(--ink);
+}
+.home-app > img {
+  width: 67px;
+  height: 67px;
+  border-radius: 16px;
+  flex-shrink: 0;
+}
+.home-app > span {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.home-app strong {
+  font-size: 22px;
+  letter-spacing: -0.025em;
+}
+.home-app > span > span {
+  font-size: 13px;
+  color: var(--muted);
+}
+.home-app .home-app-link {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 700;
+}
+.home-app:hover .home-app-link {
+  text-decoration: underline;
+}
+.platform-paths {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 36px;
+  padding: 42px 0 48px;
+  border-top: 1px solid var(--rule);
+}
+.platform-paths h2 {
+  font-size: 22px;
+  margin: 13px 0 17px;
+}
+.platform-paths article > p:not(.section-label) {
+  font-size: 13px;
+  color: var(--muted);
+  min-height: 66px;
+}
+.platform-paths a {
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 20px;
+}
+.evidence-note {
+  border-top: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 65px;
+  padding: 36px 0;
+}
+.evidence-note h2 {
+  font-size: 24px;
+}
+.evidence-note p {
+  font-size: 13px;
+  color: var(--muted);
+  max-width: 65ch;
+}
+.shared-account-band {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  background: var(--soft);
+  padding: 28px 30px;
+  border-radius: 12px;
+}
+.shared-account-band h2 {
+  font-size: 23px;
+}
+.shared-account-band p {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 9px;
+}
+.public-reading {
+  max-width: 840px;
+  margin: auto;
+  padding: 65px 30px 80px;
+}
+.public-reading h1 {
+  font-size: 42px;
+  margin-bottom: 24px;
+}
+.public-reading h2 {
+  font-size: 25px;
+  margin: 30px 0 16px;
+}
+.public-reading p {
+  margin: 16px 0;
+  max-width: 70ch;
+  font-size: 15px;
+}
+.public-reading .reading-intro {
+  font-size: 19px;
+  color: var(--muted);
+}
+.public-reading section {
+  margin-top: 36px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+.public-reading li {
+  margin: 12px 0;
+}
+.public-reading .apk-button {
+  margin: 15px 0;
+}
+.account-service-status {
+  max-width: 620px;
+  margin: 28px 0 8px;
+  padding: 20px 22px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--soft);
+}
+.account-service-status strong {
+  color: var(--green);
+  font-size: 15px;
+}
+.public-reading .account-service-status p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.public-reading .account-public-access {
+  color: var(--muted);
+  font-size: 13px;
+}
+.research-list {
+  list-style: none;
+  padding: 0;
+}
+.public-footer {
+  max-width: 1280px;
+  margin: auto;
+  padding: 24px 6%;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.public-footer a {
+  font-size: 11px;
+}
+@media (max-width: 900px) {
+  .public-header {
+    padding: 18px 5%;
+  }
+  .public-header nav {
+    gap: 18px;
+  }
+  .download-page,
+  .platform-home {
+    padding-right: 5%;
+    padding-left: 5%;
+  }
+  .download-hero {
+    gap: 35px;
+  }
+  .home-intro {
+    gap: 30px;
+  }
+  .public-portal .home-app {
+    padding: 24px 18px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .install-steps {
+    gap: 23px;
+  }
+  .download-support {
+    gap: 35px;
+  }
+  .release-facts {
+    gap: 22px;
+  }
+  .app-preview > img {
+    width: 215px;
+  }
+}
+@media (max-width: 640px) {
+  .public-header {
+    min-height: auto;
+    padding: 17px 5%;
+    flex-wrap: wrap;
+    gap: 17px;
+  }
+  .public-brand {
+    font-size: 21px;
+  }
+  .public-header nav {
+    width: 100%;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+  .public-header .account-link {
+    margin-left: auto;
+    padding: 7px 11px;
+  }
+  .download-topline {
+    padding-top: 23px;
+  }
+  .download-hero {
+    grid-template-columns: 1fr;
+    padding: 32px 0 38px;
+    gap: 30px;
+  }
+  .app-identity {
+    gap: 16px;
+  }
+  .app-identity img {
+    width: 68px;
+    height: 68px;
+    border-radius: 15px;
+  }
+  .app-identity h1 {
+    font-size: 33px;
+  }
+  .app-summary {
+    font-size: 23px;
+    margin-top: 24px !important;
+  }
+  .app-description {
+    font-size: 14px;
+  }
+  .download-action {
+    margin-top: 25px;
+  }
+  .download-action .apk-button {
+    width: 100%;
+    min-height: 55px;
+  }
+  .download-action > span {
+    align-self: center;
+  }
+  .release-facts {
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 12px;
+    margin-top: 23px;
+    padding: 18px 0;
+  }
+  .device-note {
+    max-width: none;
+  }
+  .app-preview > img {
+    width: 190px;
+  }
+  .app-preview figcaption {
+    max-width: none;
+  }
+  .installation {
+    padding: 31px 0;
+  }
+  .section-heading h2 {
+    font-size: 27px;
+  }
+  .install-steps {
+    grid-template-columns: 1fr;
+    gap: 27px;
+    margin-top: 27px;
+  }
+  .install-steps p {
+    max-width: 45ch;
+  }
+  .install-steps h3 {
+    margin-bottom: 8px;
+  }
+  .download-support {
+    grid-template-columns: 1fr;
+    gap: 26px;
+    padding-top: 30px;
+  }
+  .release-disclosures details:first-child {
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+  }
+  .home-intro {
+    grid-template-columns: 1fr;
+    padding: 42px 0 38px;
+    gap: 33px;
+  }
+  .home-intro h1 {
+    font-size: 35px;
+    margin-top: 17px;
+  }
+  .home-lead {
+    font-size: 17px;
+  }
+  .home-description {
+    font-size: 13px;
+  }
+  .home-actions {
+    gap: 22px;
+    align-items: flex-start;
+    flex-direction: column;
+    margin-top: 26px;
+  }
+  .public-portal .home-app {
+    flex-direction: row;
+    padding: 23px 20px;
+  }
+  .home-app strong {
+    font-size: 20px;
+  }
+  .platform-paths {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 30px 0;
+  }
+  .platform-paths h2 {
+    font-size: 24px;
+  }
+  .platform-paths article > p:not(.section-label) {
+    min-height: 0;
+  }
+  .platform-paths a {
+    margin-top: 14px;
+  }
+  .evidence-note {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 30px 0;
+  }
+  .shared-account-band {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 24px;
+  }
+  .public-reading {
+    padding: 38px 5% 60px;
+  }
+  .public-reading h1 {
+    font-size: 32px;
+  }
+  .public-reading .reading-intro {
+    font-size: 17px;
+  }
+  .public-footer {
+    flex-direction: column;
+    padding: 23px 5%;
+    gap: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .public-portal * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

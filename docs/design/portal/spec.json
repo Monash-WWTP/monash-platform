@@ -1,0 +1,2620 @@
+{
+  "tool": "comp-spec",
+  "version": 1,
+  "createdAt": "2026-10-02T11:07:13.417Z",
+  "comp": ".impeccable/mocks/atlas-purpose-index.png",
+  "warnings": [
+    "region nav: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region brand: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region research-nav: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region dashboard-nav: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region login-nav: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region register-nav: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region headline: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region intro: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region download: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region release-status: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region install-guide: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region purpose-frame: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region purpose-title: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region citizen-row: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region operator-row: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region research-row: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region map-tools: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region north: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region scale: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region map-caption: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region legend: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region evidence-heading: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region evidence-intro: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region citizen-icon: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region citizen-heading: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region citizen-description: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region citizen-link: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region lab-icon: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region lab-heading: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region lab-description: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region lab-link: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region model-icon: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region model-heading: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region model-description: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region model-link: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region research-heading: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region research-empty: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region research-all: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region evidence-ground: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region evidence-ground: \"container\": true set in the regions file (the region-size refusal is overridden: one undivided element)",
+    "region research-ground: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)"
+  ],
+  "uncoveredInkCells": [],
+  "compSize": {
+    "width": 1505,
+    "height": 1045
+  },
+  "aspect": 1.4402,
+  "orientation": "landscape",
+  "palette": [
+    {
+      "hex": "#f2f1e9",
+      "coverage": 0.747
+    },
+    {
+      "hex": "#bdccc4",
+      "coverage": 0.2163
+    },
+    {
+      "hex": "#89a1a6",
+      "coverage": 0.0181
+    },
+    {
+      "hex": "#0a2230",
+      "coverage": 0.0102
+    },
+    {
+      "hex": "#b5715e",
+      "coverage": 0.0083
+    }
+  ],
+  "bands": [
+    {
+      "y": 0.0337,
+      "strength": 0.202
+    },
+    {
+      "y": 0.1461,
+      "strength": 0.3452
+    },
+    {
+      "y": 0.1798,
+      "strength": 0.338
+    },
+    {
+      "y": 0.2022,
+      "strength": 0.2592
+    },
+    {
+      "y": 0.236,
+      "strength": 0.3222
+    },
+    {
+      "y": 0.2809,
+      "strength": 0.2825
+    },
+    {
+      "y": 0.3371,
+      "strength": 0.2799
+    },
+    {
+      "y": 0.382,
+      "strength": 0.292
+    },
+    {
+      "y": 0.5056,
+      "strength": 0.2277
+    },
+    {
+      "y": 0.6629,
+      "strength": 0.3884
+    },
+    {
+      "y": 0.7079,
+      "strength": 0.2515
+    },
+    {
+      "y": 0.7978,
+      "strength": 0.33
+    },
+    {
+      "y": 0.8427,
+      "strength": 0.2331
+    },
+    {
+      "y": 0.9551,
+      "strength": 0.2317
+    }
+  ],
+  "regions": [
+    {
+      "id": "nav",
+      "kind": "chrome",
+      "note": "Ivory navigation strip with bottom border",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0,
+        "y": 0,
+        "w": 1,
+        "h": 0.0498
+      },
+      "px": {
+        "x": 0,
+        "y": 0,
+        "w": 1505,
+        "h": 52
+      },
+      "aspect": 28.9423,
+      "palette": [
+        {
+          "hex": "#f8f8e9",
+          "coverage": 0.9031
+        },
+        {
+          "hex": "#c2c7c3",
+          "coverage": 0.0657
+        },
+        {
+          "hex": "#59717b",
+          "coverage": 0.0116
+        },
+        {
+          "hex": "#7f9495",
+          "coverage": 0.0111
+        },
+        {
+          "hex": "#0f2737",
+          "coverage": 0.0085
+        }
+      ],
+      "detail": {
+        "energy": 15.5442
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": true
+      }
+    },
+    {
+      "id": "brand",
+      "kind": "text",
+      "note": "Monash WWTP project name",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.0432,
+        "y": 0.0134,
+        "w": 0.1163,
+        "h": 0.0258
+      },
+      "px": {
+        "x": 65,
+        "y": 14,
+        "w": 175,
+        "h": 27
+      },
+      "aspect": 6.4815,
+      "palette": [
+        {
+          "hex": "#f6f6ec",
+          "coverage": 0.7419
+        },
+        {
+          "hex": "#163140",
+          "coverage": 0.1778
+        },
+        {
+          "hex": "#566871",
+          "coverage": 0.0325
+        },
+        {
+          "hex": "#b7bebd",
+          "coverage": 0.0249
+        },
+        {
+          "hex": "#899b9d",
+          "coverage": 0.0229
+        }
+      ],
+      "detail": {
+        "energy": 58.1427
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 10,
+          "capHeightPx": 18.2,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6995,
+          "advTall": 0.8641,
+          "advX": 0.6584,
+          "gap": 0.0823,
+          "xRatio": 0.6661,
+          "stemW": 0.1735,
+          "contrast": 1.7628,
+          "serif": 1.4826,
+          "densTall": 0.4672,
+          "densX": 0.5246,
+          "weight": 0.4672
+        },
+        "widthClass": "normal",
+        "weightClass": "regular"
+      }
+    },
+    {
+      "id": "research-nav",
+      "kind": "control",
+      "note": "Research link",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.6731,
+        "y": 0.0115,
+        "w": 0.0478,
+        "h": 0.0249
+      },
+      "px": {
+        "x": 1013,
+        "y": 12,
+        "w": 72,
+        "h": 26
+      },
+      "aspect": 2.7692,
+      "palette": [
+        {
+          "hex": "#f7f7ea",
+          "coverage": 0.8419
+        },
+        {
+          "hex": "#a7afaf",
+          "coverage": 0.1023
+        },
+        {
+          "hex": "#2b4252",
+          "coverage": 0.0233
+        },
+        {
+          "hex": "#808c98",
+          "coverage": 0.0186
+        },
+        {
+          "hex": "#d3dddd",
+          "coverage": 0.014
+        }
+      ],
+      "detail": {
+        "energy": 13.6885
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      }
+    },
+    {
+      "id": "dashboard-nav",
+      "kind": "control",
+      "note": "Dashboard link",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.7342,
+        "y": 0.0115,
+        "w": 0.0498,
+        "h": 0.0249
+      },
+      "px": {
+        "x": 1105,
+        "y": 12,
+        "w": 75,
+        "h": 26
+      },
+      "aspect": 2.8846,
+      "palette": [
+        {
+          "hex": "#f7f7ea",
+          "coverage": 0.8072
+        },
+        {
+          "hex": "#5a6d7b",
+          "coverage": 0.0762
+        },
+        {
+          "hex": "#cbcccc",
+          "coverage": 0.0538
+        },
+        {
+          "hex": "#99a1a5",
+          "coverage": 0.0493
+        },
+        {
+          "hex": "#334353",
+          "coverage": 0.0135
+        }
+      ],
+      "detail": {
+        "energy": 16.9509
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      }
+    },
+    {
+      "id": "login-nav",
+      "kind": "control",
+      "note": "Log in link",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.8066,
+        "y": 0.0115,
+        "w": 0.0319,
+        "h": 0.0249
+      },
+      "px": {
+        "x": 1214,
+        "y": 12,
+        "w": 48,
+        "h": 26
+      },
+      "aspect": 1.8462,
+      "palette": [
+        {
+          "hex": "#f7f7e9",
+          "coverage": 0.8264
+        },
+        {
+          "hex": "#bdc3c3",
+          "coverage": 0.0694
+        },
+        {
+          "hex": "#849294",
+          "coverage": 0.0556
+        },
+        {
+          "hex": "#455563",
+          "coverage": 0.0417
+        },
+        {
+          "hex": "#182838",
+          "coverage": 0.0069
+        }
+      ],
+      "detail": {
+        "energy": 9.7214
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      }
+    },
+    {
+      "id": "register-nav",
+      "kind": "control",
+      "note": "Create account outlined link",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.8551,
+        "y": 0.0057,
+        "w": 0.1017,
+        "h": 0.0383
+      },
+      "px": {
+        "x": 1287,
+        "y": 6,
+        "w": 153,
+        "h": 40
+      },
+      "aspect": 3.825,
+      "palette": [
+        {
+          "hex": "#f6f6e9",
+          "coverage": 0.7546
+        },
+        {
+          "hex": "#566f7c",
+          "coverage": 0.103
+        },
+        {
+          "hex": "#7d9495",
+          "coverage": 0.0973
+        },
+        {
+          "hex": "#112536",
+          "coverage": 0.024
+        },
+        {
+          "hex": "#b3bdc1",
+          "coverage": 0.0212
+        }
+      ],
+      "detail": {
+        "energy": 25.5838
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      }
+    },
+    {
+      "id": "atlas",
+      "kind": "plate",
+      "note": "Illustrative topographic river basin artwork, muted green hills, blue waterways and coast, light calm left area; excludes text and UI overlays",
+      "grid": null,
+      "box": {
+        "x": 0,
+        "y": 0.0498,
+        "w": 1,
+        "h": 0.6144
+      },
+      "px": {
+        "x": 0,
+        "y": 52,
+        "w": 1505,
+        "h": 642
+      },
+      "aspect": 2.3442,
+      "palette": [
+        {
+          "hex": "#ecebe1",
+          "coverage": 0.6142
+        },
+        {
+          "hex": "#bdccc4",
+          "coverage": 0.3355
+        },
+        {
+          "hex": "#89a4aa",
+          "coverage": 0.0237
+        },
+        {
+          "hex": "#a0ba9e",
+          "coverage": 0.0134
+        },
+        {
+          "hex": "#b4715d",
+          "coverage": 0.0131
+        }
+      ],
+      "detail": {
+        "energy": 26.0298
+      },
+      "medium": "raster",
+      "plate": "assets/plates/atlas.png",
+      "text": null
+    },
+    {
+      "id": "headline",
+      "kind": "text",
+      "note": "Understand water. Report what you see. in two lines",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.0425,
+        "y": 0.1215,
+        "w": 0.3674,
+        "h": 0.1225
+      },
+      "px": {
+        "x": 64,
+        "y": 127,
+        "w": 553,
+        "h": 128
+      },
+      "aspect": 4.3203,
+      "palette": [
+        {
+          "hex": "#f5f4ea",
+          "coverage": 0.7705
+        },
+        {
+          "hex": "#0b2531",
+          "coverage": 0.1682
+        },
+        {
+          "hex": "#909fa1",
+          "coverage": 0.0291
+        },
+        {
+          "hex": "#566a73",
+          "coverage": 0.0181
+        },
+        {
+          "hex": "#c0cac8",
+          "coverage": 0.0141
+        }
+      ],
+      "detail": {
+        "energy": 81.3993
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 2,
+          "glyphs": 24,
+          "capHeightPx": 46.9,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6291,
+          "advTall": 0.7203,
+          "advX": 0.5794,
+          "gap": 0.0424,
+          "xRatio": 0.6602,
+          "stemW": 0.149,
+          "contrast": 1.7695,
+          "serif": 1.9821,
+          "densTall": 0.4025,
+          "densX": 0.4843,
+          "weight": 0.4025
+        },
+        "widthClass": "condensed",
+        "weightClass": "regular",
+        "chosen": {
+          "family": "Gelasio",
+          "weight": 400,
+          "fontSizePx": 62,
+          "source": "index",
+          "fp": {
+            "lines": 1,
+            "glyphs": 15,
+            "capHeightPx": 47,
+            "inkIsDark": true,
+            "allCaps": false,
+            "advance": 0.5745,
+            "advTall": 0.6809,
+            "advX": 0.5638,
+            "gap": 0.0638,
+            "xRatio": 0.6383,
+            "stemW": 0.122,
+            "contrast": 1.7855,
+            "serif": 2.4277,
+            "densTall": 0.3537,
+            "densX": 0.4394,
+            "weight": 0.3537
+          },
+          "stamp": "3f7b682e3682"
+        }
+      }
+    },
+    {
+      "id": "intro",
+      "kind": "text",
+      "note": "Citizen observations, wastewater monitoring and research — with their evidence kept distinct.",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.0439,
+        "y": 0.2584,
+        "w": 0.3887,
+        "h": 0.0498
+      },
+      "px": {
+        "x": 66,
+        "y": 270,
+        "w": 585,
+        "h": 52
+      },
+      "aspect": 11.25,
+      "palette": [
+        {
+          "hex": "#f4f1e9",
+          "coverage": 0.8428
+        },
+        {
+          "hex": "#bdc6c5",
+          "coverage": 0.0444
+        },
+        {
+          "hex": "#495f68",
+          "coverage": 0.0432
+        },
+        {
+          "hex": "#808f91",
+          "coverage": 0.0358
+        },
+        {
+          "hex": "#183140",
+          "coverage": 0.0338
+        }
+      ],
+      "detail": {
+        "energy": 55.7555
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 2,
+          "glyphs": 77,
+          "capHeightPx": 16.6,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.5745,
+          "advTall": 0.2721,
+          "advX": 0.5745,
+          "gap": 0.0605,
+          "xRatio": 0.6712,
+          "stemW": 0.149,
+          "contrast": 1.3289,
+          "serif": 1.4761,
+          "densTall": 0.5124,
+          "densX": 0.521,
+          "weight": 0.5124
+        },
+        "widthClass": "condensed",
+        "weightClass": "medium"
+      }
+    },
+    {
+      "id": "download",
+      "kind": "control",
+      "note": "Disabled rust Download Android APK button",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.0439,
+        "y": 0.334,
+        "w": 0.1874,
+        "h": 0.0498
+      },
+      "px": {
+        "x": 66,
+        "y": 349,
+        "w": 282,
+        "h": 52
+      },
+      "aspect": 5.4231,
+      "palette": [
+        {
+          "hex": "#b4715d",
+          "coverage": 0.8387
+        },
+        {
+          "hex": "#c89f8e",
+          "coverage": 0.1052
+        },
+        {
+          "hex": "#e8d8c9",
+          "coverage": 0.0556
+        },
+        {
+          "hex": "#f8f8f8",
+          "coverage": 0.0006
+        }
+      ],
+      "detail": {
+        "energy": 10.5119
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": false
+      }
+    },
+    {
+      "id": "release-status",
+      "kind": "text",
+      "note": "Android release coming soon",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.2465,
+        "y": 0.3368,
+        "w": 0.1216,
+        "h": 0.0211
+      },
+      "px": {
+        "x": 371,
+        "y": 352,
+        "w": 183,
+        "h": 22
+      },
+      "aspect": 8.3182,
+      "palette": [
+        {
+          "hex": "#f3eee9",
+          "coverage": 0.7876
+        },
+        {
+          "hex": "#abb5b4",
+          "coverage": 0.1052
+        },
+        {
+          "hex": "#46595f",
+          "coverage": 0.0557
+        },
+        {
+          "hex": "#77858a",
+          "coverage": 0.0392
+        },
+        {
+          "hex": "#1b3b45",
+          "coverage": 0.0124
+        }
+      ],
+      "detail": {
+        "energy": 43.563
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 19,
+          "capHeightPx": 11.1,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6317,
+          "advTall": 0.4362,
+          "advX": 0.6317,
+          "gap": 0.0602,
+          "xRatio": 0.685,
+          "stemW": 0.1864,
+          "contrast": 1.2805,
+          "serif": 0.6519,
+          "densTall": 0.5703,
+          "densX": 0.5752,
+          "weight": 0.5703
+        },
+        "widthClass": "normal",
+        "weightClass": "bold"
+      }
+    },
+    {
+      "id": "install-guide",
+      "kind": "control",
+      "note": "Installation guide link",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.2465,
+        "y": 0.3598,
+        "w": 0.089,
+        "h": 0.023
+      },
+      "px": {
+        "x": 371,
+        "y": 376,
+        "w": 134,
+        "h": 24
+      },
+      "aspect": 5.5833,
+      "palette": [
+        {
+          "hex": "#f5f1ec",
+          "coverage": 0.7479
+        },
+        {
+          "hex": "#7a9bb1",
+          "coverage": 0.1485
+        },
+        {
+          "hex": "#b7c6d0",
+          "coverage": 0.0476
+        },
+        {
+          "hex": "#1b4e7c",
+          "coverage": 0.0308
+        },
+        {
+          "hex": "#3a6a8f",
+          "coverage": 0.0252
+        }
+      ],
+      "detail": {
+        "energy": 36.8842
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": false
+      }
+    },
+    {
+      "id": "purpose-frame",
+      "kind": "chrome",
+      "note": "Ivory purpose index outlined panel with horizontal row rules",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.0439,
+        "y": 0.4067,
+        "w": 0.3821,
+        "h": 0.1684
+      },
+      "px": {
+        "x": 66,
+        "y": 425,
+        "w": 575,
+        "h": 176
+      },
+      "aspect": 3.267,
+      "palette": [
+        {
+          "hex": "#f7f7e9",
+          "coverage": 0.912
+        },
+        {
+          "hex": "#a8b1b2",
+          "coverage": 0.0523
+        },
+        {
+          "hex": "#69787e",
+          "coverage": 0.0228
+        },
+        {
+          "hex": "#405459",
+          "coverage": 0.0068
+        },
+        {
+          "hex": "#203644",
+          "coverage": 0.0061
+        }
+      ],
+      "detail": {
+        "energy": 20.3964
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": false
+      }
+    },
+    {
+      "id": "purpose-title",
+      "kind": "text",
+      "note": "Explore the map by purpose",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.0591,
+        "y": 0.4191,
+        "w": 0.1794,
+        "h": 0.023
+      },
+      "px": {
+        "x": 89,
+        "y": 438,
+        "w": 270,
+        "h": 24
+      },
+      "aspect": 11.25,
+      "palette": [
+        {
+          "hex": "#f6f6ea",
+          "coverage": 0.8248
+        },
+        {
+          "hex": "#a1adaf",
+          "coverage": 0.0584
+        },
+        {
+          "hex": "#0e1f2e",
+          "coverage": 0.0499
+        },
+        {
+          "hex": "#69787b",
+          "coverage": 0.0456
+        },
+        {
+          "hex": "#244245",
+          "coverage": 0.0214
+        }
+      ],
+      "detail": {
+        "energy": 62.7094
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 18,
+          "capHeightPx": 13.2,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6453,
+          "advTall": 0.8541,
+          "advX": 0.6074,
+          "gap": 0.0759,
+          "xRatio": 0.6682,
+          "stemW": 0.1768,
+          "contrast": 1.3454,
+          "serif": 1.4804,
+          "densTall": 0.4785,
+          "densX": 0.5767,
+          "weight": 0.4785
+        },
+        "widthClass": "normal",
+        "weightClass": "regular"
+      }
+    },
+    {
+      "id": "citizen-row",
+      "kind": "control",
+      "note": "CitizenFlood: Community observations from the public.",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.0591,
+        "y": 0.4574,
+        "w": 0.3522,
+        "h": 0.0268
+      },
+      "px": {
+        "x": 89,
+        "y": 478,
+        "w": 530,
+        "h": 28
+      },
+      "aspect": 18.9286,
+      "palette": [
+        {
+          "hex": "#f7f7ea",
+          "coverage": 0.9173
+        },
+        {
+          "hex": "#56676f",
+          "coverage": 0.026
+        },
+        {
+          "hex": "#1c5a93",
+          "coverage": 0.0226
+        },
+        {
+          "hex": "#c1cbca",
+          "coverage": 0.0185
+        },
+        {
+          "hex": "#8a989b",
+          "coverage": 0.0156
+        }
+      ],
+      "detail": {
+        "energy": 30.2616
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": false
+      }
+    },
+    {
+      "id": "operator-row",
+      "kind": "control",
+      "note": "Operator workspace: Wastewater operations and monitoring.",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.0591,
+        "y": 0.4976,
+        "w": 0.3522,
+        "h": 0.0268
+      },
+      "px": {
+        "x": 89,
+        "y": 520,
+        "w": 530,
+        "h": 28
+      },
+      "aspect": 18.9286,
+      "palette": [
+        {
+          "hex": "#f7f6e9",
+          "coverage": 0.8762
+        },
+        {
+          "hex": "#b6bfbe",
+          "coverage": 0.0487
+        },
+        {
+          "hex": "#748388",
+          "coverage": 0.0309
+        },
+        {
+          "hex": "#286963",
+          "coverage": 0.0235
+        },
+        {
+          "hex": "#42565f",
+          "coverage": 0.0206
+        }
+      ],
+      "detail": {
+        "energy": 34.4779
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": false
+      }
+    },
+    {
+      "id": "research-row",
+      "kind": "control",
+      "note": "Research: Illustrative model outputs and research.",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.0591,
+        "y": 0.5388,
+        "w": 0.3522,
+        "h": 0.0268
+      },
+      "px": {
+        "x": 89,
+        "y": 563,
+        "w": 530,
+        "h": 28
+      },
+      "aspect": 18.9286,
+      "palette": [
+        {
+          "hex": "#f7f7e9",
+          "coverage": 0.8656
+        },
+        {
+          "hex": "#818d8f",
+          "coverage": 0.0583
+        },
+        {
+          "hex": "#4a5d63",
+          "coverage": 0.0269
+        },
+        {
+          "hex": "#bbc4c2",
+          "coverage": 0.0269
+        },
+        {
+          "hex": "#ae573a",
+          "coverage": 0.0223
+        }
+      ],
+      "detail": {
+        "energy": 26.5319
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": false
+      }
+    },
+    {
+      "id": "map-tools",
+      "kind": "chrome",
+      "note": "Decorative concept zoom and layer controls; omit from production unless map is interactive",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.9561,
+        "y": 0.0861,
+        "w": 0.0239,
+        "h": 0.1072
+      },
+      "px": {
+        "x": 1439,
+        "y": 90,
+        "w": 36,
+        "h": 112
+      },
+      "aspect": 0.3214,
+      "palette": [
+        {
+          "hex": "#f6f5ea",
+          "coverage": 0.7361
+        },
+        {
+          "hex": "#c1cac1",
+          "coverage": 0.235
+        },
+        {
+          "hex": "#657878",
+          "coverage": 0.0111
+        },
+        {
+          "hex": "#1c2c3c",
+          "coverage": 0.0089
+        },
+        {
+          "hex": "#284040",
+          "coverage": 0.0089
+        }
+      ],
+      "detail": {
+        "energy": 5.1086
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": false
+      }
+    },
+    {
+      "id": "north",
+      "kind": "chrome",
+      "note": "Small compass north indicator",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.0259,
+        "y": 0.5895,
+        "w": 0.014,
+        "h": 0.044
+      },
+      "px": {
+        "x": 39,
+        "y": 616,
+        "w": 21,
+        "h": 46
+      },
+      "aspect": 0.4565,
+      "palette": [
+        {
+          "hex": "#ece9e6",
+          "coverage": 0.8125
+        },
+        {
+          "hex": "#092735",
+          "coverage": 0.0982
+        },
+        {
+          "hex": "#3b535d",
+          "coverage": 0.0536
+        },
+        {
+          "hex": "#acb8b8",
+          "coverage": 0.0357
+        }
+      ],
+      "detail": {
+        "energy": 5.6768
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": false
+      }
+    },
+    {
+      "id": "scale",
+      "kind": "chrome",
+      "note": "Unnumbered map scale decoration",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.0578,
+        "y": 0.6163,
+        "w": 0.0478,
+        "h": 0.0172
+      },
+      "px": {
+        "x": 87,
+        "y": 644,
+        "w": 72,
+        "h": 18
+      },
+      "aspect": 4,
+      "palette": [
+        {
+          "hex": "#f1ebe8",
+          "coverage": 0.8125
+        },
+        {
+          "hex": "#7e8f90",
+          "coverage": 0.1875
+        }
+      ],
+      "detail": {
+        "energy": 13.2258
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": false
+      }
+    },
+    {
+      "id": "map-caption",
+      "kind": "text",
+      "note": "Illustrative geography — not live monitoring.",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.1209,
+        "y": 0.6201,
+        "w": 0.1449,
+        "h": 0.0172
+      },
+      "px": {
+        "x": 182,
+        "y": 648,
+        "w": 218,
+        "h": 18
+      },
+      "aspect": 12.1111,
+      "palette": [
+        {
+          "hex": "#ebeae5",
+          "coverage": 0.7737
+        },
+        {
+          "hex": "#8d9799",
+          "coverage": 0.0716
+        },
+        {
+          "hex": "#3a4959",
+          "coverage": 0.0531
+        },
+        {
+          "hex": "#b7c3bb",
+          "coverage": 0.0508
+        },
+        {
+          "hex": "#5f6a6c",
+          "coverage": 0.0508
+        }
+      ],
+      "detail": {
+        "energy": 44.1911
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 23,
+          "capHeightPx": 8.3,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6624,
+          "advTall": 0.6323,
+          "advX": 1.1743,
+          "gap": 0.0602,
+          "xRatio": 0.7395,
+          "stemW": 0.2379,
+          "contrast": 1.384,
+          "serif": 0.4674,
+          "densTall": 0.6446,
+          "densX": 0.655,
+          "weight": 0.6446
+        },
+        "widthClass": "wide",
+        "weightClass": "bold"
+      }
+    },
+    {
+      "id": "legend",
+      "kind": "chrome",
+      "note": "Ivory map legend panel with colored swatches and water/land labels",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.8645,
+        "y": 0.5311,
+        "w": 0.115,
+        "h": 0.1167
+      },
+      "px": {
+        "x": 1301,
+        "y": 555,
+        "w": 173,
+        "h": 122
+      },
+      "aspect": 1.418,
+      "palette": [
+        {
+          "hex": "#e6e7e6",
+          "coverage": 0.8672
+        },
+        {
+          "hex": "#b4c1c5",
+          "coverage": 0.0632
+        },
+        {
+          "hex": "#bdccb2",
+          "coverage": 0.0342
+        },
+        {
+          "hex": "#909c9f",
+          "coverage": 0.0226
+        },
+        {
+          "hex": "#536466",
+          "coverage": 0.0128
+        }
+      ],
+      "detail": {
+        "energy": 15.5002
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": false
+      }
+    },
+    {
+      "id": "evidence-heading",
+      "kind": "text",
+      "note": "Three kinds of evidence",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.0432,
+        "y": 0.6976,
+        "w": 0.2512,
+        "h": 0.0392
+      },
+      "px": {
+        "x": 65,
+        "y": 729,
+        "w": 378,
+        "h": 41
+      },
+      "aspect": 9.2195,
+      "palette": [
+        {
+          "hex": "#f6f6f5",
+          "coverage": 0.7681
+        },
+        {
+          "hex": "#0a2333",
+          "coverage": 0.1268
+        },
+        {
+          "hex": "#61747d",
+          "coverage": 0.0377
+        },
+        {
+          "hex": "#a1adaf",
+          "coverage": 0.0343
+        },
+        {
+          "hex": "#2c454e",
+          "coverage": 0.0331
+        }
+      ],
+      "detail": {
+        "energy": 82.8498
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 18,
+          "capHeightPx": 26.8,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.615,
+          "advTall": 0.5405,
+          "advX": 0.615,
+          "gap": 0.0373,
+          "xRatio": 0.6801,
+          "stemW": 0.1518,
+          "contrast": 1.7594,
+          "serif": 1.4502,
+          "densTall": 0.4247,
+          "densX": 0.4703,
+          "weight": 0.4247
+        },
+        "widthClass": "normal",
+        "weightClass": "regular"
+      }
+    },
+    {
+      "id": "evidence-intro",
+      "kind": "text",
+      "note": "Different types of information help us see a fuller picture of water in our environment. Each has a distinct purpose, and we keep their evidence separate.",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.489,
+        "y": 0.6957,
+        "w": 0.4465,
+        "h": 0.0431
+      },
+      "px": {
+        "x": 736,
+        "y": 727,
+        "w": 672,
+        "h": 45
+      },
+      "aspect": 14.9333,
+      "palette": [
+        {
+          "hex": "#f6f6f3",
+          "coverage": 0.8061
+        },
+        {
+          "hex": "#7c8a8e",
+          "coverage": 0.0681
+        },
+        {
+          "hex": "#b0bbbc",
+          "coverage": 0.0666
+        },
+        {
+          "hex": "#3b515b",
+          "coverage": 0.058
+        },
+        {
+          "hex": "#203838",
+          "coverage": 0.0012
+        }
+      ],
+      "detail": {
+        "energy": 50.8257
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 2,
+          "glyphs": 114,
+          "capHeightPx": 13.8,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.5715,
+          "advTall": 0.3304,
+          "advX": 0.5874,
+          "gap": 0.0734,
+          "xRatio": 0.657,
+          "stemW": 0.1696,
+          "contrast": 1.3551,
+          "serif": 1.0989,
+          "densTall": 0.5824,
+          "densX": 0.5724,
+          "weight": 0.5824
+        },
+        "widthClass": "normal",
+        "weightClass": "bold"
+      }
+    },
+    {
+      "id": "citizen-icon",
+      "kind": "chrome",
+      "note": "Blue circle with simple community icon",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.0432,
+        "y": 0.7656,
+        "w": 0.0605,
+        "h": 0.088
+      },
+      "px": {
+        "x": 65,
+        "y": 800,
+        "w": 91,
+        "h": 92
+      },
+      "aspect": 0.9891,
+      "palette": [
+        {
+          "hex": "#e3edec",
+          "coverage": 0.8603
+        },
+        {
+          "hex": "#18578d",
+          "coverage": 0.1116
+        },
+        {
+          "hex": "#cad5e5",
+          "coverage": 0.0156
+        },
+        {
+          "hex": "#6c98b6",
+          "coverage": 0.0094
+        },
+        {
+          "hex": "#5883b3",
+          "coverage": 0.0031
+        }
+      ],
+      "detail": {
+        "energy": 5.7212
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      }
+    },
+    {
+      "id": "citizen-heading",
+      "kind": "text",
+      "note": "Community observations",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.1216,
+        "y": 0.7742,
+        "w": 0.1774,
+        "h": 0.0258
+      },
+      "px": {
+        "x": 183,
+        "y": 809,
+        "w": 267,
+        "h": 27
+      },
+      "aspect": 9.8889,
+      "palette": [
+        {
+          "hex": "#f7f7f6",
+          "coverage": 0.8643
+        },
+        {
+          "hex": "#243845",
+          "coverage": 0.0487
+        },
+        {
+          "hex": "#b5c0c3",
+          "coverage": 0.0397
+        },
+        {
+          "hex": "#081425",
+          "coverage": 0.0269
+        },
+        {
+          "hex": "#5a6878",
+          "coverage": 0.0205
+        }
+      ],
+      "detail": {
+        "energy": 72.8604
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 20,
+          "capHeightPx": 15.6,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6418,
+          "advTall": 0.4493,
+          "advX": 0.6418,
+          "gap": 0.0321,
+          "xRatio": 0.6902,
+          "stemW": 0.1636,
+          "contrast": 1.3629,
+          "serif": 0.9853,
+          "densTall": 0.5057,
+          "densX": 0.5538,
+          "weight": 0.5057
+        },
+        "widthClass": "normal",
+        "weightClass": "medium"
+      }
+    },
+    {
+      "id": "citizen-description",
+      "kind": "text",
+      "note": "Reports from people in the community, such as photos and notes about water in their local area.",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.1216,
+        "y": 0.8096,
+        "w": 0.2093,
+        "h": 0.0402
+      },
+      "px": {
+        "x": 183,
+        "y": 846,
+        "w": 315,
+        "h": 42
+      },
+      "aspect": 7.5,
+      "palette": [
+        {
+          "hex": "#f4f5f0",
+          "coverage": 0.8109
+        },
+        {
+          "hex": "#848f93",
+          "coverage": 0.0721
+        },
+        {
+          "hex": "#b7bebf",
+          "coverage": 0.0592
+        },
+        {
+          "hex": "#40545d",
+          "coverage": 0.0571
+        },
+        {
+          "hex": "#183838",
+          "coverage": 0.0007
+        }
+      ],
+      "detail": {
+        "energy": 63.5911
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 2,
+          "glyphs": 56,
+          "capHeightPx": 11.6,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6247,
+          "advTall": 0.6478,
+          "advX": 0.6425,
+          "gap": 0.0568,
+          "xRatio": 0.669,
+          "stemW": 0.1791,
+          "contrast": 1.4229,
+          "serif": 0.8244,
+          "densTall": 0.5085,
+          "densX": 0.5896,
+          "weight": 0.5085
+        },
+        "widthClass": "normal",
+        "weightClass": "medium"
+      }
+    },
+    {
+      "id": "citizen-link",
+      "kind": "control",
+      "note": "Go to CitizenFlood link",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.1216,
+        "y": 0.866,
+        "w": 0.1003,
+        "h": 0.023
+      },
+      "px": {
+        "x": 183,
+        "y": 905,
+        "w": 151,
+        "h": 24
+      },
+      "aspect": 6.2917,
+      "palette": [
+        {
+          "hex": "#f6f7f2",
+          "coverage": 0.7377
+        },
+        {
+          "hex": "#7397b5",
+          "coverage": 0.1471
+        },
+        {
+          "hex": "#bbcdd9",
+          "coverage": 0.0686
+        },
+        {
+          "hex": "#2a5f8d",
+          "coverage": 0.0417
+        },
+        {
+          "hex": "#205090",
+          "coverage": 0.0049
+        }
+      ],
+      "detail": {
+        "energy": 38.2996
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      }
+    },
+    {
+      "id": "lab-icon",
+      "kind": "chrome",
+      "note": "Green circle with simple flask icon",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.3635,
+        "y": 0.7656,
+        "w": 0.0605,
+        "h": 0.088
+      },
+      "px": {
+        "x": 547,
+        "y": 800,
+        "w": 91,
+        "h": 92
+      },
+      "aspect": 0.9891,
+      "palette": [
+        {
+          "hex": "#e2edea",
+          "coverage": 0.9001
+        },
+        {
+          "hex": "#2a6961",
+          "coverage": 0.0728
+        },
+        {
+          "hex": "#a4c6b7",
+          "coverage": 0.0187
+        },
+        {
+          "hex": "#88a8a5",
+          "coverage": 0.0062
+        },
+        {
+          "hex": "#588888",
+          "coverage": 0.0021
+        }
+      ],
+      "detail": {
+        "energy": 4.6172
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      }
+    },
+    {
+      "id": "lab-heading",
+      "kind": "text",
+      "note": "Laboratory measurements",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.4452,
+        "y": 0.7742,
+        "w": 0.1894,
+        "h": 0.0258
+      },
+      "px": {
+        "x": 670,
+        "y": 809,
+        "w": 285,
+        "h": 27
+      },
+      "aspect": 10.5556,
+      "palette": [
+        {
+          "hex": "#f7f7f4",
+          "coverage": 0.8546
+        },
+        {
+          "hex": "#acb7ba",
+          "coverage": 0.0572
+        },
+        {
+          "hex": "#526370",
+          "coverage": 0.0358
+        },
+        {
+          "hex": "#0d1a2b",
+          "coverage": 0.0334
+        },
+        {
+          "hex": "#7a8890",
+          "coverage": 0.0191
+        }
+      ],
+      "detail": {
+        "energy": 71.2038
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 18,
+          "capHeightPx": 16,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.5928,
+          "advTall": 1.2636,
+          "advX": 0.5928,
+          "gap": 0.0312,
+          "xRatio": 0.6713,
+          "stemW": 0.1637,
+          "contrast": 1.377,
+          "serif": 0.9536,
+          "densTall": 0.4012,
+          "densX": 0.5509,
+          "weight": 0.4012
+        },
+        "widthClass": "normal",
+        "weightClass": "regular"
+      }
+    },
+    {
+      "id": "lab-description",
+      "kind": "text",
+      "note": "Waste water and water quality measurements from operational monitoring.",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.4452,
+        "y": 0.8096,
+        "w": 0.2113,
+        "h": 0.0402
+      },
+      "px": {
+        "x": 670,
+        "y": 846,
+        "w": 318,
+        "h": 42
+      },
+      "aspect": 7.5714,
+      "palette": [
+        {
+          "hex": "#f7f7f0",
+          "coverage": 0.7861
+        },
+        {
+          "hex": "#5f7176",
+          "coverage": 0.0749
+        },
+        {
+          "hex": "#9aa3a6",
+          "coverage": 0.0628
+        },
+        {
+          "hex": "#c6cac9",
+          "coverage": 0.056
+        },
+        {
+          "hex": "#3b4c5b",
+          "coverage": 0.0202
+        }
+      ],
+      "detail": {
+        "energy": 47.556
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 2,
+          "glyphs": 53,
+          "capHeightPx": 11.4,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6167,
+          "advTall": 0.4112,
+          "advX": 0.6448,
+          "gap": 0.0585,
+          "xRatio": 0.717,
+          "stemW": 0.193,
+          "contrast": 1.4807,
+          "serif": 0.278,
+          "densTall": 0.5584,
+          "densX": 0.571,
+          "weight": 0.5584
+        },
+        "widthClass": "normal",
+        "weightClass": "medium"
+      }
+    },
+    {
+      "id": "lab-link",
+      "kind": "control",
+      "note": "Go to operator workspace link",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.4452,
+        "y": 0.866,
+        "w": 0.1316,
+        "h": 0.023
+      },
+      "px": {
+        "x": 670,
+        "y": 905,
+        "w": 198,
+        "h": 24
+      },
+      "aspect": 8.25,
+      "palette": [
+        {
+          "hex": "#f7f7f1",
+          "coverage": 0.6667
+        },
+        {
+          "hex": "#c3d3e2",
+          "coverage": 0.1705
+        },
+        {
+          "hex": "#6589aa",
+          "coverage": 0.0701
+        },
+        {
+          "hex": "#8aa6b8",
+          "coverage": 0.0511
+        },
+        {
+          "hex": "#356596",
+          "coverage": 0.0417
+        }
+      ],
+      "detail": {
+        "energy": 42.6527
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      }
+    },
+    {
+      "id": "model-icon",
+      "kind": "chrome",
+      "note": "Rust circle with simple chart icon",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.6777,
+        "y": 0.7656,
+        "w": 0.0605,
+        "h": 0.088
+      },
+      "px": {
+        "x": 1020,
+        "y": 800,
+        "w": 91,
+        "h": 92
+      },
+      "aspect": 0.9891,
+      "palette": [
+        {
+          "hex": "#f7ede1",
+          "coverage": 0.9032
+        },
+        {
+          "hex": "#a94c33",
+          "coverage": 0.078
+        },
+        {
+          "hex": "#d2a899",
+          "coverage": 0.0187
+        }
+      ],
+      "detail": {
+        "energy": 3.7248
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      }
+    },
+    {
+      "id": "model-heading",
+      "kind": "text",
+      "note": "Illustrative model outputs",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.7608,
+        "y": 0.7742,
+        "w": 0.1821,
+        "h": 0.0258
+      },
+      "px": {
+        "x": 1145,
+        "y": 809,
+        "w": 274,
+        "h": 27
+      },
+      "aspect": 10.1481,
+      "palette": [
+        {
+          "hex": "#f6f7f5",
+          "coverage": 0.8515
+        },
+        {
+          "hex": "#b7c2c4",
+          "coverage": 0.0442
+        },
+        {
+          "hex": "#081123",
+          "coverage": 0.0429
+        },
+        {
+          "hex": "#203545",
+          "coverage": 0.0417
+        },
+        {
+          "hex": "#4c6163",
+          "coverage": 0.0196
+        }
+      ],
+      "detail": {
+        "energy": 74.5165
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 22,
+          "capHeightPx": 16.1,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.4671,
+          "advTall": 0.2802,
+          "advX": 0.6227,
+          "gap": 0.0623,
+          "xRatio": 0.6948,
+          "stemW": 0.1554,
+          "contrast": 1.4465,
+          "serif": 0.4786,
+          "densTall": 0.5872,
+          "densX": 0.5493,
+          "weight": 0.5872
+        },
+        "widthClass": "normal",
+        "weightClass": "bold"
+      }
+    },
+    {
+      "id": "model-description",
+      "kind": "text",
+      "note": "Model outputs used for research and exploration, not real-time monitoring.",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.7608,
+        "y": 0.8096,
+        "w": 0.202,
+        "h": 0.0402
+      },
+      "px": {
+        "x": 1145,
+        "y": 846,
+        "w": 304,
+        "h": 42
+      },
+      "aspect": 7.2381,
+      "palette": [
+        {
+          "hex": "#f6f6f0",
+          "coverage": 0.7937
+        },
+        {
+          "hex": "#7f8a8f",
+          "coverage": 0.0786
+        },
+        {
+          "hex": "#b3babe",
+          "coverage": 0.0765
+        },
+        {
+          "hex": "#485a63",
+          "coverage": 0.0442
+        },
+        {
+          "hex": "#253845",
+          "coverage": 0.007
+        }
+      ],
+      "detail": {
+        "energy": 52.0489
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 2,
+          "glyphs": 55,
+          "capHeightPx": 11.6,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.622,
+          "advTall": 0.622,
+          "advX": 0.622,
+          "gap": 0.0565,
+          "xRatio": 0.6842,
+          "stemW": 0.1794,
+          "contrast": 1.4451,
+          "serif": 1.0433,
+          "densTall": 0.5056,
+          "densX": 0.5659,
+          "weight": 0.5056
+        },
+        "widthClass": "normal",
+        "weightClass": "medium"
+      }
+    },
+    {
+      "id": "model-link",
+      "kind": "control",
+      "note": "Go to research link",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.7608,
+        "y": 0.866,
+        "w": 0.0837,
+        "h": 0.023
+      },
+      "px": {
+        "x": 1145,
+        "y": 905,
+        "w": 126,
+        "h": 24
+      },
+      "aspect": 5.25,
+      "palette": [
+        {
+          "hex": "#f5f6f2",
+          "coverage": 0.7946
+        },
+        {
+          "hex": "#779bb8",
+          "coverage": 0.1458
+        },
+        {
+          "hex": "#bdd3df",
+          "coverage": 0.0268
+        },
+        {
+          "hex": "#24568a",
+          "coverage": 0.0238
+        },
+        {
+          "hex": "#4d7398",
+          "coverage": 0.0089
+        }
+      ],
+      "detail": {
+        "energy": 29.3723
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      }
+    },
+    {
+      "id": "research-heading",
+      "kind": "text",
+      "note": "Research",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.0432,
+        "y": 0.9407,
+        "w": 0.093,
+        "h": 0.0373
+      },
+      "px": {
+        "x": 65,
+        "y": 983,
+        "w": 140,
+        "h": 39
+      },
+      "aspect": 3.5897,
+      "palette": [
+        {
+          "hex": "#f6f6f4",
+          "coverage": 0.7743
+        },
+        {
+          "hex": "#0a2736",
+          "coverage": 0.1384
+        },
+        {
+          "hex": "#9dabad",
+          "coverage": 0.0511
+        },
+        {
+          "hex": "#38525d",
+          "coverage": 0.028
+        },
+        {
+          "hex": "#587272",
+          "coverage": 0.0082
+        }
+      ],
+      "detail": {
+        "energy": 39.762
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 7,
+          "capHeightPx": 25.8,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.542,
+          "advTall": 1.0259,
+          "advX": 0.542,
+          "gap": 0.0774,
+          "xRatio": 0.661,
+          "stemW": 0.1484,
+          "contrast": 1.6318,
+          "serif": null,
+          "densTall": 0.4105,
+          "densX": 0.4917,
+          "weight": 0.4105
+        },
+        "widthClass": "condensed",
+        "weightClass": "regular"
+      }
+    },
+    {
+      "id": "research-empty",
+      "kind": "text",
+      "note": "Approved publications will appear here.",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.1874,
+        "y": 0.9522,
+        "w": 0.1761,
+        "h": 0.0211
+      },
+      "px": {
+        "x": 282,
+        "y": 995,
+        "w": 265,
+        "h": 22
+      },
+      "aspect": 12.0455,
+      "palette": [
+        {
+          "hex": "#f7f7f3",
+          "coverage": 0.7842
+        },
+        {
+          "hex": "#919ea0",
+          "coverage": 0.1007
+        },
+        {
+          "hex": "#c7cbcc",
+          "coverage": 0.0633
+        },
+        {
+          "hex": "#334454",
+          "coverage": 0.0273
+        },
+        {
+          "hex": "#5c6977",
+          "coverage": 0.0245
+        }
+      ],
+      "detail": {
+        "energy": 68.3552
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      },
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 28,
+          "capHeightPx": 11.8,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.5673,
+          "advTall": 0.4396,
+          "advX": 0.5815,
+          "gap": 0.0567,
+          "xRatio": 0.6943,
+          "stemW": 0.1771,
+          "contrast": 1.3698,
+          "serif": 0.3767,
+          "densTall": 0.5525,
+          "densX": 0.5555,
+          "weight": 0.5525
+        },
+        "widthClass": "condensed",
+        "weightClass": "medium"
+      }
+    },
+    {
+      "id": "research-all",
+      "kind": "control",
+      "note": "View all research link",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0.8711,
+        "y": 0.9502,
+        "w": 0.087,
+        "h": 0.0258
+      },
+      "px": {
+        "x": 1311,
+        "y": 993,
+        "w": 131,
+        "h": 27
+      },
+      "aspect": 4.8519,
+      "palette": [
+        {
+          "hex": "#f7f7f6",
+          "coverage": 0.8142
+        },
+        {
+          "hex": "#366695",
+          "coverage": 0.0712
+        },
+        {
+          "hex": "#8ba7bb",
+          "coverage": 0.0585
+        },
+        {
+          "hex": "#baced7",
+          "coverage": 0.0356
+        },
+        {
+          "hex": "#6088a0",
+          "coverage": 0.0204
+        }
+      ],
+      "detail": {
+        "energy": 30.4209
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": false,
+        "rules": false
+      }
+    },
+    {
+      "id": "evidence-ground",
+      "kind": "chrome",
+      "note": "Ivory evidence section ground with two column divider rules",
+      "grid": null,
+      "codeDrawn": true,
+      "container": true,
+      "box": {
+        "x": 0,
+        "y": 0.6641,
+        "w": 1,
+        "h": 0.2536
+      },
+      "px": {
+        "x": 0,
+        "y": 694,
+        "w": 1505,
+        "h": 265
+      },
+      "aspect": 5.6792,
+      "palette": [
+        {
+          "hex": "#f6f6f1",
+          "coverage": 0.9558
+        },
+        {
+          "hex": "#919fa0",
+          "coverage": 0.0161
+        },
+        {
+          "hex": "#5d6e73",
+          "coverage": 0.0107
+        },
+        {
+          "hex": "#c2cacd",
+          "coverage": 0.0104
+        },
+        {
+          "hex": "#334756",
+          "coverage": 0.007
+        }
+      ],
+      "detail": {
+        "energy": 20.0715
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": true
+      }
+    },
+    {
+      "id": "research-ground",
+      "kind": "chrome",
+      "note": "Ivory research strip with top horizontal rule",
+      "grid": null,
+      "codeDrawn": true,
+      "box": {
+        "x": 0,
+        "y": 0.9177,
+        "w": 1,
+        "h": 0.0823
+      },
+      "px": {
+        "x": 0,
+        "y": 959,
+        "w": 1505,
+        "h": 86
+      },
+      "aspect": 17.5,
+      "palette": [
+        {
+          "hex": "#f7f7f0",
+          "coverage": 0.9864
+        },
+        {
+          "hex": "#082434",
+          "coverage": 0.0042
+        },
+        {
+          "hex": "#8c9c9c",
+          "coverage": 0.0037
+        },
+        {
+          "hex": "#bec8c5",
+          "coverage": 0.0034
+        },
+        {
+          "hex": "#425762",
+          "coverage": 0.0023
+        }
+      ],
+      "detail": {
+        "energy": 7.3854
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "surface": {
+        "flat": true,
+        "rules": true
+      }
+    }
+  ],
+  "compSha256": "d5a26451d26d37d478fa5424bcb8c390703ab5846461f814d4dd624d65a5c85d",
+  "regionsSource": {
+    "path": ".impeccable/build/regions.json",
+    "sha256": "80ff19143068d27ea9d9752f306217d2c0af80f86cab9b5d8c164b499572426c"
+  }
+}

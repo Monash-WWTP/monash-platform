@@ -6,7 +6,7 @@ import { ChevronsLeft, ChevronsRight, X } from 'lucide-react'
 
 import { usePlants } from '../api/hooks'
 import { useCommunityWastewaterObservations, useStations } from '@/api/monitoring'
-import type { CommunityWastewaterObservation, Station } from '@/lib/supabase'
+import type { CommunityWastewaterObservation, Station } from '@/api/monitoring-types'
 import StationDashboard from '@/components/monitoring/StationDashboard'
 
 // OpenFreeMap Liberty: free vector style with 3D building extrusions.
@@ -31,20 +31,9 @@ function observationPopupContent(observation: CommunityWastewaterObservation): H
   observed.textContent = `Observed ${new Date(observation.observed_at).toLocaleString()}`
   content.append(observed)
 
-  if (observation.location_accuracy_m != null) {
-    const accuracy = document.createElement('p')
-    accuracy.style.margin = '0 0 8px'
-    accuracy.textContent = `Device GPS accuracy: ±${Math.round(observation.location_accuracy_m)} m`
-    content.append(accuracy)
-  }
-
-  if (observation.note) {
-    const note = document.createElement('p')
-    note.style.margin = '0 0 8px'
-    note.style.whiteSpace = 'pre-wrap'
-    note.textContent = observation.note
-    content.append(note)
-  }
+  const privacy = document.createElement('p')
+  privacy.textContent = 'Location rounded for public display.'
+  content.append(privacy)
 
   const provenance = document.createElement('p')
   provenance.style.margin = '8px 0 0'
@@ -224,7 +213,7 @@ export default function MapPage() {
 
   const openWorkspace = (station: Station) => {
     const plant = plants?.find((p) => p.code === station.code)
-    if (plant) navigate(`/plants/${plant.id}`)
+    if (plant) navigate(`/dashboard/plants/${plant.id}`)
   }
 
   return (
@@ -246,7 +235,7 @@ export default function MapPage() {
                 onClick={() => {
                   const station = stations?.find((s) => s.code === plant.code)
                   if (station) setSelected(station)
-                  else navigate(`/plants/${plant.id}`)
+                  else navigate(`/dashboard/plants/${plant.id}`)
                 }}
                 className="rounded-lg border border-border bg-card p-4 text-left hover:border-primary"
               >
@@ -281,7 +270,6 @@ export default function MapPage() {
                   <li key={observation.id} className="flex items-start justify-between gap-3 p-3 text-sm">
                     <span>
                       <span className="font-medium capitalize">{observation.condition}</span>
-                      {observation.note && <span className="mt-1 block text-xs text-muted-foreground">{observation.note}</span>}
                     </span>
                     <time className="shrink-0 text-xs text-muted-foreground" dateTime={observation.observed_at}>
                       {new Date(observation.observed_at).toLocaleDateString()}
