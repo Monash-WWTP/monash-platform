@@ -7,7 +7,6 @@ export interface ResearchReference {
   publishedAt: string;
   doi: string;
   pdfUrl: string;
-  coverUrl: string;
   publisherUrl: string;
   license: string;
   relevance: string;
@@ -24,8 +23,6 @@ export const researchReferences: ResearchReference[] = [
     publishedAt: "2024",
     doi: "10.2166/9781789064223",
     pdfUrl: "/references/urban-water-carbon-accounting-guidelines.pdf",
-    coverUrl:
-      "/assets/references/urban-water-carbon-accounting-guidelines-cover.jpg",
     publisherUrl: "https://doi.org/10.2166/9781789064223",
     license: "CC BY-NC-ND 4.0, as stated in the supplied publisher PDF",
     relevance:
