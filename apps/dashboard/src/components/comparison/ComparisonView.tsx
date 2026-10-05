@@ -53,7 +53,7 @@ export default function ComparisonView({ plantId }: { plantId: number }) {
 
       {cmp && (
         <>
-          <p className="rounded border border-amber-500/40 bg-amber-500/5 p-2 text-xs text-foreground">
+          <p className="rounded border border-warning/40 bg-warning-soft p-2 text-xs text-foreground">
             Decision use is not permitted. These illustrative results are not validated against plant
             data and must not be used for operations, regulatory reporting, compliance determinations,
             or causal conclusions.

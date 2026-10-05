@@ -6,7 +6,24 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ROWS = json.loads((ROOT / "docs/migration/source-inventory.json").read_text())["files"]
-MOBILE_ADAPTATIONS = {"android/gradle.properties", "android/app/build.gradle.kts", "lib/config/env.dart", "README.md", "android/app/src/debug/AndroidManifest.xml", "lib/main.dart", "lib/screens/map_screen.dart", "lib/screens/profile_screen.dart", "lib/screens/report_form_screen.dart", "lib/services/report_repository.dart", "pubspec.lock", "pubspec.yaml"}
+MOBILE_ADAPTATIONS = {
+    "android/gradle.properties",
+    "android/app/build.gradle.kts",
+    "android/app/src/debug/AndroidManifest.xml",
+    "lib/config/env.dart",
+    "lib/main.dart",
+    "lib/models/report.dart",
+    "lib/screens/map_screen.dart",
+    "lib/screens/profile_screen.dart",
+    "lib/screens/report_form_screen.dart",
+    "lib/services/report_repository.dart",
+    "lib/theme/app_theme.dart",
+    "lib/widgets/category_tile.dart",
+    "README.md",
+    "pubspec.lock",
+    "pubspec.yaml",
+    "test/widgets/category_tile_test.dart",
+}
 DASHBOARD_ADAPTATIONS = {
     "frontend/README.md",
     "frontend/.gitignore",
@@ -16,6 +33,11 @@ DASHBOARD_ADAPTATIONS = {
     "frontend/vercel.json",
     "frontend/src/main.tsx",
     "frontend/src/pages/WorkspacePage.tsx",
+    "frontend/src/components/scenario/ScenarioPanel.tsx",
+    "frontend/src/components/comparison/ComparisonView.tsx",
+    "frontend/src/components/results/ResultsPanel.tsx",
+    "frontend/src/components/ui.tsx",
+    "frontend/src/index.css",
     "frontend/package.json",
     "frontend/package-lock.json",
     "frontend/src/pages/MapPage.tsx",

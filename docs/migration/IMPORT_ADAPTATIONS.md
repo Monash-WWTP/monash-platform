@@ -56,3 +56,9 @@ The successor now owns public routes at `/`; `src/main.tsx` uses lazy operator r
 ## Vercel successor deployment
 
 `apps/dashboard/vercel.json` now specifies the Vite build/output and an SPA fallback after the inherited legacy `/api` proxy. The existing Render target is retained during client cutover. Root deployment settings use `apps/dashboard`; `.vercelignore` restricts uploads to the frontend and excludes local secrets/dependencies/build output. Vercel project state and local OIDC credentials are ignored. This deployment does not establish shared identity or successor API integration.
+
+## Cross-platform consistency follow-up
+
+The 2026-10-05 visual alignment updates the imported dashboard's `src/index.css` and `src/components/scenario/ScenarioPanel.tsx`, and the imported mobile model, theme, category tile, report/map screens and category-tile test. Their new hashes are intentionally different from the pinned source snapshot; `tests/test_client_imports.py` records these exact paths as adaptations. Browser styles consume the landing page's canonical semantic colors and Manrope; Android mirrors its green/neutral palette with Material components, replaces category emoji with named icons and avoids duplicate screen-reader category labels. These UI changes do not alter backend contracts or the already published Android artifact.
+
+The follow-up status-color audit also updates dashboard severity badges and warnings to use shared semantic roles. It does not change status meaning or model results.

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../models/report.dart';
+import '../theme/app_theme.dart';
 import '../services/location_service.dart';
 import '../services/report_repository.dart';
 import '../services/account_session.dart';
@@ -42,7 +43,10 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
   }
 
   void _resetRetry() {
-    if (!_submitting) { _retryReport = null; _retryKey = null; }
+    if (!_submitting) {
+      _retryReport = null;
+      _retryKey = null;
+    }
   }
 
   Future<void> _captureLocation() async {
@@ -66,12 +70,22 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
       imageQuality: 70,
     );
     if (!mounted) return;
-    if (picked != null) setState(() { _resetRetry(); _photo = picked; });
+    if (picked != null) {
+      setState(() {
+        _resetRetry();
+        _photo = picked;
+      });
+    }
   }
 
   Future<void> _submit() async {
     if (!AccountSession.instance.signedIn) {
-      try { await AccountSession.instance.signIn(); } catch (_) { _snack('Sign in with a verified account to submit.'); return; }
+      try {
+        await AccountSession.instance.signIn();
+      } catch (_) {
+        _snack('Sign in with a verified account to submit.');
+        return;
+      }
     }
     // Validate the reading first.
     double? value;
@@ -99,19 +113,19 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
         photoPath = await _repo.uploadPhoto(bytes, ext);
       }
       _retryReport ??= Report(
-          category: widget.category,
-          readingValue: _isNumeric ? value : null,
-          readingUnit: _isNumeric ? widget.category.unit : null,
-          condition: _isNumeric ? null : _condition,
-          note: _noteController.text.trim().isEmpty
-              ? null
-              : _noteController.text.trim(),
-          latitude: _position!.coordinates.latitude,
-          longitude: _position!.coordinates.longitude,
-          locationAccuracyM: _position!.accuracyM,
-          observedAt: DateTime.now().toUtc(),
-          photoPath: photoPath,
-        );
+        category: widget.category,
+        readingValue: _isNumeric ? value : null,
+        readingUnit: _isNumeric ? widget.category.unit : null,
+        condition: _isNumeric ? null : _condition,
+        note: _noteController.text.trim().isEmpty
+            ? null
+            : _noteController.text.trim(),
+        latitude: _position!.coordinates.latitude,
+        longitude: _position!.coordinates.longitude,
+        locationAccuracyM: _position!.accuracyM,
+        observedAt: DateTime.now().toUtc(),
+        photoPath: photoPath,
+      );
       _retryKey ??= const Uuid().v4();
       await _repo.submit(_retryReport!, idempotencyKey: _retryKey);
       if (!mounted) return;
@@ -133,10 +147,11 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            Icon(
-              widget.category.icon,
-              semanticLabel: widget.category.label,
-              color: Theme.of(context).colorScheme.primary,
+            ExcludeSemantics(
+              child: Icon(
+                widget.category.icon,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
             const SizedBox(width: 10),
             Text(widget.category.label),
@@ -174,21 +189,27 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
                 ButtonSegment(
                   value: Condition.normal,
                   label: Text('Normal'),
-                  icon: Icon(Icons.check_circle_outline),
+                  icon: Icon(Icons.check_circle_outline, color: AppTheme.green),
                 ),
                 ButtonSegment(
                   value: Condition.warning,
                   label: Text('Warning'),
-                  icon: Icon(Icons.warning_amber_outlined),
+                  icon: Icon(
+                    Icons.warning_amber_outlined,
+                    color: AppTheme.warning,
+                  ),
                 ),
                 ButtonSegment(
                   value: Condition.critical,
                   label: Text('Critical'),
-                  icon: Icon(Icons.error_outline),
+                  icon: Icon(Icons.error_outline, color: AppTheme.danger),
                 ),
               ],
               selected: {_condition},
-              onSelectionChanged: (s) => setState(() { _resetRetry(); _condition = s.first; }),
+              onSelectionChanged: (s) => setState(() {
+                _resetRetry();
+                _condition = s.first;
+              }),
             ),
           const SizedBox(height: 16),
 

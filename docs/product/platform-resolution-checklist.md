@@ -5,8 +5,9 @@ This checklist tracks readiness across the public website, operator dashboard, C
 ## Completed in repository source
 
 - [x] Use the public landing page's canonical palette and Manrope across the public and operator browser surfaces.
+- [x] Use shared semantic warning, success and danger roles for dashboard alerts and severity badges.
 - [x] Use equivalent canonical green, charcoal, muted text, pale surface and divider colors in Android Material 3.
-- [x] Replace report-category emoji with accessible Material icons in category selection, form headings, map markers, map details and report lists.
+- [x] Replace report-category emoji with Material icons in category selection, form headings, map markers, map details and report lists; expose category names once to screen readers.
 - [x] Keep the supplied urban-water carbon-accounting guideline PDF byte-identical in the public web build, link it directly from the landing page, and list citation, DOI, license caveat and relevance on the reference page.
 - [x] Label the scenario influent input BOD₅ while preserving the legacy API wire property and its description.
 - [x] Subtract CH₄/N₂O recovery terms directly as written in the referenced equations; retain illustrative/unvalidated status and prohibit decision use.
@@ -31,7 +32,7 @@ This checklist tracks readiness across the public website, operator dashboard, C
 | `/dashboard/plants/:plantId` | Provides monitoring, scenario and results workspace; scenario routes still include legacy `/api/*` dependencies per dashboard README. | Point at the intended versioned API; verify lab filters, scenario create/edit/run/failure state, immutable run provenance, comparisons and no synthetic data presented as live. | [ ] |
 | `/dashboard/moderation` | Operator moderation route exists in source. | Verify invitation/MFA gate, list pagination, approve/reject actions, audit trail, duplicate submissions and community projection privacy against staging/production. | [ ] |
 | Dashboard identity and authorization | Shared account pages are not integrated; production dashboard proxy still targets the legacy service. | Verify operator invitation, MFA, expiry/revocation, least privilege and fail-closed API authorization using direct unauthorized API requests. | [ ] |
-| Browser visual/accessibility parity | Shared tokens, font and semantic chart colors are now in source. | Inspect actual desktop/tablet/mobile dashboard captures; verify chart contrast, keyboard operations, labels, focus and reduced-motion behavior. | [ ] |
+| Browser visual/accessibility parity | Shared tokens, font and semantic chart colors are now in source. T3 preview snapshots failed on the original and a fresh tab, so there is no screenshot evidence yet. | Inspect actual desktop/tablet/mobile dashboard captures; verify chart contrast, keyboard operations, labels, focus and reduced-motion behavior. | [ ] |
 
 ## CitizenFlood Android functionality
 

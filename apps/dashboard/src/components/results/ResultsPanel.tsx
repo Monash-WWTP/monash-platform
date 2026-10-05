@@ -27,7 +27,7 @@ export default function ResultsPanel() {
   return (
     <div className="flex h-full flex-col gap-3 overflow-y-auto p-3">
       {!run.decision_use_permitted && (
-        <p role="status" className="rounded border border-amber-500/40 bg-amber-500/5 p-2 text-xs text-foreground">
+        <p role="status" className="rounded border border-warning/40 bg-warning-soft p-2 text-xs text-foreground">
           Decision use is not permitted. This process model is illustrative and has not been
           validated against plant data; do not use these estimates for operations, regulatory
           reporting, or compliance determinations.

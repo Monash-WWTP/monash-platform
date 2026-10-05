@@ -18,7 +18,8 @@ class _MapScreenState extends State<MapScreen> {
   late Future<List<Report>> _future = _repo.recent();
   final _mapController = MapController();
 
-  Color _pinColor(BuildContext context) => Theme.of(context).colorScheme.primary;
+  Color _pinColor(BuildContext context) =>
+      Theme.of(context).colorScheme.primary;
 
   void _refresh() => setState(() => _future = _repo.recent());
 
@@ -38,10 +39,8 @@ class _MapScreenState extends State<MapScreen> {
           children: [
             Row(
               children: [
-                Icon(
-                  r.category.icon,
-                  color: _pinColor(context),
-                  semanticLabel: r.category.label,
+                ExcludeSemantics(
+                  child: Icon(r.category.icon, color: _pinColor(context)),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -55,9 +54,9 @@ class _MapScreenState extends State<MapScreen> {
             const SizedBox(height: 12),
             Text(
               r.readingLabel,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: _pinColor(context),
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineMedium?.copyWith(color: _pinColor(context)),
             ),
             const SizedBox(height: 4),
             Text(_time(r), style: Theme.of(context).textTheme.bodySmall),
@@ -164,7 +163,8 @@ class _MapScreenState extends State<MapScreen> {
                               onTap: () => _showDetail(r),
                               child: Semantics(
                                 button: true,
-                                label: '${r.category.label} observation at map location',
+                                label:
+                                    '${r.category.label} observation at map location',
                                 child: Tooltip(
                                   message: r.category.label,
                                   child: Icon(
@@ -199,10 +199,11 @@ class _MapScreenState extends State<MapScreen> {
                                 );
                                 _showDetail(r);
                               },
-                              leading: Icon(
-                                r.category.icon,
-                                color: _pinColor(context),
-                                semanticLabel: r.category.label,
+                              leading: ExcludeSemantics(
+                                child: Icon(
+                                  r.category.icon,
+                                  color: _pinColor(context),
+                                ),
                               ),
                               title: Text(
                                 '${r.category.label} · ${r.readingLabel}',

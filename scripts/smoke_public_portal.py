@@ -30,7 +30,16 @@ with sync_playwright() as pw:
             route.abort()
     page.route('**/*', intercept)
     page.goto(origin, wait_until='networkidle')
-    page.get_by_role('heading', name='Understand water. Report what you see.').wait_for()
+    page.get_by_role('heading', name='Water observations. A clearer shared picture.').wait_for()
+    pdf_href = '/references/urban-water-carbon-accounting-guidelines.pdf'
+    assert page.get_by_role('link', name='Open the guideline PDF').get_attribute('href') == pdf_href
+    page.get_by_role('link', name='View all references').click()
+    page.get_by_role('heading', name='References').wait_for()
+    assert page.get_by_role('link', name='Open the hosted PDF').get_attribute('href') == pdf_href
+    pdf_response = page.request.get(origin + pdf_href)
+    assert pdf_response.status == 200
+    assert pdf_response.headers.get('content-type', '').startswith('application/pdf')
+    page.goto(origin)
     page.keyboard.press('Tab')
     assert page.get_by_role('link', name='Skip to content').evaluate('(e) => e === document.activeElement')
     page.keyboard.press('Enter')
@@ -55,7 +64,7 @@ with sync_playwright() as pw:
     for route in ('login', 'register'):
         page.goto(origin + '/' + route)
         assert page.locator('input[type="password"]').count() == 0
-        page.get_by_text('Shared accounts are not available yet.', exact=True).wait_for()
+        page.get_by_text('Account service is in local staging', exact=True).wait_for()
     page.goto(origin + '/plants/987')
     page.wait_for_url('**/dashboard/plants/987')
     page.get_by_role('link', name='Back to map').click()
@@ -68,14 +77,12 @@ with sync_playwright() as pw:
         page.set_viewport_size({'width':width,'height':1045})
         assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), width
     page.set_viewport_size({'width':390,'height':844})
-    page.get_by_role('button', name='Show illustration legend').click()
-    page.get_by_role('complementary', name='Illustration legend').wait_for(state='visible')
-    page.get_by_role('button', name='Hide illustration legend').click()
-    assert page.get_by_role('complementary', name='Illustration legend').count() == 0
-    assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth')
+    for route in ('/', '/download', '/research', '/research/references', '/login', '/register'):
+        page.goto(origin + route)
+        assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), route
     page.get_by_role('link', name='Create account', exact=True).wait_for()
     if a.screenshots:
         page.screenshot(path=str(out/'mobile.png'), full_page=True)
     assert not errors, errors
     browser.close()
-print('Public portal passed: honest release/account states, research routes, legacy links and narrow-screen layout.')
+print('Public portal passed: release/account states, reference PDF, research routes, legacy links and narrow-screen layout.')

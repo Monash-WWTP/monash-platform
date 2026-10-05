@@ -37,6 +37,8 @@
 - Modify: `apps/dashboard/src/pages/public/public.css`
 - Modify: `apps/dashboard/src/components/dashboard/chartPalette.ts`
 - Modify: `apps/dashboard/src/components/comparison/ComparisonView.tsx`
+- Modify: `apps/dashboard/src/components/results/ResultsPanel.tsx`
+- Modify: `apps/dashboard/src/components/ui.tsx`
 - Modify: `apps/dashboard/src/pages/MapPage.tsx`
 - Test: `apps/dashboard/tests/design-tokens.test.ts`
 
@@ -46,7 +48,7 @@
 
 - [x] **Step 1: Write failing token contract tests** asserting the canonical hex values, Manrope application, dashboard variable mapping, and that public CSS consumes the shared properties.
 - [x] **Step 2: Run `npm --prefix apps/dashboard test -- --test-name-pattern='canonical browser tokens'`; confirm it fails because the browser token contract is not present.**
-- [x] **Step 3: Implement the root semantic tokens, Manrope font application, public variable consumption, chart palette, and map marker colors using the agreed canonical values.**
+- [x] **Step 3: Implement the root semantic tokens, Manrope font application, public variable consumption, chart palette, map marker colors and dashboard warning/success roles using the agreed canonical values.**
 - [x] **Step 4: Run the focused token tests and full dashboard tests; confirm all pass.**
 - [x] **Step 5: Run dashboard lint and production build; confirm both pass.**
 
@@ -59,7 +61,6 @@
 - Modify: `apps/citizenflood/lib/screens/report_form_screen.dart`
 - Modify: `apps/citizenflood/lib/screens/map_screen.dart`
 - Test: `apps/citizenflood/test/widgets/category_tile_test.dart`
-- Test: `apps/citizenflood/test/models/report_test.dart`
 
 **Interfaces:**
 - Consumes: the browser token contract from Task 1 and Flutter Material 3.
@@ -80,7 +81,7 @@
 
 **Interfaces:**
 - Consumes: route inventories, current mobile screens, `docs/operations/deployment.md`, `docs/migration/ROADMAP.md`, and `docs/science/VALIDATION.md`.
-- Produces: a checklist with status, owner/evidence fields, and explicit completion criteria for public website, dashboard, Android, API/identity, data/privacy, science/publication, and operations. Items already verified in source are checked; live or owner-dependent gates stay open.
+- Produces: a checklist with explicit completion criteria and status, plus guidance for recording owner/evidence for public website, dashboard, Android, API/identity, data/privacy, science/publication, and operations. Items already verified in source are checked; live or owner-dependent gates stay open.
 
 - [x] **Step 1: Add the checklist skeleton and route/screen acceptance rows** for each user entry point, main action, data source, permission requirement, success, empty, loading, error and retry behavior; leave all evidence-dependent items unchecked.
 - [x] **Step 2: Review every row against current routes, screens, deployment documentation and science status; add precise evidence requirements and mark only completed source-level items checked.**
@@ -91,12 +92,21 @@
 
 **Files:**
 - Modify only findings from Tasks 1–3.
+- Modify: `apps/dashboard/tests/design-tokens.test.ts`
+- Modify: `apps/dashboard/src/index.css`
+- Modify: `apps/dashboard/src/components/ui.tsx`
+- Modify: `apps/dashboard/src/components/results/ResultsPanel.tsx`
+- Modify: `apps/dashboard/src/components/comparison/ComparisonView.tsx`
+- Modify: `apps/dashboard/src/pages/MapPage.tsx`
+- Modify: `scripts/smoke_public_portal.py`
 
-- [ ] **Step 1: Start the Vite preview and inspect desktop and narrow-screen public routes plus the dashboard map/workspace through the T3 preview.**
-- [ ] **Step 2: Run the repository's public portal and dashboard map browser smoke checks; fix only defects exposed by the approved scope.**
-- [ ] **Step 3: Run the cross-surface palette/icon audit and confirm no report-category emoji remain in app UI.**
-- [ ] **Step 4: Run repository policy/manifest checks, dashboard tests/lint/build, API/simulator checks affected by the prior commit, and Flutter tests/analyze.**
-- [ ] **Step 5: Record any live-infrastructure or empirical-evidence gates still open in the resolution checklist; do not publish a new APK or production website from this plan.**
+- [x] **Step 1: Start the Vite preview and inspect desktop and narrow-screen public routes plus the dashboard map/workspace through the T3 preview. If preview snapshots repeatedly fail after a fresh tab, record visual inspection as unavailable and run non-browser local HTTP checks.**
+- [x] **Step 2: Update stale public-portal smoke expectations to the current headline, reference-PDF links and staged-account status. Run browser smoke checks only when T3 is functional; if snapshots remain unavailable, record the reason and keep visual acceptance open without switching browser systems.**
+- [x] **Step 3: Run the cross-surface palette/icon audit and confirm no report-category emoji remain in app UI.**
+- [x] **Step 4: Run repository policy/manifest checks, dashboard tests/lint/build, API/simulator checks affected by the prior commit, and Flutter tests/analyze.**
+- [x] **Step 5: Record any live-infrastructure or empirical-evidence gates still open in the resolution checklist; do not publish a new APK or production website from this plan.**
+
+**Verification limitation:** T3 snapshots failed on the original and a fresh preview tab. Browser smoke scripts were not run because this session requires the T3 preview when available. Local HTTP route/PDF checks passed. On the final resumed shell, Flutter/Dart executables were not on PATH, so the final semantics/status-color widget changes could not be rerun here; earlier full Flutter tests and analysis had passed before those final changes. Production desktop/mobile visual evidence remains an open checklist item.
 
 ## Commit strategy
 

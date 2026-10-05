@@ -37,9 +37,7 @@ class AppTheme {
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           minimumSize: const Size.fromHeight(52),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
       cardTheme: CardThemeData(
@@ -62,6 +60,7 @@ class AppTheme {
       ),
       dividerColor: rule,
       focusColor: green,
+      hoverColor: greenHover.withValues(alpha: 0.08),
       splashColor: green.withValues(alpha: 0.08),
     );
   }

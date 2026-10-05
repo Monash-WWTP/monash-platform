@@ -130,8 +130,8 @@ export function SegmentGroup<T extends string>({
 }
 
 const severityColor: Record<string, string> = {
-  low: 'text-emerald-700 bg-emerald-50 border-emerald-300',
-  medium: 'text-amber-700 bg-amber-50 border-amber-300',
+  low: 'text-success bg-success-soft border-success/30',
+  medium: 'text-warning bg-warning-soft border-warning/30',
   high: 'text-destructive bg-destructive/10 border-destructive/30',
 }
 

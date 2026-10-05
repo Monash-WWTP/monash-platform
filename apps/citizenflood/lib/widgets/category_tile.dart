@@ -18,11 +18,12 @@ class CategoryTile extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                category.icon,
-                size: 36,
-                color: Theme.of(context).colorScheme.primary,
-                semanticLabel: category.label,
+              ExcludeSemantics(
+                child: Icon(
+                  category.icon,
+                  size: 36,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
               const SizedBox(height: 10),
               Text(

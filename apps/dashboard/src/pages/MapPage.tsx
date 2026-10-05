@@ -226,7 +226,7 @@ export default function MapPage() {
           className="absolute inset-0 z-10 overflow-y-auto bg-background p-6 pt-32"
           data-testid="plant-list-fallback"
         >
-          <p className="mx-auto mb-4 max-w-3xl text-xs text-amber-700">
+          <p className="mx-auto mb-4 max-w-3xl text-xs text-warning">
             Interactive map unavailable (WebGL not supported here) — select a plant from the list.
           </p>
           <div className="mx-auto grid max-w-3xl gap-3 sm:grid-cols-2">
@@ -290,7 +290,7 @@ export default function MapPage() {
               type="checkbox"
               checked={showCommunityObservations}
               onChange={(event) => setShowCommunityObservations(event.target.checked)}
-              className="size-4 accent-[#146346]"
+              className="size-4 accent-primary"
             />
             Approved community wastewater
           </label>
