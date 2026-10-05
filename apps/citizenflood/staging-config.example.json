@@ -1,0 +1,7 @@
+{
+  "API_BASE_URL": "http://localhost:8181",
+  "OIDC_ISSUER": "http://localhost:9100/",
+  "OIDC_DISCOVERY_URL": "http://localhost:9100/application/o/citizen-mobile/.well-known/openid-configuration",
+  "OIDC_CLIENT_ID": "citizen-mobile",
+  "LOCAL_STAGING": true
+}

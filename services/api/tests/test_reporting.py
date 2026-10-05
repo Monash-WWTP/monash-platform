@@ -8,40 +8,130 @@ from app.db.session import SessionLocal
 
 def account(capabilities):
     with SessionLocal() as db:
-        item=Account(issuer='https://test-issuer.invalid',subject=str(uuid4()),email='test@example.com',capabilities=capabilities)
-        db.add(item);db.commit();db.refresh(item);item._mfa_verified=True;return item
+        item = Account(
+            issuer="https://test-issuer.invalid",
+            subject=str(uuid4()),
+            email="test@example.com",
+            capabilities=capabilities,
+        )
+        db.add(item)
+        db.commit()
+        db.refresh(item)
+        item._mfa_verified = True
+        return item
 
 
 def test_owner_idempotency_and_privacy():
-    citizen=account(['report:own']);other=account(['report:own']);reviewer=account(['report:review'])
-    client=TestClient(app)
-    app.dependency_overrides[require_account]=lambda:citizen
-    body={'category':'wastewater','condition':'warning','latitude':3.065961,'longitude':101.628047,
-          'note':'private note','observed_at':'2026-10-01T12:00:00Z'}
+    citizen = account(["report:own"])
+    other = account(["report:own"])
+    reviewer = account(["report:review"])
+    client = TestClient(app)
+    app.dependency_overrides[require_account] = lambda: citizen
+    body = {
+        "category": "wastewater",
+        "condition": "warning",
+        "latitude": 3.065961,
+        "longitude": 101.628047,
+        "note": "private note",
+        "observed_at": "2026-10-01T12:00:00Z",
+    }
     try:
-        headers={'Idempotency-Key':str(uuid4())}
-        first=client.post('/api/v1/reports',json=body,headers=headers)
-        assert first.status_code==201
-        report=first.json()
-        assert client.post('/api/v1/reports',json=body,headers=headers).json()['id']==report['id']
-        assert client.post('/api/v1/reports',json={**body,'condition':'critical'},headers=headers).status_code==409
-        app.dependency_overrides[require_account]=lambda:other
-        assert client.get('/api/v1/reports/'+report['id']).status_code==404
-        assert client.post('/api/v1/reports/'+report['id']+'/moderation',json={'status':'approved','reason':'reviewed'}).status_code==403
-        app.dependency_overrides[require_account]=lambda:reviewer
-        assert client.post('/api/v1/reports/'+report['id']+'/moderation',json={'status':'approved','reason':'reviewed'}).status_code==200
-        public=client.get('/api/v1/community/observations').json()['items']
-        row=next(r for r in public if r['id']==report['id'])
-        assert not {'owner_id','note','photo_path','media_id','legacy_subject','location_accuracy_m'} & row.keys()
-        assert row['latitude']==3.066 and row['longitude']==101.628
-    finally:app.dependency_overrides.clear()
+        headers = {"Idempotency-Key": str(uuid4())}
+        first = client.post("/api/v1/reports", json=body, headers=headers)
+        assert first.status_code == 201
+        report = first.json()
+        assert (
+            client.post("/api/v1/reports", json=body, headers=headers).json()["id"]
+            == report["id"]
+        )
+        assert (
+            client.post(
+                "/api/v1/reports",
+                json={**body, "condition": "critical"},
+                headers=headers,
+            ).status_code
+            == 409
+        )
+        app.dependency_overrides[require_account] = lambda: other
+        assert client.get("/api/v1/reports/" + report["id"]).status_code == 404
+        assert (
+            client.post(
+                "/api/v1/reports/" + report["id"] + "/moderation",
+                json={"status": "approved", "reason": "reviewed"},
+            ).status_code
+            == 403
+        )
+        app.dependency_overrides[require_account] = lambda: reviewer
+        assert (
+            client.post(
+                "/api/v1/reports/" + report["id"] + "/moderation",
+                json={"status": "approved", "reason": "reviewed"},
+            ).status_code
+            == 200
+        )
+        public = client.get("/api/v1/community/observations").json()["items"]
+        row = next(r for r in public if r["id"] == report["id"])
+        assert (
+            not {
+                "owner_id",
+                "note",
+                "photo_path",
+                "media_id",
+                "legacy_subject",
+                "location_accuracy_m",
+            }
+            & row.keys()
+        )
+        assert row["latitude"] == 3.066 and row["longitude"] == 101.628
+    finally:
+        app.dependency_overrides.clear()
 
 
 def test_category_units_are_validated():
-    citizen=account(['report:own']);app.dependency_overrides[require_account]=lambda:citizen
+    citizen = account(["report:own"])
+    app.dependency_overrides[require_account] = lambda: citizen
     try:
-        response=TestClient(app).post('/api/v1/reports',headers={'Idempotency-Key':str(uuid4())},json={
-            'category':'rainfall','reading_value':-1,'reading_unit':'mm','latitude':0,'longitude':0,
-            'observed_at':'2026-10-01T12:00:00Z'})
-        assert response.status_code==422
-    finally:app.dependency_overrides.clear()
+        response = TestClient(app).post(
+            "/api/v1/reports",
+            headers={"Idempotency-Key": str(uuid4())},
+            json={
+                "category": "rainfall",
+                "reading_value": -1,
+                "reading_unit": "mm",
+                "latitude": 0,
+                "longitude": 0,
+                "observed_at": "2026-10-01T12:00:00Z",
+            },
+        )
+        assert response.status_code == 422
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_reviewer_cannot_read_private_detail_without_mfa():
+    citizen = account(["report:own"])
+    reviewer = account(["report:review"])
+    reviewer._mfa_verified = False
+    app.dependency_overrides[require_account] = lambda: citizen
+    try:
+        client = TestClient(app)
+        response = client.post(
+            "/api/v1/reports",
+            headers={"Idempotency-Key": str(uuid4())},
+            json={
+                "category": "wastewater",
+                "condition": "normal",
+                "latitude": 0,
+                "longitude": 0,
+                "observed_at": "2026-10-01T12:00:00Z",
+            },
+        )
+        assert response.status_code == 201
+        app.dependency_overrides[require_account] = lambda: reviewer
+        assert client.get("/api/v1/reports/" + response.json()["id"]).status_code == 403
+        assert client.post(
+            "/api/v1/reports/" + response.json()["id"] + "/moderation",
+            json={"status": "approved", "reason": "   "},
+        ).status_code in (403, 422)
+    finally:
+        app.dependency_overrides.clear()

@@ -1,222 +1,105 @@
-import { currentRelease } from "../../releases/release";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  ArrowRight,
-  Download,
-  Users,
-  FlaskConical,
-  ChartNoAxesColumnIncreasing,
-  Plus,
-  Minus,
-  Layers,
-} from "lucide-react";
-
-const purposes = [
-  {
-    name: "CitizenFlood",
-    description: "Community observations from the public.",
-    to: "/download",
-    color: "citizen",
-  },
-  {
-    name: "Operator workspace",
-    description: "Wastewater operations and monitoring.",
-    to: "/dashboard",
-    color: "laboratory",
-  },
-  {
-    name: "Research",
-    description: "Illustrative model outputs and research.",
-    to: "/research",
-    color: "model",
-  },
-];
+import { ArrowRight, Download } from "lucide-react";
+import { currentRelease } from "../../releases/release";
 export default function LandingPage() {
-  const [zoom, setZoom] = useState(1);
-  const [legend, setLegend] = useState(
-    () => window.matchMedia("(min-width: 701px)").matches,
-  );
-  useEffect(() => {
-    const query = window.matchMedia("(min-width: 701px)");
-    const update = () => setLegend(query.matches);
-    query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
-  }, []);
   return (
-    <main id="public-main">
-      <section className="public-atlas" aria-label="Platform introduction">
-        <div className="atlas-artwork" aria-hidden="true">
-          <img
-            src="/assets/plates/atlas.png"
-            alt=""
-            style={{ transform: `scale(${zoom})` }}
-          />
-        </div>
-        <div className="atlas-opening">
+    <main id="public-main" className="platform-home">
+      <section className="home-intro">
+        <div>
           <h1>
-            Understand water.
-            <br />
-            Report what you see.
+            Water observations.
+            <br />A clearer shared picture.
           </h1>
-          <p className="atlas-intro">
-            Citizen observations, wastewater monitoring and research —
-            <br className="desktop-break" /> with their evidence kept distinct.
+          <p className="home-lead">
+            A place for community reports, wastewater monitoring and research.
           </p>
-          <div className="atlas-release">
-            {currentRelease ? (
-              <a className="apk-button" href={currentRelease.artifactUrl}>
-                <Download size={20} aria-hidden="true" />
-                Download Android APK
-              </a>
-            ) : (
-              <button className="apk-button" disabled>
-                <Download size={20} aria-hidden="true" />
-                Download Android APK
-              </button>
-            )}
-            <div>
-              <p>
-                {currentRelease
-                  ? `Android ${currentRelease.versionName}`
-                  : "Android release coming soon"}
-              </p>
-              <Link to="/download">
-                Installation guide <ArrowRight size={14} aria-hidden="true" />
-              </Link>
-            </div>
+          <p className="home-description">
+            Record observations with CitizenFlood. Explore the laboratory record
+            in the dashboard. Read research as approved articles become
+            available.
+          </p>
+          <div className="home-actions">
+            <Link className="apk-button" to="/download">
+              <Download size={20} aria-hidden="true" />
+              Get CitizenFlood
+            </Link>
+            <Link className="quiet-action" to="/dashboard">
+              Open dashboard <ArrowRight size={18} aria-hidden="true" />
+            </Link>
           </div>
-          <div className="purpose-index">
-            <h2>Explore the map by purpose</h2>
-            {purposes.map((p) => (
-              <Link className="purpose-row" key={p.name} to={p.to}>
-                <span className={`purpose-dot ${p.color}`} aria-hidden="true" />
-                <strong>{p.name}</strong>
-                <span>{p.description}</span>
-                <ArrowRight size={16} aria-hidden="true" />
-              </Link>
-            ))}
-          </div>
+          <p className="home-release">
+            Android{currentRelease ? ` ${currentRelease.versionName}` : ""} ·
+            direct APK download
+          </p>
         </div>
-        <div className="atlas-tools" aria-label="Illustration controls">
-          <button
-            aria-label="Zoom illustration in"
-            disabled={zoom >= 1.6}
-            onClick={() => setZoom((v) => Math.min(1.6, v + 0.2))}
-          >
-            <Plus size={18} />
-          </button>
-          <button
-            aria-label="Zoom illustration out"
-            disabled={zoom <= 1}
-            onClick={() => setZoom((v) => Math.max(1, v - 0.2))}
-          >
-            <Minus size={18} />
-          </button>
-          <button
-            aria-label={
-              legend ? "Hide illustration legend" : "Show illustration legend"
-            }
-            aria-pressed={legend}
-            onClick={() => setLegend((v) => !v)}
-          >
-            <Layers size={18} />
-          </button>
-        </div>
-        <div className="atlas-caption">
-          <span className="north-mark" aria-hidden="true">
-            N<span />
+        <Link className="home-app" to="/download">
+          <img
+            src="/assets/app/citizenflood-icon.png"
+            alt=""
+            width="76"
+            height="76"
+          />
+          <span>
+            <strong>CitizenFlood</strong>
+            <span>Your observations, recorded in the field.</span>
+            <span className="home-app-link">
+              View the Android app <ArrowRight size={16} aria-hidden="true" />
+            </span>
           </span>
-          <span className="scale-mark" aria-hidden="true" />
-          <span>Illustrative geography — not live monitoring.</span>
-        </div>
-        {legend && (
-          <aside className="atlas-legend" aria-label="Illustration legend">
-            <div>
-              <span className="river-swatch" />
-              Rivers and waterways
-            </div>
-            <div>
-              <span className="catchment-swatch" />
-              Catchment area
-            </div>
-            <div>
-              <span className="park-swatch" />
-              Parks and public land
-            </div>
-            <div>
-              <span className="water-swatch" />
-              Coastline / water body
-            </div>
-          </aside>
-        )}
+        </Link>
       </section>
-      <section className="public-evidence" aria-labelledby="evidence-title">
-        <div className="evidence-introduction">
-          <h2 id="evidence-title">Three kinds of evidence</h2>
+      <section className="platform-paths" aria-label="Explore the platform">
+        <article>
+          <h2>Record an observation.</h2>
           <p>
-            Different types of information help us see a fuller picture of water
-            in our environment.
-            <br className="desktop-break" /> Each has a distinct purpose, and we
-            keep their evidence separate.
+            Rainfall, water level, temperature or wastewater. Capture what you
+            see with the Android app.
+          </p>
+          <Link to="/download">
+            Download CitizenFlood <ArrowRight size={17} aria-hidden="true" />
+          </Link>
+        </article>
+        <article>
+          <h2>Explore the water record.</h2>
+          <p>
+            View laboratory measurements and their source context. Invited
+            operators can access scenario tools.
+          </p>
+          <Link to="/dashboard">
+            Open the dashboard <ArrowRight size={17} aria-hidden="true" />
+          </Link>
+        </article>
+        <article>
+          <h2>Read the work behind it.</h2>
+          <p>
+            Approved research articles and publication links will appear here
+            when they are ready to share.
+          </p>
+          <Link to="/research">
+            Browse research <ArrowRight size={17} aria-hidden="true" />
+          </Link>
+        </article>
+      </section>
+      <section className="evidence-note">
+        <h2>Understand what you’re looking at.</h2>
+        <p>
+          Community observations describe what people report. Laboratory
+          measurements describe sampled water quality. Model outputs are
+          illustrative and unvalidated. Each is labelled with its own context.
+        </p>
+      </section>
+      <section className="shared-account-band">
+        <div>
+          <h2>One platform account.</h2>
+          <p>
+            Shared accounts are available in local staging for the dashboard and
+            API-connected app. The public APK 1.0.0 uses the existing
+            CitizenFlood account service.
           </p>
         </div>
-        <div className="evidence-columns">
-          <article>
-            <span className="evidence-icon citizen">
-              <Users size={48} aria-hidden="true" />
-            </span>
-            <div>
-              <h3>Community observations</h3>
-              <p>
-                Reports from people in the community, such as photos and notes
-                about water in their local area.
-              </p>
-              <Link to="/download">
-                Go to CitizenFlood <ArrowRight size={14} aria-hidden="true" />
-              </Link>
-            </div>
-          </article>
-          <article>
-            <span className="evidence-icon laboratory">
-              <FlaskConical size={48} aria-hidden="true" />
-            </span>
-            <div>
-              <h3>Laboratory measurements</h3>
-              <p>
-                Wastewater and water quality measurements from operational
-                monitoring.
-              </p>
-              <Link to="/dashboard">
-                Go to operator workspace{" "}
-                <ArrowRight size={14} aria-hidden="true" />
-              </Link>
-            </div>
-          </article>
-          <article>
-            <span className="evidence-icon model">
-              <ChartNoAxesColumnIncreasing size={48} aria-hidden="true" />
-            </span>
-            <div>
-              <h3>Illustrative model outputs</h3>
-              <p>
-                Model outputs used for research and exploration, not real-time
-                monitoring.
-              </p>
-              <Link to="/research">
-                Go to research <ArrowRight size={14} aria-hidden="true" />
-              </Link>
-            </div>
-          </article>
-        </div>
-        <div className="research-strip">
-          <h2>Research</h2>
-          <span className="research-rule" aria-hidden="true" />
-          <p>Approved publications will appear here.</p>
-          <Link to="/research">
-            View all research <ArrowRight size={14} aria-hidden="true" />
-          </Link>
-        </div>
+        <Link className="quiet-action" to="/register">
+          Create an account <ArrowRight size={18} aria-hidden="true" />
+        </Link>
       </section>
     </main>
   );

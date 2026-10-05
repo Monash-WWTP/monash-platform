@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Download } from "lucide-react";
+import { Download, ArrowRight, Copy, Smartphone } from "lucide-react";
 import { currentRelease } from "../../releases/release";
 export default function DownloadPage() {
   const release = currentRelease;
@@ -10,106 +10,189 @@ export default function DownloadPage() {
       await navigator.clipboard.writeText(
         new URL("/download", window.location.origin).href,
       );
-      setCopyStatus("Link copied.");
+      setCopyStatus("Download page link copied.");
     } catch {
-      setCopyStatus(
-        "Copy unavailable. Copy this page’s address from your browser.",
-      );
+      setCopyStatus("Copy this page’s address from your browser to share it.");
     }
   }
   return (
-    <main id="public-main" className="public-reading">
-      <h1>CitizenFlood for Android</h1>
-      <p className="reading-intro">
-        Report what you observe in your local area using the existing live
-        CitizenFlood service. Shared accounts with the dashboard are not
-        available yet.
-      </p>
-      <section className="release-details" aria-labelledby="release-title">
-        <h2 id="release-title">
-          {release
-            ? "Download the current release"
-            : "Android release coming soon"}
-        </h2>
-        {release ? (
-          <>
-            <a className="apk-button" href={release.artifactUrl}>
-              <Download size={20} />
-              Download Android APK
-            </a>
-            <dl>
-              <dt>Version</dt>
-              <dd>{release.versionName}</dd>
-              <dt>Released</dt>
-              <dd>{release.publishedAt}</dd>
-              <dt>File size</dt>
-              <dd>{(release.byteSize / 1048576).toFixed(1)} MB</dd>
-              <dt>Minimum Android</dt>
-              <dd>{release.minAndroid}</dd>
-              <dt>SHA-256</dt>
-              <dd className="checksum">{release.sha256}</dd>
+    <main id="public-main" className="download-page">
+      <div className="download-topline">
+        <Link to="/">Monash Water</Link>
+        <span>Android app</span>
+      </div>
+      <section className="download-hero" aria-labelledby="app-title">
+        <div className="download-copy">
+          <div className="app-identity">
+            <img
+              src="/assets/app/citizenflood-icon.png"
+              alt=""
+              width="88"
+              height="88"
+            />
+            <div>
+              <h1 id="app-title">CitizenFlood</h1>
+            </div>
+          </div>
+          <p className="app-summary">
+            Record what you see.
+            <br />
+            Keep your local water observations together.
+          </p>
+          <p className="app-description">
+            Report rainfall, water levels, temperature and wastewater
+            observations from your Android phone.
+          </p>
+          <div className="download-action">
+            {release ? (
+              <a className="apk-button" href={release.artifactUrl}>
+                <Download size={20} aria-hidden="true" />
+                Download APK
+              </a>
+            ) : (
+              <button className="apk-button" disabled>
+                <Download size={20} aria-hidden="true" />
+                Release coming soon
+              </button>
+            )}
+            <span>Direct download · no Play Store required</span>
+          </div>
+          {release && (
+            <dl className="release-facts">
+              <div>
+                <dt>Version</dt>
+                <dd>{release.versionName}</dd>
+              </div>
+              <div>
+                <dt>Download size</dt>
+                <dd>{(release.byteSize / 1048576).toFixed(1)} MB</dd>
+              </div>
+              <div>
+                <dt>Requires</dt>
+                <dd>Android {release.minAndroid}+</dd>
+              </div>
             </dl>
-            <h3>Release notes</h3>
-            <ul>
-              {release.notes.map((note, i) => (
-                <li key={i}>{note}</li>
-              ))}
-            </ul>
-          </>
-        ) : (
-          <>
-            <p>
-              A signed public APK has not been released yet. The development
-              build is not distributed here.
-            </p>
-            <button className="apk-button" disabled>
-              <Download size={20} />
-              Download Android APK
-            </button>
-          </>
-        )}
+          )}
+          <p className="device-note">
+            <Smartphone size={17} aria-hidden="true" />
+            Android only. Using an iPhone or computer? Open this page on your
+            Android phone.
+          </p>
+          <button className="text-button" onClick={copyLink}>
+            <Copy size={16} aria-hidden="true" />
+            Copy download link
+          </button>
+          <p className="copy-status" role="status">
+            {copyStatus}
+          </p>
+        </div>
+        <figure className="app-preview">
+          <img
+            src="/assets/app/report-screen.png"
+            alt="CitizenFlood report screen with rainfall, water level, temperature and wastewater observation categories"
+            width="922"
+            height="2048"
+          />
+          <figcaption>
+            Actual app screen · published Android version 1.0.0
+          </figcaption>
+        </figure>
       </section>
-      <section>
-        <h2>Installation guide</h2>
-        <ol>
+      <section className="installation" aria-labelledby="install-title">
+        <div className="section-heading">
+          <h2 id="install-title">Install in three steps.</h2>
+          <p>Download the app directly from this page.</p>
+        </div>
+        <ol className="install-steps">
           <li>
-            On an Android device, download the published APK from this page.
+            <span>1</span>
+            <div>
+              <h3>Download the APK</h3>
+              <p>
+                Tap “Download APK” on your Android phone. Open the file when the
+                download finishes.
+              </p>
+            </div>
           </li>
           <li>
-            Open the downloaded file. Android may ask you to allow installation
-            from the browser or file manager you used.
+            <span>2</span>
+            <div>
+              <h3>Allow this installation</h3>
+              <p>
+                If Android asks, allow your browser to install this app, then
+                return to the installation prompt.
+              </p>
+            </div>
           </li>
           <li>
-            Review the Android installation prompt and confirm installation.
-            Your browser cannot install the app silently.
-          </li>
-          <li>
-            Open CitizenFlood. The current app starts an anonymous session;
-            email sign-in is available within the app.
+            <span>3</span>
+            <div>
+              <h3>Open CitizenFlood</h3>
+              <p>
+                Confirm “Install”, then open the app and choose the observation
+                you want to record.
+              </p>
+            </div>
           </li>
         </ol>
-        <p>
-          Device policies and Android security settings can restrict
-          installation. Follow the device’s instructions; contact your device
-          administrator if installation is managed.
+        <p className="install-note">
+          You can turn off the browser’s installation permission afterward. If
+          your device is managed, your administrator may need to allow
+          installation.
         </p>
       </section>
-      <section>
-        <h2>Updates and other devices</h2>
-        <p>
-          Future releases will appear on this page with version details and a
-          checksum. Updates must use the same authorized signing identity. APK
-          files are for Android; they cannot be installed on an iPhone.
-        </p>
-        <p>
-          On a desktop or iPhone, open this website on your Android device.
-        </p>
+      <section
+        className="download-support"
+        aria-label="Release and account information"
+      >
+        <div>
+          <h2>Your platform account</h2>
+          <p>
+            The new platform uses one verified account across the dashboard and
+            the API-connected CitizenFlood app. Operator access requires an
+            invitation and MFA.
+          </p>
+          <p>
+            Shared accounts are being verified in local staging. The public APK
+            above still uses the existing CitizenFlood account service.
+          </p>
+          <Link to="/login">
+            Platform sign-in <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        </div>
+        <div className="release-disclosures">
+          <details>
+            <summary>Version and release notes</summary>
+            {release ? (
+              <>
+                <p>
+                  Version {release.versionName} · released {release.publishedAt}
+                </p>
+                <ul>
+                  {release.notes.map((note, i) => (
+                    <li key={i}>{note}</li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p>A signed public release will appear here when ready.</p>
+            )}
+          </details>
+          <details>
+            <summary>Verify your download</summary>
+            <p>The SHA-256 checksum identifies the exact published APK file.</p>
+            {release && <code className="checksum">{release.sha256}</code>}
+          </details>
+          <details>
+            <summary>How app updates work</summary>
+            <p>
+              Download the next published APK here and install it over the
+              existing app. Updates use the same release signing identity. APK
+              files cannot be installed on an iPhone.
+            </p>
+          </details>
+        </div>
       </section>
-      <button className="copy-link" onClick={copyLink}>
-        Copy download page link
-      </button>
-      <p role="status">{copyStatus}</p>
-      <Link to="/">Back to the platform</Link>
     </main>
   );
 }

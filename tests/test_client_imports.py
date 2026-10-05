@@ -9,6 +9,7 @@ ROWS = json.loads((ROOT / "docs/migration/source-inventory.json").read_text())["
 MOBILE_ADAPTATIONS = {"android/gradle.properties", "android/app/build.gradle.kts", "lib/config/env.dart", "README.md", "android/app/src/debug/AndroidManifest.xml", "lib/main.dart", "lib/screens/map_screen.dart", "lib/screens/profile_screen.dart", "lib/screens/report_form_screen.dart", "lib/services/report_repository.dart", "pubspec.lock", "pubspec.yaml"}
 DASHBOARD_ADAPTATIONS = {
     "frontend/README.md",
+    "frontend/.gitignore",
     "frontend/src/api/client.ts", "frontend/src/api/monitoring.ts",
     "frontend/src/components/auth/OperatorAccess.tsx", "frontend/vite.config.ts",
     "frontend/src/lib/supabase.ts",

@@ -36,7 +36,13 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
   @override
   void initState() {
     super.initState();
+    _valueController.addListener(_resetRetry);
+    _noteController.addListener(_resetRetry);
     _captureLocation();
+  }
+
+  void _resetRetry() {
+    if (!_submitting) { _retryReport = null; _retryKey = null; }
   }
 
   Future<void> _captureLocation() async {
@@ -44,6 +50,7 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
       final pos = await _location.current();
       if (!mounted) return;
       setState(() {
+        _resetRetry();
         _position = pos;
         _locationError = null;
       });
@@ -59,7 +66,7 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
       imageQuality: 70,
     );
     if (!mounted) return;
-    if (picked != null) setState(() => _photo = picked);
+    if (picked != null) setState(() { _resetRetry(); _photo = picked; });
   }
 
   Future<void> _submit() async {
@@ -86,7 +93,7 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
     setState(() => _submitting = true);
     try {
       String? photoPath;
-      if (_photo != null) {
+      if (_photo != null && _retryReport == null) {
         final bytes = await _photo!.readAsBytes();
         final ext = _photo!.name.split('.').last;
         photoPath = await _repo.uploadPhoto(bytes, ext);
@@ -171,7 +178,7 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
                 ),
               ],
               selected: {_condition},
-              onSelectionChanged: (s) => setState(() => _condition = s.first),
+              onSelectionChanged: (s) => setState(() { _resetRetry(); _condition = s.first; }),
             ),
           const SizedBox(height: 16),
 

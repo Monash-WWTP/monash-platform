@@ -8,9 +8,10 @@ export default function PublicLayout() {
       </a>
       <header className="public-header">
         <Link className="public-brand" to="/">
-          Monash WWTP
+          Monash Water
         </Link>
         <nav aria-label="Main navigation">
+          <Link to="/download">Download app</Link>
           <Link to="/research">Research</Link>
           <Link to="/dashboard">Dashboard</Link>
           <Link to="/login">Log in</Link>
@@ -20,6 +21,10 @@ export default function PublicLayout() {
         </nav>
       </header>
       <Outlet />
+      <footer className="public-footer">
+        <span>Monash Water Platform · community, monitoring and research</span>
+        <Link to="/download">CitizenFlood for Android</Link>
+      </footer>
     </div>
   );
 }

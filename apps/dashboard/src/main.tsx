@@ -43,6 +43,7 @@ const router = createBrowserRouter([
       Component: (await import("./pages/WorkspacePage")).default,
     }),
   },
+  { path: "/dashboard/moderation", lazy: async () => ({ Component: (await import("./pages/ModerationPage")).default }) },
   { path: "/plants/:plantId", element: <LegacyPlantRedirect /> },
 ]);
 

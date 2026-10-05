@@ -15,4 +15,4 @@ def test_alembic_can_generate_next_revision(tmp_path):
         "test_next", "next schema"
     )
     assert Path(revision.path).exists()
-    assert revision.down_revision == "c04995eb0733"
+    assert revision.down_revision == "d57267a1d090"

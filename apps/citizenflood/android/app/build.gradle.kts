@@ -51,6 +51,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".staging"
+            versionNameSuffix = "-staging"
+        }
         release {
             if (releaseConfigured) signingConfig = signingConfigs.getByName("release")
         }

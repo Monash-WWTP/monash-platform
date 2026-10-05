@@ -16,3 +16,9 @@ def test_database_outage_is_not_ready(monkeypatch):
     result = TestClient(app).get('/api/v1/ready')
     assert result.status_code == 503
     assert 'private connection' not in result.text
+
+
+def test_schema_revision_mismatch_is_not_ready(monkeypatch):
+    from app.routers import readiness
+    monkeypatch.setattr(readiness,'EXPECTED_REVISION','unavailable-new-release',raising=False)
+    assert TestClient(app).get('/api/v1/ready').status_code==503

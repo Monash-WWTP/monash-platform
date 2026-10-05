@@ -1,6 +1,6 @@
 # CitizenFlood
 
-Flutter mobile app for citizen flood, rain, water-level and wastewater observations. It retains its legacy Supabase repository and authentication flows during shared API development.
+Flutter mobile app for citizen flood, rain, water-level and wastewater observations. The native client uses the shared FastAPI service and external-browser OIDC with PKCE. Refresh credentials are held in Android secure storage.
 
 Use Flutter 3.44.7, an Android SDK and JDK 17. From this directory:
 
@@ -8,7 +8,7 @@ Use Flutter 3.44.7, an Android SDK and JDK 17. From this directory:
 flutter pub get
 flutter analyze
 flutter test
-flutter build apk --debug --dart-define=SUPABASE_URL=https://example.supabase.co --dart-define=SUPABASE_ANON_KEY=synthetic-ci-key
+flutter build apk --debug --dart-define-from-file=staging-config.example.json
 test -s build/app/outputs/flutter-apk/app-debug.apk
 ```
 

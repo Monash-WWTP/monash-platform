@@ -16,6 +16,7 @@ class AccountSession extends ChangeNotifier {
 
   Future<void> initialize() async {
     _refresh = await _storage.read(key: 'refresh_token');
+    _idToken = await _storage.read(key: 'id_token');
   }
   Future<void> signIn() async {
     final result = await _auth.authorizeAndExchangeCode(AuthorizationTokenRequest(
@@ -28,7 +29,8 @@ class AccountSession extends ChangeNotifier {
     if (result.accessToken == null) throw StateError('Identity service did not return an access token');
     _access = result.accessToken;
     _refresh = result.refreshToken ?? _refresh;
-    _idToken = result.idToken;
+    _idToken = result.idToken ?? _idToken;
+    if (_idToken != null) await _storage.write(key: 'id_token', value: _idToken);
     _expiry = result.accessTokenExpirationDateTime;
     if (_refresh != null) await _storage.write(key: 'refresh_token', value: _refresh);
     notifyListeners();
@@ -55,6 +57,7 @@ class AccountSession extends ChangeNotifier {
     final idToken = _idToken;
     _access = null; _refresh = null; _idToken = null; _expiry = null;
     await _storage.delete(key: 'refresh_token');
+    await _storage.delete(key: 'id_token');
     notifyListeners();
     if (idToken != null) {
       await _auth.endSession(EndSessionRequest(idTokenHint: idToken,

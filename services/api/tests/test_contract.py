@@ -24,7 +24,9 @@ def test_openapi_declares_versioned_routes_and_security():
 
 def test_missing_plant_has_stable_error_and_server_request_id():
     with TestClient(app) as client:
-        response = client.get("/api/v1/plants/999999", headers={"X-Request-ID": "client-value"})
+        response = client.get(
+            "/api/v1/plants/999999", headers={"X-Request-ID": "client-value"}
+        )
     assert response.status_code == 404
     assert response.json()["error"]["code"] == "plant_not_found"
     assert response.json()["error"]["request_id"] == response.headers["X-Request-ID"]
@@ -58,7 +60,7 @@ def test_missing_operator_cannot_create_scenario():
             f"/api/v1/plants/{plant_id}/scenarios", json={"name": "unauthorized"}
         )
     assert response.status_code == 401
-    assert response.json()["error"]["code"] == "unauthorized"
+    assert response.json()["error"]["code"] == "sign_in_required"
     with SessionLocal() as db:
         assert db.query(Scenario).count() == before
 
@@ -85,4 +87,6 @@ def test_framework_route_errors_use_common_envelope():
     ):
         assert response.status_code == status
         assert response.json()["error"]["code"] == code
-        assert response.json()["error"]["request_id"] == response.headers["X-Request-ID"]
+        assert (
+            response.json()["error"]["request_id"] == response.headers["X-Request-ID"]
+        )
