@@ -45,6 +45,14 @@ export default function ResearchPage() {
           peer-reviewed paper.
         </p>
       </section>
+      <section>
+        <h2>References and frameworks</h2>
+        <p>
+          See the technical publications and guidance that inform future
+          platform work.
+        </p>
+        <Link to="/research/references">Browse references</Link>
+      </section>
     </main>
   );
 }

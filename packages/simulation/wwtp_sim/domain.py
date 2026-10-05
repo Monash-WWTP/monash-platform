@@ -34,7 +34,7 @@ class InfluentConditions:
     """Baseline influent assumptions. Units: flow MLD, concentrations mg/L."""
 
     flow: float = 40.0
-    bod: float = 220.0
+    bod: float = 220.0  # BOD5; used as the influent load in guideline Eq. 5.25.
     cod: float = 480.0
     tss: float = 240.0
     ammonia: float = 35.0

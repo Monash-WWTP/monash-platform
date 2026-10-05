@@ -12,7 +12,10 @@ Horizon = Literal["1_month", "3_months", "6_months"]
 
 class InfluentIn(BaseModel):
     flow: float = 40.0
-    bod: float = 220.0
+    bod: float = Field(
+        default=220.0,
+        description="Influent BOD5 concentration in mg/L (legacy property name: bod).",
+    )
     cod: float = 480.0
     tss: float = 240.0
     ammonia: float = 35.0

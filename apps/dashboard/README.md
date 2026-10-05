@@ -16,7 +16,7 @@ The production build runs TypeScript checking. There is no inherited browser tes
 
 ## Public portal
 
-Public routes: `/`, `/download`, `/research`, `/research/:slug`, `/login`, `/register`.
+Public routes: `/`, `/download`, `/research`, `/research/references`, `/research/:slug`, `/login`, `/register`.
 Operator routes: `/dashboard`, `/dashboard/plants/:plantId`. Old `/plants/:plantId` links redirect. Operator code is loaded separately from the public entry bundle.
 
 Shared accounts are **not integrated yet**; account entry pages explain this without collecting credentials. CitizenFlood 1.0.0 is publicly available from the download page; its immutable artifact and verification record are documented in [Android release](../../docs/operations/android-release-1.0.0.json). The public research collection is empty until approved content is supplied.
@@ -28,6 +28,8 @@ Replace the derived `src/releases/current.json` manifest after signature, Androi
 ### Publish research
 
 Pass only approved items into `validatePublishedArticles` in `src/research/articles.ts`. Required fields: unique stable slug, title, authors, publication date, type (`peer-reviewed`, `preprint`, `project-note`), approval reference, HTTPS sources, paragraphs, explicit limitations and correction history (`corrections`, empty if none). Corrections require a valid date on or after publication and description. Content is escaped plain text. Keep drafts outside imports from public routes; additions are reviewed in Git. Verify publication status, citation URLs and hosting rights before publishing. Withdrawals currently require an editorial code change; no CMS or withdrawal automation is claimed.
+
+Reference resources are listed separately in `src/research/references.ts` and rendered at `/research/references`. The landing page links directly to the supplied, byte-identical PDF at `public/references/urban-water-carbon-accounting-guidelines.pdf`. This copy is distributed unchanged under the non-commercial CC BY-NC-ND 4.0 terms stated in the edition; the reference listing retains the third-party-material caveat. Record the DOI, citation, license and how the resource informs platform work. A reference does not establish that the simulator implements or is validated against the publication.
 
 ### Browser verification
 

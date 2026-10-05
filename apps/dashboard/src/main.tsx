@@ -8,6 +8,7 @@ import LandingPage from "./pages/public/LandingPage";
 import DownloadPage from "./pages/public/DownloadPage";
 import ResearchPage from "./pages/public/ResearchPage";
 import ResearchArticlePage from "./pages/public/ResearchArticlePage";
+import ResearchReferencesPage from "./pages/public/ResearchReferencesPage";
 import AccountPage from "./pages/public/AccountPage";
 import NotFoundPage from "./pages/public/NotFoundPage";
 import PublicLayout from "./pages/public/PublicLayout";
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
       { path: "/", element: <LandingPage /> },
       { path: "/download", element: <DownloadPage /> },
       { path: "/research", element: <ResearchPage /> },
+      { path: "/research/references", element: <ResearchReferencesPage /> },
       { path: "/research/:slug", element: <ResearchArticlePage /> },
       { path: "/login", element: <AccountPage /> },
       { path: "/register", element: <AccountPage /> },

@@ -396,6 +396,7 @@
           },
           "bod": {
             "default": 220.0,
+            "description": "Influent BOD5 concentration in mg/L (legacy property name: bod).",
             "title": "Bod",
             "type": "number"
           },

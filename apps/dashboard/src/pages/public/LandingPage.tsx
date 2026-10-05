@@ -72,9 +72,17 @@ export default function LandingPage() {
         <article>
           <h2>Read the work behind it.</h2>
           <p>
-            Approved research articles and publication links will appear here
-            when they are ready to share.
+            This urban water carbon-accounting guideline is a reference for
+            future platform work. It does not validate the simulator.
           </p>
+          <a
+            href="/references/urban-water-carbon-accounting-guidelines.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open the guideline PDF
+          </a>
+          <Link to="/research/references">View all references</Link>
           <Link to="/research">
             Browse research <ArrowRight size={17} aria-hidden="true" />
           </Link>

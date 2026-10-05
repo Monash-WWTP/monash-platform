@@ -31,7 +31,7 @@ def ch4_intensity_kgco2e_m3(
         * float(emission_factor)
         * MG_L_TO_KG_M3
     )
-    net_kg_ch4_m3 = np.maximum(gross_kg_ch4_m3 - recovered_kg_ch4_m3, 0.0)
+    net_kg_ch4_m3 = gross_kg_ch4_m3 - recovered_kg_ch4_m3
     return net_kg_ch4_m3 * GWP_CH4
 
 
@@ -47,5 +47,5 @@ def n2o_intensity_kgco2e_m3(
         * N2O_N_TO_N2O
         * MG_L_TO_KG_M3
     )
-    net_kg_n2o_m3 = np.maximum(gross_kg_n2o_m3 - recovered_kg_n2o_m3, 0.0)
+    net_kg_n2o_m3 = gross_kg_n2o_m3 - recovered_kg_n2o_m3
     return net_kg_n2o_m3 * GWP_N2O

@@ -245,7 +245,7 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
               {(
                 [
                   ['flow', 'Flow (MLD)'],
-                  ['bod', 'BOD (mg/L)'],
+                  ['bod', 'BOD₅ (mg/L)'],
                   ['cod', 'COD (mg/L)'],
                   ['tss', 'TSS (mg/L)'],
                   ['ammonia', 'Ammonia (mg/L)'],

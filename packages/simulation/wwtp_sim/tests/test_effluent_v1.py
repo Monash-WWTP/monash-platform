@@ -256,7 +256,7 @@ def test_ghg_equations(model):
     assert result.ghg["total"][0] == pytest.approx(expected_ch4 + expected_n2o, rel=1e-3)
 
 
-def test_ghg_recovery_terms_are_subtracted_and_clamped(model):
+def test_ghg_recovery_terms_are_subtracted_as_specified_by_guideline(model):
     forecast = Forecast(
         weather="dry",
         influent=InfluentConditions(tkn=50.0),
@@ -274,7 +274,7 @@ def test_ghg_recovery_terms_are_subtracted_and_clamped(model):
     assert with_recovery.kpis["ch4_mean_kgco2e_m3"] < no_recovery.kpis["ch4_mean_kgco2e_m3"]
     assert with_recovery.kpis["n2o_mean_kgco2e_m3"] < no_recovery.kpis["n2o_mean_kgco2e_m3"]
 
-    fully_recovered = model.run(
+    recovered_above_gross = model.run(
         make_input(
             forecast=forecast,
             operating_parameters=OperatingParameters(
@@ -283,7 +283,11 @@ def test_ghg_recovery_terms_are_subtracted_and_clamped(model):
             ),
         )
     )
-    assert fully_recovered.kpis["ghg_mean_kgco2e_m3"] == 0.0
+    expected_ch4 = (220.0 * 0.0121 * 1e-3 - 1.0) * 28
+    expected_n2o = (50.0 * 0.0093 * (44 / 28) * 1e-3 - 1.0) * 265
+    assert recovered_above_gross.ghg["ch4"][0] == pytest.approx(expected_ch4)
+    assert recovered_above_gross.ghg["n2o"][0] == pytest.approx(expected_n2o)
+    assert recovered_above_gross.ghg["total"][0] < 0.0
 
 
 def test_parquet_roundtrip(model, tmp_path):
