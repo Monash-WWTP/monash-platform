@@ -63,4 +63,4 @@ The 2026-10-05 visual alignment updates the imported dashboard's `src/index.css`
 
 The follow-up status-color audit also updates dashboard severity badges and warnings to use shared semantic roles. It does not change status meaning or model results.
 
-The supplied guideline's first page is rendered as a static cover image on the landing page and reference entry. Visitors open or download the original PDF from the visible links; the site does not embed a scrollable PDF viewer.
+The supplied guideline's first page is rendered as a static cover image on the research references page only. The landing page links to general research without exposing this specific publication. Visitors open or download the original PDF from the reference entry; the site does not embed a scrollable PDF viewer.

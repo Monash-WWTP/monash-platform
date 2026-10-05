@@ -1,10 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Download } from "lucide-react";
 import { currentRelease } from "../../releases/release";
-import { researchReferences } from "../../research/references";
 export default function LandingPage() {
-  const featuredReference = researchReferences[0];
-
   return (
     <main id="public-main" className="platform-home">
       <section className="home-intro">
@@ -73,65 +70,16 @@ export default function LandingPage() {
           </Link>
         </article>
         <article>
-          <h2>Read the work behind it.</h2>
+          <h2>Explore the research.</h2>
           <p>
-            This urban water carbon-accounting guideline is a reference for
-            future platform work. It does not validate the simulator.
+            Read approved research and learn how published work informs the
+            platform.
           </p>
-          <a
-            href="/references/urban-water-carbon-accounting-guidelines.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Open the guideline PDF
-          </a>
-          <Link to="/research/references">View all references</Link>
           <Link to="/research">
             Browse research <ArrowRight size={17} aria-hidden="true" />
           </Link>
         </article>
       </section>
-      {featuredReference && (
-        <section
-          className="featured-reference"
-          aria-labelledby="featured-reference-title"
-        >
-          <Link
-            className="featured-reference-cover"
-            to={`/research/references#${featuredReference.slug}`}
-            aria-label={`View ${featuredReference.title} reference`}
-          >
-            <img src={featuredReference.coverUrl} alt="" loading="lazy" />
-          </Link>
-          <div className="featured-reference-copy">
-            <p className="section-label">Featured technical reference</p>
-            <h2 id="featured-reference-title">{featuredReference.title}</h2>
-            <p className="featured-reference-citation">
-              {featuredReference.organization} · {featuredReference.publisher} ·{" "}
-              {featuredReference.publishedAt}
-            </p>
-            <p className="featured-reference-relevance">
-              {featuredReference.relevance}
-            </p>
-            <div className="featured-reference-actions">
-              <Link
-                className="apk-button"
-                to={`/research/references#${featuredReference.slug}`}
-              >
-                View citation <ArrowRight size={17} aria-hidden="true" />
-              </Link>
-              <a
-                className="quiet-action"
-                href={featuredReference.pdfUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Open PDF <ArrowRight size={17} aria-hidden="true" />
-              </a>
-            </div>
-          </div>
-        </section>
-      )}
       <section className="evidence-note">
         <h2>Understand what you’re looking at.</h2>
         <p>
