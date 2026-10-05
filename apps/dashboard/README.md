@@ -19,6 +19,8 @@ The production build runs TypeScript checking. There is no inherited browser tes
 Public routes: `/`, `/download`, `/research`, `/research/references`, `/research/:slug`, `/login`, `/register`.
 Operator routes: `/dashboard`, `/dashboard/plants/:plantId`. Old `/plants/:plantId` links redirect. Operator code is loaded separately from the public entry bundle.
 
+The cross-surface UI, route behavior, API cutover, science and operations acceptance items are tracked in the [platform resolution checklist](../../docs/product/platform-resolution-checklist.md).
+
 Shared accounts are **not integrated yet**; account entry pages explain this without collecting credentials. CitizenFlood 1.0.0 is publicly available from the download page; its immutable artifact and verification record are documented in [Android release](../../docs/operations/android-release-1.0.0.json). The public research collection is empty until approved content is supplied.
 
 ### Publish a release

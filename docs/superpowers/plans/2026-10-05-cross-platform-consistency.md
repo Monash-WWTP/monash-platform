@@ -82,10 +82,10 @@
 - Consumes: route inventories, current mobile screens, `docs/operations/deployment.md`, `docs/migration/ROADMAP.md`, and `docs/science/VALIDATION.md`.
 - Produces: a checklist with status, owner/evidence fields, and explicit completion criteria for public website, dashboard, Android, API/identity, data/privacy, science/publication, and operations. Items already verified in source are checked; live or owner-dependent gates stay open.
 
-- [ ] **Step 1: Add the checklist skeleton and route/screen acceptance rows** for each user entry point, main action, data source, permission requirement, success, empty, loading, error and retry behavior; leave all evidence-dependent items unchecked.
-- [ ] **Step 2: Review every row against current routes, screens, deployment documentation and science status; add precise evidence requirements and mark only completed source-level items checked.**
-- [ ] **Step 3: Update existing portal acceptance links to the unified checklist and keep individual release procedures as detailed sources.**
-- [ ] **Step 4: Run repository policy and docs/link checks; confirm the checklist is internally consistent and no production or scientific gate is marked passed without evidence.**
+- [x] **Step 1: Add the checklist skeleton and route/screen acceptance rows** for each user entry point, main action, data source, permission requirement, success, empty, loading, error and retry behavior; leave all evidence-dependent items unchecked.
+- [x] **Step 2: Review every row against current routes, screens, deployment documentation and science status; add precise evidence requirements and mark only completed source-level items checked.**
+- [x] **Step 3: Update existing portal acceptance links to the unified checklist and keep individual release procedures as detailed sources.**
+- [x] **Step 4: Run repository policy and docs/link checks; confirm the checklist is internally consistent and no production or scientific gate is marked passed without evidence.**
 
 ### Task 4: Cross-surface visual and functional verification
 

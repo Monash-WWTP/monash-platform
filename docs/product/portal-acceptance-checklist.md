@@ -2,6 +2,8 @@
 
 These checks define production release evidence. Current source verification is recorded in REVIEW_STATE.md; identity, real-device APK and production operations gates remain outstanding.
 
+Use the [platform resolution checklist](platform-resolution-checklist.md) for the route-by-route website, dashboard and Android functionality matrix, and the shared API, science and operations gates. This page retains the detailed web-release acceptance criteria.
+
 ## Public website
 
 - Landing/download/research routes load without authentication.
