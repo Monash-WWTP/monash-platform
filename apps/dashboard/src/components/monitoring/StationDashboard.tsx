@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import ReactECharts from 'echarts-for-react'
+import ReactECharts from '../dashboard/Chart'
 import { ArrowRight, FlaskConical } from 'lucide-react'
 
 import { useSamples, useSampleYears, type SampleFilters } from '@/api/monitoring'

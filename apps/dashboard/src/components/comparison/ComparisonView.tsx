@@ -1,4 +1,4 @@
-import ReactECharts from 'echarts-for-react'
+import ReactECharts from '../dashboard/Chart'
 import { useState } from 'react'
 
 import { useCompare, useScenarios } from '../../api/hooks'

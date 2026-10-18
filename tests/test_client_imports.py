@@ -25,6 +25,7 @@ MOBILE_ADAPTATIONS = {
     "test/widgets/category_tile_test.dart",
 }
 DASHBOARD_ADAPTATIONS = {
+    "frontend/index.html",
     "frontend/README.md",
     "frontend/.gitignore",
     "frontend/src/api/client.ts", "frontend/src/api/monitoring.ts",

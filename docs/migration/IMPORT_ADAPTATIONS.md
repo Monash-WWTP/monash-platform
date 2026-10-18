@@ -64,3 +64,9 @@ The 2026-10-05 visual alignment updates the imported dashboard's `src/index.css`
 The follow-up status-color audit also updates dashboard severity badges and warnings to use shared semantic roles. It does not change status meaning or model results.
 
 The supplied guideline's first page is rendered as a static cover image on the research references page only. The landing page links to general research without exposing this specific publication. Visitors open or download the original PDF from the reference entry; the site does not embed a scrollable PDF viewer.
+
+## Interface and launch-readiness follow-up — 2026-10-18
+
+`frontend/index.html` intentionally differs from its pinned source: commit 531984a replaced the template favicon with the CitizenFlood PNG and added an Apple touch icon. The exact path is now recorded in the import adaptation test; hash verification remains intact for other imported files.
+
+The interface follow-up preserves missing/below-detection laboratory values, adds keyboard-accessible plant selection and a responsive station panel, and replaces unavailable registration calls to action with account status. Public home uses the existing release-specific app screen. The supplied guideline is linked from the home reference section and remains byte-identical. Line charts use a shared modular SVG runtime; optional workspace charts and the 3D view load on demand. A compatible lockfile-only source-map-js 1.2.2 patch resolves the newly reported build-tool advisory. These changes do not switch production endpoints or update the published APK.

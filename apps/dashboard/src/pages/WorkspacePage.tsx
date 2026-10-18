@@ -1,14 +1,14 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, Factory } from 'lucide-react'
 
 import { usePlant, useTimeseries } from '../api/hooks'
 import { useWorkspaceStore } from '../stores/scenarioStore'
-import ComparisonView from '../components/comparison/ComparisonView'
-import TrendsChart from '../components/dashboard/TrendsChart'
 import ResultsPanel from '../components/results/ResultsPanel'
 import ScenarioPanel from '../components/scenario/ScenarioPanel'
-import DigitalTwin from '../components/twin/DigitalTwin'
+const ComparisonView = lazy(() => import('../components/comparison/ComparisonView'))
+const TrendsChart = lazy(() => import('../components/dashboard/TrendsChart'))
+const DigitalTwin = lazy(() => import('../components/twin/DigitalTwin'))
 
 export default function WorkspacePage() {
   const { plantId } = useParams()
@@ -82,6 +82,7 @@ export default function WorkspacePage() {
         </aside>
 
         <main className="min-h-0 overflow-y-auto p-3">
+          <Suspense fallback={<p role="status" className="p-4 text-sm">Loading view…</p>}>
           {centerTab === 'trends' &&
             (ts ? (
               <TrendsChart ts={ts} maintenance={draft.maintenance} />
@@ -90,6 +91,7 @@ export default function WorkspacePage() {
             ))}
           {centerTab === 'twin' && <DigitalTwin plant={plant} ts={ts ?? null} />}
           {centerTab === 'compare' && <ComparisonView plantId={id} />}
+          </Suspense>
         </main>
 
         <aside className="min-h-0 border-l border-border bg-background">
