@@ -10,6 +10,7 @@ from ..db.session import get_db
 from ..operator_auth import require_operator
 from ..schemas import CompareOut, CompareRequest, ModelOut, RunOut, RunRequest, TimeseriesOut
 from ..services.simulation import execute_run, replay_run
+from ..services.comparison import validate_comparison
 
 router = APIRouter(tags=["simulations"])
 
@@ -93,6 +94,7 @@ def compare_runs(
     missing = [rid for rid, r in zip(body.run_ids, runs) if r is None]
     if missing:
         raise ApiError(404, "run_not_found", "Runs not found", {"run_ids": missing})
+    validate_comparison(runs)
     return CompareOut(
         runs=[_run_out(r) for r in runs],
         timeseries=[_timeseries_out(r) for r in runs],

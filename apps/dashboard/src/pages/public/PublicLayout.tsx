@@ -14,9 +14,8 @@ export default function PublicLayout() {
           <Link to="/download">Download app</Link>
           <Link to="/research">Research</Link>
           <Link to="/dashboard">Dashboard</Link>
-          <Link to="/login">Log in</Link>
           <Link className="account-link" to="/register">
-            Create account
+            Account availability
           </Link>
         </nav>
       </header>

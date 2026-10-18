@@ -1,4 +1,4 @@
-import ReactECharts from 'echarts-for-react'
+import ReactECharts from './Chart'
 
 import type { ScenarioInput, Timeseries } from '../../api/types'
 import { METRIC_LABELS, METRIC_UNITS } from '../../api/types'

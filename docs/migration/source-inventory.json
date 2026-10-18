@@ -841,12 +841,13 @@
       "target_path": "apps/dashboard/src/components/scenario/ScenarioPanel.tsx"
     },
     {
-      "disposition": "imported",
+      "disposition": "superseded",
+      "reason": "Unsupported illustrative 3D twin removed from the active product; pinned source identity and Git history are retained.",
       "source_commit": "202b72e",
       "source_path": "frontend/src/components/twin/DigitalTwin.tsx",
       "source_repo": "dashboard",
       "source_sha256": "15343d131e862323bccfdd417dfe70b6854a3a8d2a47031ad21f96c5683c083f",
-      "target_path": "apps/dashboard/src/components/twin/DigitalTwin.tsx"
+      "target_path": null
     },
     {
       "disposition": "imported",

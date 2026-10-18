@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAccount } from "../api/accounts";
 import { fetchApi, type Page } from "../api/transport";
 import OperatorAccess from "../components/auth/OperatorAccess";
+import OperatorHeader from "../components/OperatorHeader";
+import { Button } from "../components/ui";
 interface Report {
   id: string;
   category: string;
@@ -46,10 +47,9 @@ export default function ModerationPage() {
     }
   }
   return (
-    <main className="mx-auto max-w-4xl space-y-6 p-6">
-      <Link to="/dashboard" className="underline">
-        Return to monitoring
-      </Link>
+    <div className="min-h-full">
+    <OperatorHeader context="Report review" />
+    <main className="mx-auto max-w-4xl space-y-6 px-4 py-6 sm:px-6">
       <h1 className="text-2xl font-semibold">Citizen report review</h1>
       <OperatorAccess />
       {!allowed && (
@@ -59,7 +59,10 @@ export default function ModerationPage() {
         </p>
       )}
       {(error || queue.error) && (
-        <p role="alert">{error || queue.error?.message}</p>
+        <div role="alert" className="rounded border border-destructive p-4 text-sm">
+          <p>{error || queue.error?.message}</p>
+          {queue.error && <Button className="mt-3 min-h-11" onClick={() => void queue.refetch()}>Retry reports</Button>}
+        </div>
       )}
       {queue.isFetching && <p role="status">Loading reports…</p>}
       {queue.data && (
@@ -68,8 +71,9 @@ export default function ModerationPage() {
           first.
         </p>
       )}
+      {queue.data?.total === 0 && <p role="status" className="text-sm text-muted-foreground">No reports are awaiting review.</p>}
       {queue.data?.items.map((report) => (
-        <article key={report.id} className="space-y-3 rounded border p-4">
+        <article key={report.id} className="space-y-3 rounded-lg border border-border bg-card p-4 [overflow-wrap:anywhere]">
           <h2 className="font-semibold">
             {report.category} · {new Date(report.observed_at).toLocaleString()}
           </h2>
@@ -94,7 +98,7 @@ export default function ModerationPage() {
           <label className="block">
             Review reason
             <textarea
-              className="mt-1 block w-full rounded border p-2"
+              className="mt-2 block min-h-24 w-full rounded-md border border-input bg-background p-3 text-sm"
               maxLength={2000}
               value={reason[report.id] ?? ""}
               onChange={(e) =>
@@ -102,16 +106,17 @@ export default function ModerationPage() {
               }
             />
           </label>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-3">
             {(["approved", "rejected"] as const).map((status) => (
-              <button
+              <Button
                 key={status}
-                className="rounded border px-4 py-2 disabled:opacity-40"
+                variant={status === "approved" ? "primary" : "danger"}
+                className="min-h-11"
                 disabled={busy !== null || !reason[report.id]?.trim()}
                 onClick={() => review(report.id, status)}
               >
                 {status === "approved" ? "Approve public summary" : "Reject"}
-              </button>
+              </Button>
             ))}
           </div>
           <p className="text-sm">
@@ -121,5 +126,6 @@ export default function ModerationPage() {
         </article>
       ))}
     </main>
+    </div>
   );
 }

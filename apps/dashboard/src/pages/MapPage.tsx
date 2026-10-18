@@ -1,18 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import * as maplibregl from 'maplibre-gl'
 import mapWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ChevronsLeft, ChevronsRight, X } from 'lucide-react'
 
+import type { Plant } from '../api/types'
 import { usePlants } from '../api/hooks'
 import { useCommunityWastewaterObservations, useStations } from '@/api/monitoring'
 import type { CommunityWastewaterObservation, Station } from '@/api/monitoring-types'
-import StationDashboard from '@/components/monitoring/StationDashboard'
 import { CHART } from '@/components/dashboard/chartPalette'
+import OperatorHeader from '@/components/OperatorHeader'
 
 // OpenFreeMap Liberty: free vector style with 3D building extrusions.
 const MAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty'
 maplibregl.setWorkerUrl(mapWorkerUrl)
+const StationDashboard = lazy(() => import('@/components/monitoring/StationDashboard'))
 
 function observationPopupContent(observation: CommunityWastewaterObservation): HTMLElement {
   const content = document.createElement('div')
@@ -50,7 +52,7 @@ function observationPopupContent(observation: CommunityWastewaterObservation): H
 export default function MapPage() {
   const mapContainer = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
-  const { data: plants, isLoading, error } = usePlants()
+  const { data: plants, isLoading, error, refetch: refetchPlants } = usePlants()
   const { data: stations } = useStations()
   const {
     data: communityObservations,
@@ -59,10 +61,43 @@ export default function MapPage() {
     refetch: refetchCommunityObservations,
   } = useCommunityWastewaterObservations()
   const [mapUnavailable, setMapUnavailable] = useState(false)
-  const [selected, setSelected] = useState<Station | null>(null)
+  const [selectedStation, setSelected] = useState<Station | null>(null)
+  const [params] = useSearchParams()
+  const [returnSelectionDismissed, setReturnSelectionDismissed] = useState(false)
+  const selected = selectedStation ?? (!returnSelectionDismissed ? stations?.find(station => station.code === params.get('station')) ?? null : null)
   const [expanded, setExpanded] = useState(false)
   const [showCommunityObservations, setShowCommunityObservations] = useState(true)
   const navigate = useNavigate()
+  const [search, setSearch] = useState('')
+  const [narrow, setNarrow] = useState(() => window.matchMedia('(max-width: 639px)').matches)
+  const closeButton = useRef<HTMLButtonElement>(null)
+  const trigger = useRef<HTMLElement | null>(null)
+  const selectPlant = useCallback((plant: Plant, source: HTMLElement) => {
+    trigger.current = source
+    const station = stations?.find(s => s.code === plant.code)
+    setSelected(station ?? { code: plant.code ?? String(plant.id), name: plant.name,
+      stp_type: null, category: null, latitude: plant.latitude, longitude: plant.longitude })
+    mapRef.current?.flyTo({ center: [plant.longitude, plant.latitude], zoom: 14,
+      pitch: 0, bearing: 0, duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 500 })
+  }, [stations])
+  const dismissPanel = useCallback(() => {
+    setSelected(null)
+    setReturnSelectionDismissed(true)
+    setExpanded(false)
+  }, [])
+  useEffect(() => {
+    if (selected) closeButton.current?.focus()
+    else if (trigger.current?.isConnected) trigger.current.focus()
+    else if (trigger.current) document.querySelector<HTMLInputElement>('#plant-search')?.focus()
+  }, [selected, narrow])
+  useEffect(() => {
+    const query = window.matchMedia('(max-width: 639px)')
+    const update = () => setNarrow(query.matches)
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [])
+  const visiblePlants = plants?.filter(plant =>
+    `${plant.name} ${plant.code ?? ''}`.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase())) ?? []
 
   useEffect(() => {
     if (!mapContainer.current || mapRef.current) return
@@ -122,37 +157,12 @@ export default function MapPage() {
 
     const markers: maplibregl.Marker[] = []
     for (const plant of plants) {
-      const el = document.createElement('div')
-      el.className = 'cursor-pointer'
-      el.innerHTML = `
-        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
-          <div style="width:14px;height:14px;border-radius:50%;background:${CHART.series};
-            border:2.5px solid #ffffff;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>
-          <div style="background:#ffffff;color:${CHART.axis};font-size:11px;font-weight:600;
-            padding:2px 7px;border-radius:6px;border:1px solid ${CHART.grid};box-shadow:0 1px 2px rgba(0,0,0,0.08);white-space:nowrap;">${plant.name}</div>
-        </div>`
-      el.addEventListener('click', () => {
-        // cinematic zoom into the station, then open its dashboard panel
-        map.flyTo({
-          center: [plant.longitude, plant.latitude],
-          zoom: 16.8,
-          pitch: 62,
-          bearing: -30,
-          duration: 2600,
-          essential: true,
-        })
-        const station = stations?.find((s) => s.code === plant.code)
-        setSelected(
-          station ?? {
-            code: plant.code ?? String(plant.id),
-            name: plant.name,
-            stp_type: null,
-            category: null,
-            latitude: plant.latitude,
-            longitude: plant.longitude,
-          },
-        )
-      })
+      const el = document.createElement('button')
+      el.type = 'button'
+      el.className = 'plant-map-marker cursor-pointer rounded border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground'
+      el.textContent = plant.name
+      el.setAttribute('aria-label', `View ${plant.name}`)
+      el.addEventListener('click', () => selectPlant(plant, el))
 
       markers.push(
         new maplibregl.Marker({ element: el })
@@ -161,7 +171,7 @@ export default function MapPage() {
       )
     }
     return () => markers.forEach((m) => m.remove())
-  }, [plants, stations, mapUnavailable])
+  }, [plants, selectPlant, mapUnavailable])
 
   // Community observations use a separate, opt-out marker layer. They are not
   // joined to stations or shown in lab/compliance summaries.
@@ -218,146 +228,79 @@ export default function MapPage() {
   }
 
   return (
-    <div className="relative h-full">
-      <div ref={mapContainer} className="h-full" />
-
-      {mapUnavailable && plants && (
-        <div
-          className="absolute inset-0 z-10 overflow-y-auto bg-background p-6 pt-32"
-          data-testid="plant-list-fallback"
-        >
-          <p className="mx-auto mb-4 max-w-3xl text-xs text-warning">
-            Interactive map unavailable (WebGL not supported here) — select a plant from the list.
-          </p>
-          <div className="mx-auto grid max-w-3xl gap-3 sm:grid-cols-2">
-            {plants.map((plant) => (
-              <button
-                key={plant.id}
-                onClick={() => {
-                  const station = stations?.find((s) => s.code === plant.code)
-                  if (station) setSelected(station)
-                  else navigate(`/dashboard/plants/${plant.id}`)
-                }}
-                className="rounded-lg border border-border bg-card p-4 text-left hover:border-primary"
-              >
-                <span className="font-semibold">{plant.name}</span>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Design capacity {plant.capacity_mld} MLD
-                </p>
+    <main className="relative h-full overflow-hidden" aria-label="Water monitoring">
+      <div inert={selected !== null && narrow}>
+      <div className="absolute inset-x-0 top-0 z-10"><OperatorHeader context="Monitoring" monitoring /></div>
+      <div ref={mapContainer} style={{ position: 'absolute', inset: '56px 0 0' }} aria-label="Plant locations" />
+      <section className={`absolute left-3 top-[68px] z-10 max-h-[calc(100%-80px)] w-[min(320px,calc(100%-24px))] overflow-y-auto rounded-lg border border-border bg-background p-4 ${mapUnavailable ? 'shadow-none' : 'shadow-sm'}`} aria-label="Find a plant">
+        <h1 className="text-lg font-semibold">Water monitoring</h1>
+        <p className="mt-1 text-xs text-muted-foreground">Select a plant to explore its laboratory record.</p>
+        {mapUnavailable && <p role="status" className="mt-3 text-sm text-warning">Interactive map unavailable. All plants remain available below.</p>}
+        <label className="mt-4 block text-sm font-medium" htmlFor="plant-search">Search plants</label>
+        <input id="plant-search" type="search" value={search} onChange={event => setSearch(event.target.value)}
+          className="mt-2 min-h-11 w-full rounded border bg-background px-3 text-sm" placeholder="Plant name or code" />
+        {isLoading && <p role="status" className="mt-3 text-sm">Loading plants…</p>}
+        {error ? <div role="alert" className="mt-3 text-sm">
+          <p>Plants are unavailable. Please try again.</p>
+          <button className="min-h-11 text-primary underline" onClick={() => void refetchPlants()}>Retry plants</button>
+        </div> : !isLoading && <>
+          <p role="status" className="mt-3 text-xs text-muted-foreground">{visiblePlants.length} {visiblePlants.length === 1 ? 'plant' : 'plants'}</p>
+          <ul className="mt-2 max-h-[32vh] overflow-y-auto divide-y" aria-label="Plants">
+            {visiblePlants.map(plant => <li key={plant.id}>
+              <button className="min-h-11 w-full rounded p-3 text-left hover:bg-muted"
+                onClick={event => selectPlant(plant, event.currentTarget)}>
+                <span className="block text-sm font-semibold">{plant.name}</span>
+                <span className="text-xs text-muted-foreground">{plant.code} · Design capacity {plant.capacity_mld} MLD</span>
               </button>
-            ))}
-          </div>
-          <section className="mx-auto mt-8 max-w-3xl" aria-labelledby="community-observations-title">
-            <h2 id="community-observations-title" className="font-semibold">
-              Approved community wastewater observations
-            </h2>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Citizen reports are shown separately from laboratory measurements and are not used for compliance or simulations.
-            </p>
-            {communityObservationsLoading ? (
-              <p className="mt-3 text-sm text-muted-foreground">Loading observations…</p>
-            ) : communityObservationsError ? (
-              <button
-                className="mt-3 text-sm text-destructive underline"
-                onClick={() => void refetchCommunityObservations()}
-              >
-                Could not load observations. Retry
-              </button>
-            ) : !communityObservations?.length ? (
-              <p className="mt-3 text-sm text-muted-foreground">No approved wastewater observations yet.</p>
-            ) : (
-              <ul className="mt-3 divide-y rounded-lg border border-border bg-card">
-                {communityObservations.slice(0, 20).map((observation) => (
-                  <li key={observation.id} className="flex items-start justify-between gap-3 p-3 text-sm">
-                    <span>
-                      <span className="font-medium capitalize">{observation.condition}</span>
-                    </span>
-                    <time className="shrink-0 text-xs text-muted-foreground" dateTime={observation.observed_at}>
-                      {new Date(observation.observed_at).toLocaleDateString()}
-                    </time>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        </div>
-      )}
-
-      {!mapUnavailable && (
-        <div className="absolute top-3 left-3 z-10 max-w-72 rounded-lg border border-border bg-background/95 p-3 shadow-sm backdrop-blur">
-          <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
-            <input
-              type="checkbox"
-              checked={showCommunityObservations}
-              onChange={(event) => setShowCommunityObservations(event.target.checked)}
-              className="size-4 accent-primary"
-            />
+            </li>)}
+          </ul>
+          {visiblePlants.length === 0 && <p className="mt-3 text-sm">{search.trim() ? 'No plants match your search. Try another name or code.' : 'No plants are available yet.'}</p>}
+        </>}
+        <section className="mt-4 border-t pt-4" aria-label="Community observations">
+          <label className="flex min-h-11 cursor-pointer items-center gap-2 text-sm font-medium">
+            <input type="checkbox" checked={showCommunityObservations} onChange={event => setShowCommunityObservations(event.target.checked)} className="size-4 accent-primary" />
             Approved community wastewater
           </label>
-          <p className="mt-1 pl-6 text-xs text-muted-foreground">
-            Latest 500 citizen reports · not laboratory measurements
-          </p>
-          {communityObservationsLoading && (
-            <p className="mt-2 pl-6 text-xs text-muted-foreground">Loading…</p>
-          )}
-          {communityObservationsError && (
-            <button
-              className="mt-2 pl-6 text-xs text-destructive underline"
-              onClick={() => void refetchCommunityObservations()}
-            >
-              Could not load. Retry
-            </button>
-          )}
-          {!communityObservationsLoading &&
-            !communityObservationsError &&
-            !communityObservations?.length && (
-              <p className="mt-2 pl-6 text-xs text-muted-foreground">No approved observations yet.</p>
-            )}
+          <p className="mt-1 text-xs text-muted-foreground">Citizen reports · not laboratory measurements. Locations are rounded.</p>
+          {communityObservationsLoading && <p role="status" className="mt-2 text-xs">Loading observations…</p>}
+          {communityObservationsError && <button className="mt-2 min-h-11 text-sm text-primary underline" onClick={() => void refetchCommunityObservations()}>Retry community observations</button>}
+          {!communityObservationsLoading && !communityObservationsError && !communityObservations?.length && <p className="mt-2 text-xs text-muted-foreground">No approved observations yet.</p>}
+          {mapUnavailable && showCommunityObservations && !!communityObservations?.length && <ul className="mt-3 max-h-40 overflow-y-auto divide-y">
+            {communityObservations.map(observation => <li key={observation.id} className="py-2 text-sm">
+              <span className="capitalize">{observation.condition}</span> · <time dateTime={observation.observed_at}>{new Date(observation.observed_at).toLocaleDateString()}</time>
+            </li>)}
+          </ul>}
+        </section>
+      </section>
+      </div>
+      {selected && <aside className={`absolute inset-y-0 right-0 z-20 flex max-w-full flex-col border-l border-border bg-background ${expanded ? 'w-[min(880px,100%)]' : 'w-full sm:w-[380px]'}`}
+        role={narrow ? 'dialog' : undefined} aria-modal={narrow ? true : undefined}
+        aria-label={`${selected.name} laboratory record`} data-testid="station-dashboard"
+        onKeyDown={event => {
+          if (event.defaultPrevented) return
+          if (event.key === 'Escape') { event.stopPropagation(); dismissPanel() }
+          if (event.key === 'Tab' && narrow && event.currentTarget.contains(document.activeElement)) {
+            // Radix's portaled select manages its own focus outside this panel.
+            const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button, a[href], input, select, textarea, [tabindex]'))
+              .filter(element => element.tabIndex >= 0 && !element.hasAttribute('disabled') && element.getClientRects().length > 0)
+            const first = controls[0], last = controls.at(-1)
+            if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() }
+            else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() }
+          }
+        }}>
+        <div className="flex shrink-0 items-center justify-between border-b px-3 py-2">
+          <button className="flex size-11 items-center justify-center rounded hover:bg-muted" onClick={() => setExpanded(value => !value)}
+            aria-label={expanded ? 'Collapse panel' : 'Expand panel'} aria-expanded={expanded}>
+            {expanded ? <ChevronsRight className="size-5" /> : <ChevronsLeft className="size-5" />}
+          </button>
+          <button ref={closeButton} className="flex size-11 items-center justify-center rounded hover:bg-muted" onClick={dismissPanel} aria-label="Close station panel"><X className="size-5" /></button>
         </div>
-      )}
-
-      {selected && (
-        <aside
-          className={`absolute top-0 right-0 z-20 h-full border-l border-border bg-background/95 backdrop-blur transition-[width] duration-300 ${
-            expanded ? 'w-[min(880px,90vw)]' : 'w-[380px]'
-          }`}
-          data-testid="station-dashboard"
-        >
-          <div className="flex items-center justify-between border-b px-2 py-1.5">
-            <button
-              className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
-              onClick={() => setExpanded((e) => !e)}
-              title={expanded ? 'Collapse panel' : 'Expand panel'}
-            >
-              {expanded ? <ChevronsRight className="size-4" /> : <ChevronsLeft className="size-4" />}
-            </button>
-            <button
-              className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
-              onClick={() => {
-                setSelected(null)
-                setExpanded(false)
-                mapRef.current?.flyTo({ zoom: 11.5, pitch: 45, bearing: -15, duration: 1800 })
-              }}
-            >
-              <X className="size-4" />
-            </button>
-          </div>
-          <div className="h-[calc(100%-34px)]">
-            <StationDashboard station={selected} onOpenWorkspace={() => openWorkspace(selected)} />
-          </div>
-        </aside>
-      )}
-
-      {isLoading && (
-        <div className="absolute inset-x-0 bottom-6 z-10 text-center text-sm text-muted-foreground">
-          Loading plants…
+        <div className="min-h-0 flex-1">
+          <Suspense fallback={<p role="status" className="p-4 text-sm">Loading laboratory view…</p>}>
+          <StationDashboard key={selected.code} station={selected} onOpenWorkspace={plants?.some(plant => plant.code === selected.code) ? () => openWorkspace(selected) : undefined} />
+          </Suspense>
         </div>
-      )}
-      {error && (
-        <div className="absolute inset-x-0 bottom-6 z-10 text-center text-sm text-destructive">
-          Failed to load plants — is the API running on :8000?
-        </div>
-      )}
-    </div>
+      </aside>}
+    </main>
   )
 }

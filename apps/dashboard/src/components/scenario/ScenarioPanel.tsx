@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CalendarClock, Play, Plus, Trash2 } from 'lucide-react'
 
 import {
@@ -38,10 +38,12 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
     loadScenario,
     resetDraft,
     setActiveRunId,
-    setBaselineRunId,
     setCenterTab,
   } = useWorkspaceStore()
 
+  const mounted = useRef(true)
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false } }, [])
+  const [startDate, setStartDate] = useState(() => new Date().toISOString().slice(0, 10))
   const [error, setError] = useState<string | null>(null)
   const busy = createScenario.isPending || updateScenario.isPending || runScenario.isPending
 
@@ -49,6 +51,10 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
     setError(null)
     if (!draft.name.trim()) {
       setError('Give the scenario a name first.')
+      return
+    }
+    if (!startDate || !Number.isFinite(Date.parse(startDate))) {
+      setError('Choose a valid simulation start date.')
       return
     }
     const { influent } = draft.forecast
@@ -99,18 +105,14 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
       const scenario = editingScenarioId
         ? await updateScenario.mutateAsync({ id: editingScenarioId, body: payload })
         : await createScenario.mutateAsync(payload)
+      if (!mounted.current) return
       if (!editingScenarioId) loadScenario(scenario.id, payload)
-      const run = await runScenario.mutateAsync(scenario.id)
+      const run = await runScenario.mutateAsync({ scenarioId: scenario.id, startDate })
+      if (!mounted.current) return
       setActiveRunId(run.id)
       setCenterTab('trends')
-      // remember a baseline run for impact deltas
-      const baseline = scenarios?.find((s) => s.is_baseline)
-      if (baseline?.latest_run_id) setBaselineRunId(baseline.latest_run_id)
-      else if (baseline) {
-        const baseRun = await runScenario.mutateAsync(baseline.id)
-        setBaselineRunId(baseRun.id)
-      }
     } catch (e) {
+      if (!mounted.current) return
       setError(e instanceof Error ? e.message : 'Run failed')
     }
   }
@@ -124,7 +126,7 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
       operating_parameters: s.operating_parameters,
       is_baseline: s.is_baseline,
     })
-    if (s.latest_run_id) setActiveRunId(s.latest_run_id)
+    setActiveRunId(s.latest_run_id)
   }
 
   return (
@@ -160,7 +162,7 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
                   : 'border-border bg-muted'
               }`}
             >
-              <button className="flex-1 truncate text-left" onClick={() => loadExisting(s)}>
+              <button className="min-h-11 flex-1 truncate text-left sm:min-h-8" onClick={() => loadExisting(s)}>
                 <span className="font-medium">{s.name}</span>
                 {s.is_baseline && (
                   <span className="ml-2 text-[10px] text-primary uppercase">baseline</span>
@@ -168,9 +170,10 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
               </button>
               {!s.is_baseline && (
                 <button
-                  className="ml-2 text-muted-foreground hover:text-destructive"
+                  className="ml-2 flex size-11 items-center justify-center text-muted-foreground hover:text-destructive sm:size-8"
                   onClick={() => deleteScenario.mutate(s.id)}
                   title="Delete scenario"
+                  aria-label={`Delete ${s.name}`}
                 >
                   <Trash2 className="size-3.5" />
                 </button>
@@ -183,18 +186,24 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
         </div>
       </Card>
 
-      <Card title="Scenario Settings">
+      <Card title="1. Configure scenario">
         <div className="flex flex-col gap-3">
           <div>
             <Label>Scenario Name</Label>
             <Input
-              placeholder="e.g. Heavy Rainfall + Planned Maintenance"
+              aria-label="Scenario name"
+              placeholder="e.g. Assumed demand + maintenance"
               value={draft.name}
               onChange={(e) => setDraft({ name: e.target.value })}
             />
           </div>
           <div>
-            <Label>Simulation Horizon</Label>
+            <label htmlFor="run-start-date" className="mb-1 block text-xs font-medium text-muted-foreground">Simulation start date (UTC)</label>
+            <Input id="run-start-date" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+            <p className="mt-1 text-xs text-muted-foreground">Use the same dates and horizon for comparable runs.</p>
+          </div>
+          <div>
+            <Label>Simulation horizon</Label>
             <SegmentGroup
               options={[
                 { value: '1_month', label: '1 Month' },
@@ -208,13 +217,14 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
         </div>
       </Card>
 
-      <Card title="Forecast Inputs">
+      <Card title="Assumed influent and demand">
         <div className="flex flex-col gap-3">
           <div className="grid grid-cols-2 gap-2">
             <div>
               <Label>Demand change</Label>
               <Input
                 type="number"
+                aria-label="Demand change (%)"
                 min={-100}
                 max={100}
                 step={1}
@@ -224,10 +234,11 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
               <span className="text-[10px] text-muted-foreground">% from baseline</span>
             </div>
             <div>
-              <Label>Average rainfall</Label>
+              <Label>Average rainfall · Context only</Label>
               <Input
                 type="number"
                 min={0}
+                aria-label="Average rainfall, context only (mm/day)"
                 max={200}
                 step={0.1}
                 value={draft.forecast.rainfall_mm_day ?? 0}
@@ -240,7 +251,8 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
             Demand changes flow and pollutant load. Weather and rainfall are saved as context only; this model does not apply them because a site-specific hydrologic response has not been validated.
           </p>
           <div>
-            <Label>Influent Conditions</Label>
+            <Label>Assumed influent</Label>
+            <p className="mb-2 text-xs text-muted-foreground">All defaults are illustrative assumptions. Verify source, units and sampling period before changing them; monitoring data is not automatically imported.</p>
             <div className="grid grid-cols-2 gap-2">
               {(
                 [
@@ -259,6 +271,7 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
                   </div>
                   <Input
                     type="number"
+                    aria-label={label}
                     value={draft.forecast.influent[key] ?? 0}
                     onChange={(e) => setInfluent({ [key]: Number(e.target.value) })}
                   />
@@ -295,6 +308,7 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
                 type="range"
                 min={0}
                 max={100}
+                aria-label={`${label} availability (%)`}
                 value={draft.operating_parameters[key]}
                 onChange={(e) => setOperating({ [key]: Number(e.target.value) })}
                 className="w-full accent-(--primary)"
@@ -315,6 +329,7 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
               type="number"
               min={0}
               step={0.001}
+              aria-label="Recovered CH₄ (kg/m³)"
               value={draft.operating_parameters.ch4_recovered_kg_m3 ?? 0}
               onChange={(e) => setOperating({ ch4_recovered_kg_m3: Number(e.target.value) })}
             />
@@ -328,6 +343,7 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
               type="number"
               min={0}
               step={0.001}
+              aria-label="Recovered N₂O (kg/m³)"
               value={draft.operating_parameters.n2o_recovered_kg_m3 ?? 0}
               onChange={(e) => setOperating({ n2o_recovered_kg_m3: Number(e.target.value) })}
             />
@@ -342,7 +358,7 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
 
       <Button variant="primary" className="flex items-center justify-center gap-2 py-2.5" onClick={saveAndRun} disabled={busy}>
         {busy ? <Spinner /> : <Play className="size-4" />}
-        {busy ? 'Running Simulation…' : 'Run Simulation'}
+        {busy ? 'Running Simulation…' : '2. Run Simulation'}
       </Button>
     </div>
   )
@@ -369,6 +385,8 @@ function MaintenanceEditor({
   onRemove: (index: number) => void
 }) {
   const [unitType, setUnitType] = useState<UnitType>('aeration')
+  const mounted = useRef(true)
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false } }, [])
   const [startDate, setStartDate] = useState('')
   const [duration, setDuration] = useState(7)
   const [availability, setAvailability] = useState(50)
@@ -389,7 +407,7 @@ function MaintenanceEditor({
               </div>
             </div>
           </div>
-          <button className="text-muted-foreground hover:text-destructive" onClick={() => onRemove(i)}>
+          <button className="text-muted-foreground hover:text-destructive" aria-label={`Remove ${UNIT_LABEL[ev.unit_type]} maintenance on ${ev.start_date}`} onClick={() => onRemove(i)}>
             <Trash2 className="size-3.5" />
           </button>
         </div>
@@ -401,7 +419,7 @@ function MaintenanceEditor({
       <div className="mt-1 grid grid-cols-2 gap-2 rounded-md border border-dashed border-border p-2">
         <div className="col-span-2">
           <Label>Equipment</Label>
-          <Select value={unitType} onChange={(e) => setUnitType(e.target.value as UnitType)}>
+          <Select aria-label="Maintenance equipment" value={unitType} onChange={(e) => setUnitType(e.target.value as UnitType)}>
             <option value="pump">Pump Station</option>
             <option value="aeration">Aeration System</option>
             <option value="clarifier">Clarifier</option>
@@ -409,13 +427,14 @@ function MaintenanceEditor({
         </div>
         <div>
           <Label>Start Date</Label>
-          <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+          <Input aria-label="Maintenance start date" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
         </div>
         <div>
           <Label>Duration (days)</Label>
           <Input
             type="number"
             min={1}
+            aria-label="Maintenance duration (days)"
             value={duration}
             onChange={(e) => setDuration(Number(e.target.value))}
           />
@@ -426,6 +445,7 @@ function MaintenanceEditor({
             type="range"
             min={0}
             max={100}
+            aria-label="Availability during maintenance (%)"
             value={availability}
             onChange={(e) => setAvailability(Number(e.target.value))}
             className="w-full accent-(--primary)"

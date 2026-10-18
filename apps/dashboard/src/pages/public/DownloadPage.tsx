@@ -157,7 +157,7 @@ export default function DownloadPage() {
             above still uses the existing CitizenFlood account service.
           </p>
           <Link to="/login">
-            Platform sign-in <ArrowRight size={16} aria-hidden="true" />
+            Account availability <ArrowRight size={16} aria-hidden="true" />
           </Link>
         </div>
         <div className="release-disclosures">

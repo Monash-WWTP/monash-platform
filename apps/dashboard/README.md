@@ -10,9 +10,9 @@ npm --prefix apps/dashboard run build
 npm --prefix apps/dashboard run dev
 ```
 
-Vite configuration uses `VITE_SUPABASE_URL`, `VITE_SUPABASE_KEY` (publishable key only), and `VITE_API_BASE`. The default development proxy sends `/api` to localhost:8000. Scenario calls still use legacy `/api/*` routes: supply a compatible legacy development API. The successor `/api/v1` contract is not wired to this client yet. Monitoring retains the source's public Supabase defaults.
+The source client uses same-origin `/api/v1` requests with server-held browser sessions and CSRF protection. `VITE_API_BASE` can override the API base, but production cookie/origin behavior must be integration-tested. Local Vite proxies `/api` to `127.0.0.1:8181`. The checked-in Vercel rewrite still targets the legacy Render API; it must not be treated as a completed successor deployment.
 
-The production build runs TypeScript checking. There is no inherited browser test suite; build success does not verify live authentication or map interaction. See the [deployment gate](../../docs/operations/deployment.md), [migration status](../../docs/migration/ROADMAP.md), [scientific limits](../../docs/science/VALIDATION.md), and [import changes](../../docs/migration/IMPORT_ADAPTATIONS.md).
+The production build runs TypeScript checking. Synthetic browser checks live under `scripts/smoke_public_portal.py` and `scripts/smoke_dashboard_map.py`; build success alone does not verify live authentication or map interaction. See the [deployment gate](../../docs/operations/deployment.md), [migration status](../../docs/migration/ROADMAP.md), [scientific limits](../../docs/science/VALIDATION.md), and [import changes](../../docs/migration/IMPORT_ADAPTATIONS.md).
 
 ## Public portal
 
@@ -21,7 +21,7 @@ Operator routes: `/dashboard`, `/dashboard/plants/:plantId`. Old `/plants/:plant
 
 The cross-surface UI, route behavior, API cutover, science and operations acceptance items are tracked in the [platform resolution checklist](../../docs/product/platform-resolution-checklist.md).
 
-Shared accounts are **not integrated yet**; account entry pages explain this without collecting credentials. CitizenFlood 1.0.0 is publicly available from the download page; its immutable artifact and verification record are documented in [Android release](../../docs/operations/android-release-1.0.0.json). The public research collection is empty until approved content is supplied.
+Shared account integration exists in the source clients and local staging. Public account entry pages explain service availability without collecting credentials; the new identity/API service is not publicly deployed. CitizenFlood 1.0.0 is publicly available from the download page; its immutable artifact and verification record are documented in [Android release](../../docs/operations/android-release-1.0.0.json). The public research collection is empty until approved content is supplied.
 
 ### Publish a release
 

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { api } from './client'
 import type { ScenarioInput } from './types'
@@ -62,7 +62,11 @@ export function useDeleteScenario(plantId: number) {
 export function useRunScenario(plantId: number) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (scenarioId: number) => api.runScenario(scenarioId),
+    mutationFn: ({ scenarioId, startDate }: { scenarioId: number; startDate: string }) => api.runScenario(scenarioId, 'effluent_v1', startDate),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['scenarios', plantId] }),
   })
 }
+
+export const useRuns = (runIds: number[]) => useQueries({ queries: runIds.map(id => ({
+  queryKey: ['run', id], queryFn: () => api.run(id),
+})) })

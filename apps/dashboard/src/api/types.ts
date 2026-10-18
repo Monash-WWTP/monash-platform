@@ -151,6 +151,10 @@ export interface Run {
   kpis: Kpis
   exceedances: Exceedance[]
   created_at: string
+  input_snapshot: Record<string, unknown> & { forecast?: Forecast; maintenance?: MaintenanceEvent[]; start_date?: string }
+  artifact_digest: string
+  error_code: string | null
+  parent_run_id: number | null
 }
 
 export interface Timeseries {

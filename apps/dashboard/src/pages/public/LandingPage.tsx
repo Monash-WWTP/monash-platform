@@ -32,43 +32,12 @@ export default function LandingPage() {
             direct APK download
           </p>
         </div>
-        <Link className="home-app" to="/download">
-          <img
-            src="/assets/app/citizenflood-icon.png"
-            alt=""
-            width="76"
-            height="76"
-          />
-          <span>
-            <strong>CitizenFlood</strong>
-            <span>Your observations, recorded in the field.</span>
-            <span className="home-app-link">
-              View the Android app <ArrowRight size={16} aria-hidden="true" />
-            </span>
-          </span>
-        </Link>
+        <figure className="app-preview home-preview">
+          <img src="/assets/app/report-screen.png" alt="CitizenFlood report screen with rainfall, water level, temperature and wastewater observation categories" width="922" height="2048" />
+          <figcaption>Actual app screen · published Android version 1.0.0</figcaption>
+        </figure>
       </section>
       <section className="platform-paths" aria-label="Explore the platform">
-        <article>
-          <h2>Record an observation.</h2>
-          <p>
-            Rainfall, water level, temperature or wastewater. Capture what you
-            see with the Android app.
-          </p>
-          <Link to="/download">
-            Download CitizenFlood <ArrowRight size={17} aria-hidden="true" />
-          </Link>
-        </article>
-        <article>
-          <h2>Explore the water record.</h2>
-          <p>
-            View laboratory measurements and their source context. Invited
-            operators can access scenario tools.
-          </p>
-          <Link to="/dashboard">
-            Open the dashboard <ArrowRight size={17} aria-hidden="true" />
-          </Link>
-        </article>
         <article>
           <h2>Explore the research.</h2>
           <p>
@@ -78,6 +47,12 @@ export default function LandingPage() {
           <Link to="/research">
             Browse research <ArrowRight size={17} aria-hidden="true" />
           </Link>
+        </article>
+        <article>
+          <h2>Methods and references.</h2>
+          <p>Read the urban-water carbon-accounting guideline and see how references inform the platform.</p>
+          <a href="/references/urban-water-carbon-accounting-guidelines.pdf">Open the guideline PDF <ArrowRight size={17} aria-hidden="true" /></a>
+          <Link to="/research/references">View all references <ArrowRight size={17} aria-hidden="true" /></Link>
         </article>
       </section>
       <section className="evidence-note">
@@ -90,7 +65,7 @@ export default function LandingPage() {
       </section>
       <section className="shared-account-band">
         <div>
-          <h2>One platform account.</h2>
+          <h2>Shared accounts are being prepared.</h2>
           <p>
             Shared accounts are available in local staging for the dashboard and
             API-connected app. The public APK 1.0.0 uses the existing
@@ -98,7 +73,7 @@ export default function LandingPage() {
           </p>
         </div>
         <Link className="quiet-action" to="/register">
-          Create an account <ArrowRight size={18} aria-hidden="true" />
+          Account availability <ArrowRight size={18} aria-hidden="true" />
         </Link>
       </section>
     </main>

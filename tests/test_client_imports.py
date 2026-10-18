@@ -25,14 +25,17 @@ MOBILE_ADAPTATIONS = {
     "test/widgets/category_tile_test.dart",
 }
 DASHBOARD_ADAPTATIONS = {
+    "frontend/index.html",
     "frontend/README.md",
     "frontend/.gitignore",
     "frontend/src/api/client.ts", "frontend/src/api/monitoring.ts",
+    "frontend/src/api/hooks.ts", "frontend/src/api/types.ts",
     "frontend/src/components/auth/OperatorAccess.tsx", "frontend/vite.config.ts",
     "frontend/src/lib/supabase.ts",
     "frontend/vercel.json",
     "frontend/src/main.tsx",
     "frontend/src/pages/WorkspacePage.tsx",
+    "frontend/src/stores/scenarioStore.ts",
     "frontend/src/components/scenario/ScenarioPanel.tsx",
     "frontend/src/components/comparison/ComparisonView.tsx",
     "frontend/src/components/results/ResultsPanel.tsx",
@@ -44,7 +47,6 @@ DASHBOARD_ADAPTATIONS = {
     "frontend/src/components/comparison/ComparisonView.tsx",
     "frontend/src/components/dashboard/TrendsChart.tsx",
     "frontend/src/components/monitoring/StationDashboard.tsx",
-    "frontend/src/components/twin/DigitalTwin.tsx",
     "frontend/src/components/ui.tsx",
     "frontend/src/components/ui/badge.tsx",
     "frontend/src/components/ui/button.tsx",
@@ -58,7 +60,7 @@ def test_mobile_documented_launcher_is_executable():
 
 def test_dashboard_snapshot_matches_pinned_frontend():
     rows = [r for r in ROWS if r["source_repo"] == "dashboard" and
-            r["source_path"].startswith("frontend/")]
+            r["source_path"].startswith("frontend/") and r["disposition"] == "imported"]
     assert rows
     for row in rows:
         target = ROOT / row["target_path"]
