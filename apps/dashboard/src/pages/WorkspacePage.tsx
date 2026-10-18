@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Factory } from 'lucide-react'
 
-import { usePlant, useTimeseries } from '../api/hooks'
+import { usePlant, useRun, useTimeseries } from '../api/hooks'
 import { useWorkspaceStore } from '../stores/scenarioStore'
 import ResultsPanel from '../components/results/ResultsPanel'
 import ScenarioPanel from '../components/scenario/ScenarioPanel'
@@ -15,15 +15,15 @@ export default function WorkspacePage() {
   const { plantId } = useParams()
   const id = Number(plantId)
   const { data: plant, isLoading, isError, refetch } = usePlant(id)
-  const { centerTab, setCenterTab, activeRunId, draft, resetDraft, setActiveRunId } =
+  const { centerTab, setCenterTab, activeRunId, resetWorkspace } =
     useWorkspaceStore()
-  const { data: ts } = useTimeseries(activeRunId)
+  const { data: run } = useRun(activeRunId)
+  const { data: ts } = useTimeseries(run?.plant_id === id ? activeRunId : null)
 
   // fresh workspace state when switching plants
   useEffect(() => {
-    resetDraft()
-    setActiveRunId(null)
-  }, [id, resetDraft, setActiveRunId])
+    resetWorkspace()
+  }, [id, resetWorkspace])
 
   if (isLoading) {
     return <div className="flex h-full flex-col"><OperatorHeader context="Workspace" /><p role="status" className="p-6 text-sm text-muted-foreground">Loading plant…</p></div>
@@ -93,7 +93,7 @@ export default function WorkspacePage() {
           <Suspense fallback={<p role="status" className="p-4 text-sm">Loading view…</p>}>
           {centerTab === 'trends' &&
             (ts ? (
-              <TrendsChart ts={ts} maintenance={draft.maintenance} />
+              <TrendsChart ts={ts} maintenance={run?.input_snapshot?.maintenance ?? []} />
             ) : (
               <EmptyCenter />
             ))}

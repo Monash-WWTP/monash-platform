@@ -39,6 +39,7 @@ interface WorkspaceState {
   removeMaintenance: (index: number) => void
   loadScenario: (id: number, draft: ScenarioInput) => void
   resetDraft: () => void
+  resetWorkspace: () => void
   setActiveRunId: (id: number | null) => void
   setBaselineRunId: (id: number | null) => void
   toggleCompareRun: (id: number) => void
@@ -81,10 +82,12 @@ export const useWorkspaceStore = create<WorkspaceState>((set) => ({
     })),
   loadScenario: (id, draft) => set({ editingScenarioId: id, draft }),
   resetDraft: () => set({ editingScenarioId: null, draft: emptyDraft() }),
+  resetWorkspace: () => set({ draft: emptyDraft(), editingScenarioId: null, activeRunId: null, baselineRunId: null, compareRunIds: [], centerTab: 'trends' }),
   setActiveRunId: (id) => set({ activeRunId: id }),
   setBaselineRunId: (id) => set({ baselineRunId: id }),
   toggleCompareRun: (id) =>
     set((s) => ({
+      baselineRunId: s.compareRunIds.includes(id) && s.baselineRunId === id ? null : s.baselineRunId,
       compareRunIds: s.compareRunIds.includes(id)
         ? s.compareRunIds.filter((r) => r !== id)
         : s.compareRunIds.length < 4
