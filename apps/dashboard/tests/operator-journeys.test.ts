@@ -27,6 +27,7 @@ test('workspace and moderation share a recognizable route back to the platform',
     assert.match(html, /href="\/dashboard"/)
   }
   assert.match(render(client, '/dashboard/plants/1', WorkspacePage), /aria-pressed="true"/)
+  assert.doesNotMatch(render(client, '/dashboard/plants/1', WorkspacePage), /3D Digital Twin/)
   client.clear()
 })
 

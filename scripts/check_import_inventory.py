@@ -43,6 +43,8 @@ def classify(repo: str, path: str) -> tuple[str, str | None, str | None]:
         return "imported", f"apps/citizenflood/{path}", None
 
     if repo == "dashboard":
+        if path == "frontend/src/components/twin/DigitalTwin.tsx":
+            return "superseded", None, 'Unsupported illustrative 3D twin removed from the active product; pinned source identity and Git history are retained.'
         if path.startswith(("backend/", "simulation/")):
             return "superseded", None, "Replaced by the pinned shared API foundation; origin retained here."
         if path.startswith("frontend/"):

@@ -29,8 +29,7 @@ interface WorkspaceState {
   activeRunId: number | null
   baselineRunId: number | null
   compareRunIds: number[]
-  centerTab: 'trends' | 'twin' | 'compare'
-  timelineDay: number
+  centerTab: 'trends' | 'compare'
 
   setDraft: (patch: Partial<ScenarioInput>) => void
   setForecast: (patch: Partial<ScenarioInput['forecast']>) => void
@@ -43,8 +42,7 @@ interface WorkspaceState {
   setActiveRunId: (id: number | null) => void
   setBaselineRunId: (id: number | null) => void
   toggleCompareRun: (id: number) => void
-  setCenterTab: (tab: 'trends' | 'twin' | 'compare') => void
-  setTimelineDay: (day: number) => void
+  setCenterTab: (tab: 'trends' | 'compare') => void
 }
 
 export const useWorkspaceStore = create<WorkspaceState>((set) => ({
@@ -54,7 +52,6 @@ export const useWorkspaceStore = create<WorkspaceState>((set) => ({
   baselineRunId: null,
   compareRunIds: [],
   centerTab: 'trends',
-  timelineDay: 0,
 
   setDraft: (patch) => set((s) => ({ draft: { ...s.draft, ...patch } })),
   setForecast: (patch) =>
@@ -84,7 +81,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set) => ({
     })),
   loadScenario: (id, draft) => set({ editingScenarioId: id, draft }),
   resetDraft: () => set({ editingScenarioId: null, draft: emptyDraft() }),
-  setActiveRunId: (id) => set({ activeRunId: id, timelineDay: 0 }),
+  setActiveRunId: (id) => set({ activeRunId: id }),
   setBaselineRunId: (id) => set({ baselineRunId: id }),
   toggleCompareRun: (id) =>
     set((s) => ({
@@ -95,5 +92,4 @@ export const useWorkspaceStore = create<WorkspaceState>((set) => ({
           : s.compareRunIds,
     })),
   setCenterTab: (tab) => set({ centerTab: tab }),
-  setTimelineDay: (day) => set({ timelineDay: day }),
 }))

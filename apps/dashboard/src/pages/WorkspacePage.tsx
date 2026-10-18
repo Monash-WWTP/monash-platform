@@ -10,7 +10,6 @@ import OperatorHeader from '../components/OperatorHeader'
 import { Button } from '../components/ui'
 const ComparisonView = lazy(() => import('../components/comparison/ComparisonView'))
 const TrendsChart = lazy(() => import('../components/dashboard/TrendsChart'))
-const DigitalTwin = lazy(() => import('../components/twin/DigitalTwin'))
 
 export default function WorkspacePage() {
   const { plantId } = useParams()
@@ -68,7 +67,6 @@ export default function WorkspacePage() {
           {(
             [
               ['trends', 'Effluent Trends'],
-              ['twin', '3D Digital Twin'],
               ['compare', 'Scenario Comparison'],
             ] as const
           ).map(([tab, label]) => (
@@ -99,7 +97,6 @@ export default function WorkspacePage() {
             ) : (
               <EmptyCenter />
             ))}
-          {centerTab === 'twin' && <DigitalTwin plant={plant} ts={ts ?? null} />}
           {centerTab === 'compare' && <ComparisonView plantId={id} />}
           </Suspense>
         </main>

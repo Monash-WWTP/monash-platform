@@ -75,3 +75,9 @@ Current frontend verification: 22 tests pass, lint and production build pass; th
 5. **Qualify the small-user deployment.** Use the 20–50-person estimate, confirm peak simultaneous use and photo volume, configure rate/concurrency controls and redacted alerts, then measure latency/error/resource behavior. Total registered users alone does not specify peak load.
 6. **Qualify Android and scientific scope.** Build the API-connected APK with the existing signing identity and higher versionCode; test physical installation/upgrade, sign-in and interrupted uploads. Keep simulations illustrative; decision use requires a separate validation record.
 7. **Review and release the exact artifacts.** Merge/deploy the reviewed UI and backend/client artifacts only after their applicable gates pass, rehearse rollback preserving new writes and observe an acceptance window. The web UI can be reviewed independently; this feature branch is not yet the public deployment.
+
+## Scientific audit and twin removal
+
+The unsupported twin, its timeline state and deck.gl dependencies have been removed from the active frontend; 47 packages were removed. The remaining workspace views are Effluent Trends and Scenario Comparison. Frontend tests/lint/build and a T3 production-view check confirm the twin is absent. This does not complete the proposed workflow/comparison redesign.
+
+The [simulation evidence audit](../science/SIMULATION_EVIDENCE_AUDIT.md) identifies uncalibrated effluent coefficients, methane-factor provenance gaps for ANAMMOX/AGS, equation/terminology ambiguities and comparison-integrity defects. Those findings are open scientific acceptance issues, not evidence that calculations were corrected or validated. Existing simulation semantics and public CSV values were preserved pending scientific review. The proposed configure/run/inspect/compare redesign is awaiting the user's design response.

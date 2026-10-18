@@ -11,9 +11,6 @@
     "test": "TSX_TSCONFIG_PATH=tsconfig.app.json node --import tsx --test tests/*.test.ts"
   },
   "dependencies": {
-    "@deck.gl/core": "^9.3.3",
-    "@deck.gl/layers": "^9.3.3",
-    "@deck.gl/react": "^9.3.3",
     "@radix-ui/react-label": "^2.1.9",
     "@radix-ui/react-select": "^2.3.0",
     "@radix-ui/react-separator": "^1.1.9",
