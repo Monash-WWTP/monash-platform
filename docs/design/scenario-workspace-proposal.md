@@ -1,10 +1,20 @@
-# Scenario workspace proposal — awaiting design approval
+# Monitoring-first dashboard design — approved
+
+Approved by the user on 2026-10-18 after choosing monitoring as the primary workflow and simulations as secondary.
 
 Intent: remove unsupported spectacle, make the work sequence understandable and prevent comparisons that imply unsupported scientific conclusions. Keep the approved green/charcoal/white palette, Manrope and shared operator controls. Evidence audit: `docs/science/SIMULATION_EVIDENCE_AUDIT.md`.
 
-## Monitoring → configure → run → inspect → compare
+## Priority and navigation
 
-Monitoring remains the entry point for observations and lab records. Label their source and date and keep them separate from model outputs. The station action opens a research workspace; it must not suggest a calibrated live plant twin.
+User direction: prioritize monitoring and keep simulations secondary. The primary journey is find a plant → inspect observations → understand data coverage → decide the next task. Retain the accessible map and searchable plant list as complementary views. Do not put simulation controls or model outputs on the monitoring overview.
+
+The overview emphasizes latest available measurements, observation dates and sources, and missing or below-detection-limit data. Show data freshness using explicit timestamps; do not invent an operational health score, real-time status or alert severity from sparse records. Keep sampling locations distinct from treatment plants and explain unavailable data. Plant and station details expose available history, units and provenance before secondary actions.
+
+Use one shared operator header and consistent typography, spacing, controls, focus states and empty/error states across monitoring and research. Monitoring remains the primary navigation destination. A clearly labelled Research sandbox is a secondary plant-level action, with a return link preserving monitoring context. The 3D twin remains removed.
+
+## Secondary research workspace: configure → run → inspect → compare
+
+The research workspace must not suggest a calibrated live plant twin. Measured observations and simulated values remain clearly distinguished; opening research does not imply that current monitoring data automatically calibrates or populates a model. Any transferred input must retain its source, date and unit.
 
 The workspace has two clear destinations: Run results and Compare scenarios. Configuration groups inputs into time window, measured/assumed influent, operating assumptions and maintenance. Weather/rainfall are labelled context-only rather than offered as predictive levers. Units and default assumptions are visible beside their fields. Running shows progress and a durable completed/failed result with Retry, preserving entered values.
 
