@@ -65,6 +65,7 @@ export default function MapPage() {
   const [showCommunityObservations, setShowCommunityObservations] = useState(true)
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
+  const [narrow, setNarrow] = useState(() => window.matchMedia('(max-width: 639px)').matches)
   const closeButton = useRef<HTMLButtonElement>(null)
   const trigger = useRef<HTMLElement | null>(null)
   const selectPlant = useCallback((plant: Plant, source: HTMLElement) => {
@@ -78,11 +79,18 @@ export default function MapPage() {
   const dismissPanel = useCallback(() => {
     setSelected(null)
     setExpanded(false)
-    trigger.current?.focus()
   }, [])
   useEffect(() => {
     if (selected) closeButton.current?.focus()
-  }, [selected])
+    else if (trigger.current?.isConnected) trigger.current.focus()
+    else if (trigger.current) document.querySelector<HTMLInputElement>('#plant-search')?.focus()
+  }, [selected, narrow])
+  useEffect(() => {
+    const query = window.matchMedia('(max-width: 639px)')
+    const update = () => setNarrow(query.matches)
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [])
   const visiblePlants = plants?.filter(plant =>
     `${plant.name} ${plant.code ?? ''}`.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase())) ?? []
 
@@ -216,6 +224,7 @@ export default function MapPage() {
 
   return (
     <main className="relative h-full overflow-hidden" aria-label="Water monitoring">
+      <div inert={selected !== null && narrow}>
       <header className="absolute inset-x-0 top-0 z-10 flex h-14 items-center justify-between gap-3 border-b bg-background px-4">
         <Link to="/" className="font-semibold text-primary">Monash Water</Link>
         <span className="text-sm">Monitoring</span>
@@ -261,9 +270,22 @@ export default function MapPage() {
           </ul>}
         </section>
       </section>
-      {selected && <aside className={`absolute inset-y-0 right-0 z-20 flex max-w-full flex-col border-l border-border bg-background ${expanded ? 'w-[min(880px,100%)]' : 'w-[380px]'}`}
+      </div>
+      {selected && <aside className={`absolute inset-y-0 right-0 z-20 flex max-w-full flex-col border-l border-border bg-background ${expanded ? 'w-[min(880px,100%)]' : 'w-full sm:w-[380px]'}`}
+        role={narrow ? 'dialog' : undefined} aria-modal={narrow ? true : undefined}
         aria-label={`${selected.name} laboratory record`} data-testid="station-dashboard"
-        onKeyDown={event => { if (event.key === 'Escape' && !event.defaultPrevented) { event.stopPropagation(); dismissPanel() } }}>
+        onKeyDown={event => {
+          if (event.defaultPrevented) return
+          if (event.key === 'Escape') { event.stopPropagation(); dismissPanel() }
+          if (event.key === 'Tab' && narrow && event.currentTarget.contains(document.activeElement)) {
+            // Radix's portaled select manages its own focus outside this panel.
+            const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button, a[href], input, select, textarea, [tabindex]'))
+              .filter(element => element.tabIndex >= 0 && !element.hasAttribute('disabled') && element.getClientRects().length > 0)
+            const first = controls[0], last = controls.at(-1)
+            if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() }
+            else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() }
+          }
+        }}>
         <div className="flex shrink-0 items-center justify-between border-b px-3 py-2">
           <button className="flex size-11 items-center justify-center rounded hover:bg-muted" onClick={() => setExpanded(value => !value)}
             aria-label={expanded ? 'Collapse panel' : 'Expand panel'} aria-expanded={expanded}>

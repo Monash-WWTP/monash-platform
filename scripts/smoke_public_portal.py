@@ -35,7 +35,7 @@ with sync_playwright() as pw:
     assert page.get_by_role('link', name='Open the guideline PDF').get_attribute('href') == pdf_href
     page.get_by_role('link', name='View all references').click()
     page.get_by_role('heading', name='References').wait_for()
-    assert page.get_by_role('link', name='Open the hosted PDF').get_attribute('href') == pdf_href
+    assert page.get_by_role('link', name='Open full PDF').get_attribute('href') == pdf_href
     pdf_response = page.request.get(origin + pdf_href)
     assert pdf_response.status == 200
     assert pdf_response.headers.get('content-type', '').startswith('application/pdf')
@@ -47,12 +47,13 @@ with sync_playwright() as pw:
     assert page.get_by_role('link', name='Account availability', exact=True).count() >= 1
     assert page.get_by_role('link', name='Create account', exact=True).count() == 0
     page.get_by_role('link', name='Get CitizenFlood', exact=True).click()
-    page.get_by_role('heading', name='CitizenFlood for Android').wait_for()
+    page.get_by_role('heading', name='CitizenFlood', exact=True).wait_for()
     if release:
         assert page.get_by_role('link', name='Download Android APK').get_attribute('href') == release['artifactUrl']
+        page.get_by_text('Verify your download', exact=True).click()
         page.get_by_text(release['sha256'], exact=True).wait_for()
         page.get_by_text(release['versionName'], exact=True).wait_for()
-    page.get_by_role('button', name='Copy download page link').click()
+    page.get_by_role('button', name='Copy download link').click()
     page.get_by_role('status').get_by_text('Download page link copied.').wait_for()
     page.goto(origin + '/research')
     page.get_by_text('Approved publications will appear here.', exact=True).wait_for()
