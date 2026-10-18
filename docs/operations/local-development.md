@@ -19,8 +19,10 @@ uv run --locked python scripts/check_repository.py
 
 For a synthetic API demo, set `APP_ENV=development`, run `uv run --locked python -m app.devdata`, then `uv run --locked uvicorn app.main:app --reload --host 127.0.0.1`. The seed is idempotent and rejects production. Confirm health with `curl --fail http://127.0.0.1:8000/api/v1/health`.
 
-API environment: `DATABASE_URL` is required; `APP_ENV`, `CORS_ORIGINS`, `SUPABASE_URL`, `SUPABASE_KEY` and `WWTP_OPERATOR_EMAILS` configure the temporary integration. Do not open operator access by weakening the dependency. The empty default allowlist denies mutations.
+API environment: `DATABASE_URL` is required. Current authentication uses OIDC issuer/discovery/JWKS, browser client secret/callback/web origin, issuer-subject account mapping, server-owned capabilities and operator MFA. Private photos require the configured S3 endpoint/bucket/access credentials. See `services/api/app/config.py` and `infra/staging/.env.example`; never copy real secrets into Git or chat. Legacy Supabase configuration remains for ownership-claim compatibility, not general operator authorization.
 
-[Dashboard](../../apps/dashboard/README.md) and [mobile](../../apps/citizenflood/README.md) commands are independent. Both retain legacy integration. API tests mock authentication and use synthetic data; they do not call production services. [Research reproduction](../../research/README.md) is optional and separately installed.
+`/api/v1/health` is process liveness. `/api/v1/ready` checks the migrated database and, when configured, private bucket access and identity signing-key availability. Production settings require those integrations. Database connection acquisition and statements, storage and identity probes use bounded waits; a healthy database alone no longer establishes integrated readiness. Readiness needs bucket head permission. These probes do not replace login/upload acceptance.
+
+[Dashboard](../../apps/dashboard/README.md) and [mobile](../../apps/citizenflood/README.md) source clients use the versioned API. The published APK remains legacy. API tests use synthetic identities/data and a disposable database; storage tests use an in-memory double, so they do not prove a deployed S3 service. [Research reproduction](../../research/README.md) is optional and separately installed.
 
 Stop the database with `docker compose -f infra/local/compose.test.yaml down`. This retains its named volume. Deleting the volume is a separate destructive reset; it is never part of onboarding.

@@ -1,6 +1,6 @@
 # Shared backend release plan
 
-Assessment date: 2026-10-03. Status: release proposal; production cutover is not ready. Hosting location remains an owner input. This document operationalizes the existing shared-platform design and migration roadmap; it does not claim missing features are implemented.
+Historical proposal date: 2026-10-03. Current implementation/verification is recorded in [2026-10-18 acceptance](staging-acceptance-2026-10-18.md); the unimplemented descriptions below are historical, not the current source inventory. Status: release proposal; production cutover is not ready. Hosting location remains an owner input. This document operationalizes the existing shared-platform design and migration roadmap; it does not claim missing features are implemented.
 
 ## Current evidence
 

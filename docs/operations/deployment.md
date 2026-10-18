@@ -1,10 +1,21 @@
 # Standalone server readiness
 
+## Current assessment — 2026-10-18
+
+The shared API, OIDC/browser sessions, capability/MFA checks, monitoring/report/media/moderation routes, versioned source clients and immutable simulation runs exist. Source and test evidence are in the [current acceptance record](staging-acceptance-2026-10-18.md). Production cutover remains blocked on domains/configuration, integration, private migration reconciliation, physical-device release, operational acceptance and owner decisions.
+
+Local staging's application database/API and identity discovery respond, but Garage storage is stopped because its host configuration mount points at an unavailable old worktree path. Recover the original private configuration from secure custody and repair that mount before rehearsing uploads/restores; do not replace its keys or reset persisted volumes. The running API image predates this branch and its readiness probe checks only the database. This branch extends readiness to configured storage and identity dependencies.
+
+The expected initial audience is 20–50 people (user estimate on 2026-10-18); concurrency and photo rates are still assumptions to confirm. Recovery ownership, acceptable data loss/downtime, production domains and hosting access are not yet assigned in this record. Request-rate controls and load acceptance remain open.
+
+The sections below retain earlier deployment history. Statements that capabilities are unimplemented describe those dated checkpoints and are superseded by this assessment.
+
+
 The public static website is published. Shared API/identity production deployment and client cutover are not complete. Start with independent dashboard/static hosting and API processes behind TLS, application PostgreSQL, authentik with a separate identity database, and private object storage. A shared physical server is acceptable initially; keep service credentials, database roles and backup procedures distinct.
 
 Before deployment, record domains, TLS/DNS ownership, approved maintainers, measured request/photo volume, resource limits, API workers, object retention, RPO/RTO, and recovery owners. Use secret injection outside Git, restricted DB networking, least-privilege DB roles, durable object storage and versioned release artifacts. Migrations run as an explicit release step before traffic changes. Do not deploy the disposable Compose service or its credentials.
 
-Current blockers:
+Historical foundation blockers (see current assessment above):
 
 - Identity, reporting/monitoring contracts, client cutover and privacy reconciliation remain planned.
 - The inherited npm audit findings were remediated locally (MapLibre upgrade, removal of unused umbrella dependency, compatible lockfile updates). The current audit is clean; require the CI audit and browser release checks before deployment.

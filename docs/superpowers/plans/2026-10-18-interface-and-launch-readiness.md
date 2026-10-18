@@ -32,6 +32,16 @@ Audit verification: frontend 12 tests, lint and build passed; Python suite had 9
 4. Registration unavailable: no primary action promises a working registration flow (Task 2).
 5. Lost responses and security changes: retries avoid duplicates; revoked identities cannot retain access (Task 5).
 
+## Execution status — 2026-10-18
+
+- Tasks 1–3: implemented and verified with unit/render tests and T3 public/monitoring browser checks; final review's mobile focus finding fixed and retested in both Tab directions, Escape/focus restoration and the portaled metric select.
+- Task 4: implementation and repository checks complete; payload measurements recorded. Optional 3D rendering/full simulation UI and controlled latency/load benchmarking remain acceptance work, so those checks are not claimed complete.
+- Task 5: synthetic backend verification and dependency-readiness hardening complete; live integrated qualification blocked by stopped staging object storage. Existing identity accounts were not modified.
+- Task 6: stale documentation reconciled; 20–50-person user estimate recorded. Restore/load/alerts/owner acceptance remains open.
+- Task 7: not started. Production routing and published APK remain unchanged.
+
+Evidence and exact open gates: `docs/operations/staging-acceptance-2026-10-18.md`.
+
 ## Delivery order
 
 Tasks 1–4 are a reviewable interface/repository batch. Tasks 5–6 form a separate backend qualification batch. Task 7 is production release work, dependent on the preceding evidence. Cosmetic changes must not delay the correctness fixes.
@@ -42,11 +52,11 @@ Tasks 1–4 are a reviewable interface/repository batch. Tasks 5–6 form a sepa
 
 **Interfaces:** `summarizeMetric(samples: Sample[], metric: string): { totalCount: number; quantifiedCount: number; mean: number | null; max: number | null }`, using the existing monitoring sample type. Below-detection and null readings are excluded from quantified statistics; their underlying records are preserved.
 
-- [ ] Add failing tests: empty/all-null/all-BDL return null mean/max and zero quantified count; mixed values `[2, 4]` plus null/BDL return mean 3/max 4 and accurate counts; measured zero remains zero.
-- [ ] Run `npm --prefix apps/dashboard test` and confirm the new assertions fail before implementation.
-- [ ] Implement the helper and render unavailable summaries as “No quantifiable readings”; display usable/total counts and explain exclusion of below-detection results without inventing a censoring method.
-- [ ] Handle `useSamples` errors before empty states; provide Retry that preserves filters and selected metric.
-- [ ] Verify synthetic empty, outage, all-BDL and mixed states; run frontend tests, lint and build. Commit the focused change.
+- [x] Add failing tests: empty/all-null/all-BDL return null mean/max and zero quantified count; mixed values `[2, 4]` plus null/BDL return mean 3/max 4 and accurate counts; measured zero remains zero.
+- [x] Run `npm --prefix apps/dashboard test` and confirm the new assertions fail before implementation.
+- [x] Implement the helper and render unavailable summaries as “No quantifiable readings”; display usable/total counts and explain exclusion of below-detection results without inventing a censoring method.
+- [x] Handle `useSamples` errors before empty states; provide Retry that preserves filters and selected metric.
+- [x] Verify synthetic empty, outage, all-BDL and mixed states; run frontend tests, lint and build. Commit the focused change.
 
 ### Task 2: Make public actions honest and simplify the homepage
 
@@ -54,11 +64,11 @@ Tasks 1–4 are a reviewable interface/repository batch. Tasks 5–6 form a sepa
 
 **Interfaces:** Preserve `/login` and `/register` URLs. While shared identity is unavailable publicly, navigation says “Account availability”; the destination explains status without a disabled primary registration action. Keep CitizenFlood download the principal home action and dashboard the secondary action.
 
-- [ ] Update the public route contract to detect misleading registration CTAs and require the availability explanation.
-- [ ] Reduce repeated homepage download/dashboard promotions; use the existing release-appropriate app screenshot when its provenance and caption match the published artifact. Do not introduce fabricated metrics, imagery or claims.
-- [ ] Tighten the mobile header so unavailable accounts do not dominate it. Preserve keyboard focus, skip link and logical reading order.
-- [ ] Inspect current desktop and narrow-screen captures through T3 preview; check primary actions, wrapping, contrast and keyboard order. If preview remains unreachable, record visual acceptance as open.
-- [ ] Run frontend tests, lint/build and the public contract through the permitted browser workflow. Commit.
+- [x] Update the public route contract to detect misleading registration CTAs and require the availability explanation.
+- [x] Reduce repeated homepage download/dashboard promotions; use the existing release-appropriate app screenshot when its provenance and caption match the published artifact. Do not introduce fabricated metrics, imagery or claims.
+- [x] Tighten the mobile header so unavailable accounts do not dominate it. Preserve keyboard focus, skip link and logical reading order.
+- [x] Inspect current desktop and narrow-screen captures through T3 preview; check primary actions, wrapping, contrast and keyboard order. If preview remains unreachable, record visual acceptance as open.
+- [x] Run frontend tests, lint/build and the public contract through the permitted browser workflow. Commit.
 
 ### Task 3: Make monitoring practical with keyboard and mobile
 
@@ -66,12 +76,12 @@ Tasks 1–4 are a reviewable interface/repository batch. Tasks 5–6 form a sepa
 
 **Interfaces:** Keep station selection and workspace URLs. Expose a plant list independent of WebGL availability; list search filters by plant name/code without changing the API contract. Both markers and list buttons open the same selected station.
 
-- [ ] Add regression cases for keyboard selection, search with no matches, Escape/close dismissal, focus return and a 320px viewport.
-- [ ] Replace clickable plant divs and interpolated `innerHTML` with named buttons and safe text nodes. Give close/expand controls accessible labels and adequate touch targets.
-- [ ] Make the panel fit its viewport, preserve a usable scroll area, move focus into it on open and return focus on close.
-- [ ] Honor reduced motion; remove `essential: true` from decorative camera flights and shorten normal navigation motion.
-- [ ] Replace the port-8000 diagnostic with a user-facing unavailable message and Retry. Verify error versus empty data and map-unavailable fallback.
-- [ ] Run frontend verification and browser checks; inspect desktop/mobile in one bounded review pass and one confirmation pass after fixes. Commit.
+- [x] Add regression cases for keyboard selection, search with no matches, Escape/close dismissal, focus return and a 320px viewport.
+- [x] Replace clickable plant divs and interpolated `innerHTML` with named buttons and safe text nodes. Give close/expand controls accessible labels and adequate touch targets.
+- [x] Make the panel fit its viewport, preserve a usable scroll area, move focus into it on open and return focus on close.
+- [x] Honor reduced motion; remove `essential: true` from decorative camera flights and shorten normal navigation motion.
+- [x] Replace the port-8000 diagnostic with a user-facing unavailable message and Retry. Verify error versus empty data and map-unavailable fallback.
+- [x] Run frontend verification and browser checks; inspect desktop/mobile in one bounded review pass and one confirmation pass after fixes. Commit.
 
 ### Task 4: Restore a green baseline and reduce loading cost
 
