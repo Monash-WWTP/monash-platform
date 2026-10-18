@@ -44,26 +44,24 @@ with sync_playwright() as pw:
     assert page.get_by_role('link', name='Skip to content').evaluate('(e) => e === document.activeElement')
     page.keyboard.press('Enter')
     assert page.evaluate('window.location.hash') == '#public-main'
-    if release:
-        assert page.get_by_role('link', name='Download Android APK').get_attribute('href') == release['artifactUrl']
-    else:
-        assert not page.get_by_role('button', name='Download Android APK').is_enabled()
-        assert page.locator('a[href$=".apk"]').count() == 0
-    page.get_by_role('link', name='Installation guide', exact=True).click()
+    assert page.get_by_role('link', name='Account availability', exact=True).count() >= 1
+    assert page.get_by_role('link', name='Create account', exact=True).count() == 0
+    page.get_by_role('link', name='Get CitizenFlood', exact=True).click()
     page.get_by_role('heading', name='CitizenFlood for Android').wait_for()
     if release:
         assert page.get_by_role('link', name='Download Android APK').get_attribute('href') == release['artifactUrl']
         page.get_by_text(release['sha256'], exact=True).wait_for()
         page.get_by_text(release['versionName'], exact=True).wait_for()
     page.get_by_role('button', name='Copy download page link').click()
-    page.get_by_role('status').get_by_text('Link copied.').wait_for()
+    page.get_by_role('status').get_by_text('Download page link copied.').wait_for()
     page.goto(origin + '/research')
     page.get_by_text('Approved publications will appear here.', exact=True).wait_for()
     page.goto(origin + '/research/missing')
     page.get_by_role('heading', name='Article not found').wait_for()
     for route in ('login', 'register'):
         page.goto(origin + '/' + route)
-        assert page.locator('input[type="password"]').count() == 0
+        assert page.locator('input[type="password"], button[disabled]').count() == 0
+        page.get_by_role('heading', name='Account availability').wait_for()
         page.get_by_text('Account service is in local staging', exact=True).wait_for()
     page.goto(origin + '/plants/987')
     page.wait_for_url('**/dashboard/plants/987')
@@ -80,7 +78,7 @@ with sync_playwright() as pw:
     for route in ('/', '/download', '/research', '/research/references', '/login', '/register'):
         page.goto(origin + route)
         assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), route
-    page.get_by_role('link', name='Create account', exact=True).wait_for()
+    page.get_by_role('link', name='Account availability', exact=True).first.wait_for()
     if a.screenshots:
         page.screenshot(path=str(out/'mobile.png'), full_page=True)
     assert not errors, errors

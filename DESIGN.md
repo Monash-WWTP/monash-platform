@@ -162,3 +162,9 @@ Account pages present scope and current release limitations before the primary c
 - Don't add decorative eyebrows above headings.
 - Don't invent release metrics, research results or institutional endorsements.
 - Don't imply the public legacy APK already uses the local shared identity service.
+
+## Interface refinements — 2026-10-18
+
+The public home pairs its download action with the actual published Android 1.0.0 report screen and an explicit release caption. Research and references use two flat columns below the hero. Account navigation says “Account availability” while the shared identity service is not public; login/register deep links explain staging status and offer a usable download path instead of disabled registration controls. Mobile account navigation is an unboxed text link.
+
+The operator map retains the shared green/neutral palette and now provides a searchable plant list alongside the map. Station panels fit narrow viewports, move focus to their named close control and return it on dismissal. Below-detection and missing laboratory readings have no numerical summary substitute; counts disclose which observations were quantified.

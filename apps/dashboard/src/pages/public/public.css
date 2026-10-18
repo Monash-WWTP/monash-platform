@@ -410,51 +410,12 @@
   color: var(--muted);
   margin-top: 15px !important;
 }
-.public-portal .home-app {
-  display: flex;
-  align-items: center;
-  gap: 19px;
-  padding: 36px 27px;
-  background: var(--soft);
-  border-radius: 14px;
-  text-decoration: none;
-  color: var(--ink);
-}
-.home-app > img {
-  width: 67px;
-  height: 67px;
-  border-radius: 16px;
-  flex-shrink: 0;
-}
-.home-app > span {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-width: 0;
-}
-.home-app strong {
-  font-size: 22px;
-  letter-spacing: -0.025em;
-}
-.home-app > span > span {
-  font-size: 13px;
-  color: var(--muted);
-}
-.home-app .home-app-link {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: var(--green);
-  font-size: 12px;
-  font-weight: 700;
-}
-.home-app:hover .home-app-link {
-  text-decoration: underline;
-}
+.home-preview > img { width: min(190px, 100%); }
+.home-preview { padding: 18px 0; }
 .platform-paths {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 36px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 48px;
   padding: 42px 0 48px;
   border-top: 1px solid var(--rule);
 }
@@ -468,6 +429,7 @@
   min-height: 66px;
 }
 .platform-paths a {
+  margin-right: 22px;
   font-size: 12px;
   font-weight: 700;
   margin-top: 20px;
@@ -700,13 +662,14 @@
   }
   .public-header nav {
     width: 100%;
-    gap: 18px;
+    gap: 10px 14px;
     flex-wrap: wrap;
     font-size: 12px;
   }
   .public-header .account-link {
-    margin-left: auto;
-    padding: 7px 11px;
+    margin-left: 0;
+    padding: 0;
+    border: 0;
   }
   .download-topline {
     padding-top: 23px;
@@ -793,7 +756,7 @@
   }
   .home-intro h1 {
     font-size: 35px;
-    margin-top: 17px;
+    margin-top: 0;
   }
   .home-lead {
     font-size: 17px;
@@ -826,6 +789,7 @@
     min-height: 0;
   }
   .platform-paths a {
+  margin-right: 22px;
     margin-top: 14px;
   }
   .evidence-note {
