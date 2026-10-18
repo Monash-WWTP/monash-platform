@@ -30,7 +30,7 @@ export default function StationDashboard({
   onOpenWorkspace,
 }: {
   station: Station
-  onOpenWorkspace: () => void
+  onOpenWorkspace?: () => void
 }) {
   const [year, setYear] = useState<SampleFilters['year']>('all')
   const [compliance, setCompliance] = useState<SampleFilters['compliance']>('all')
@@ -39,6 +39,9 @@ export default function StationDashboard({
   const { data: years } = useSampleYears(station.code)
   const { data: samples, isLoading, isError, refetch } = useSamples(station.code, { year, compliance })
 
+  const orderedSamples = useMemo(() => [...(samples ?? [])].sort((a, b) =>
+    (a.sample_date || '').localeCompare(b.sample_date || '')), [samples])
+  const latest = orderedSamples.filter(sample => /^\d{4}-\d{2}-\d{2}$/.test(sample.sample_date ?? '')).at(-1)
   const meta = SAMPLE_METRICS[metric]
   const stats = useMemo(() => {
     if (!samples?.length) return null
@@ -60,13 +63,13 @@ export default function StationDashboard({
         <p className="mt-1 text-xs text-muted-foreground">
           {station.code} · {station.stp_type ?? 'STP'} · Source category: {station.category ?? 'not recorded'}
         </p>
-        <Button
-          variant="primary"
-          className="mt-3 flex w-full items-center justify-center gap-1.5"
-          onClick={onOpenWorkspace}
-        >
-          Open Simulation Workspace <ArrowRight className="size-3.5" />
-        </Button>
+        <p className="mt-3 text-xs text-muted-foreground">Laboratory observations · historical records, not live plant status.</p>
+        {!isLoading && !isError && <div className="mt-3 border-t pt-3 text-sm">
+          <p className="font-medium">Latest available sample in this selection</p>
+          <p className="mt-1">{latest ? <time dateTime={latest.sample_date}>{latest.sample_date}</time> : 'Observation date unavailable'}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{latest?.sample_point || 'Sampling point not recorded'} · Source dataset year: {latest?.source_year ?? 'not recorded'}</p>
+          <p className="mt-1 text-xs text-muted-foreground">Source: imported laboratory dataset. Collection date does not indicate a current operating condition.</p>
+        </div>}
       </Card>
 
       <Card title="Filters">
@@ -160,7 +163,7 @@ export default function StationDashboard({
               tooltip: { trigger: 'axis' },
               xAxis: {
                 type: 'category',
-                data: samples.map((s) => s.sample_date),
+                data: orderedSamples.map((s) => s.sample_date),
                 axisLabel: { color: CHART.axis, fontSize: 9 },
                 axisLine: { lineStyle: { color: CHART.grid } },
               },
@@ -173,7 +176,7 @@ export default function StationDashboard({
               series: [
                 {
                   type: 'line',
-                  data: samples.map((s) =>
+                  data: orderedSamples.map((s) =>
                     s[`${metric}_bdl` as keyof typeof s]
                       ? null
                       : s[metric as keyof typeof s],
@@ -203,17 +206,17 @@ export default function StationDashboard({
               <TableHeader>
                 <TableRow className="border-border">
                   <TableHead className="h-7 text-[10px]">Date</TableHead>
-                  <TableHead className="h-7 text-[10px]">BOD</TableHead>
-                  <TableHead className="h-7 text-[10px]">COD</TableHead>
-                  <TableHead className="h-7 text-[10px]">NH₃-N</TableHead>
-                  <TableHead className="h-7 text-[10px]">TSS</TableHead>
+                  <TableHead className="h-7 text-[10px]">BOD (mg/L)</TableHead>
+                  <TableHead className="h-7 text-[10px]">COD (mg/L)</TableHead>
+                  <TableHead className="h-7 text-[10px]">NH₃-N (mg/L)</TableHead>
+                  <TableHead className="h-7 text-[10px]">TSS (mg/L)</TableHead>
                   <TableHead className="h-7 text-[10px]">Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {[...samples].reverse().slice(0, 30).map((s) => (
+                {[...orderedSamples].reverse().slice(0, 30).map((s) => (
                   <TableRow key={s.id} className="border-border/50">
-                    <TableCell className="py-1 text-[11px]">{s.sample_date}</TableCell>
+                    <TableCell className="py-1 text-[11px]">{s.sample_date || 'Date unavailable'}</TableCell>
                     <TableCell className="py-1 font-mono text-[11px]">
                       {s.bod_bdl ? '<' : ''}{s.bod ?? '—'}
                     </TableCell>
@@ -240,6 +243,12 @@ export default function StationDashboard({
           </div>
         </Card>
       )}
+      <Card title="Research tools">
+        <p className="text-xs text-muted-foreground">Explore assumptions separately from these measured observations. Simulations are illustrative and unvalidated.</p>
+        {onOpenWorkspace ? <Button className="mt-3 flex items-center gap-2" onClick={onOpenWorkspace}>
+          Research sandbox <ArrowRight className="size-3.5" />
+        </Button> : <p className="mt-2 text-xs text-muted-foreground">No linked treatment plant. Research is unavailable for this sampling location.</p>}
+      </Card>
     </div>
   )
 }

@@ -293,7 +293,7 @@ export default function MapPage() {
         </div>
         <div className="min-h-0 flex-1">
           <Suspense fallback={<p role="status" className="p-4 text-sm">Loading laboratory view…</p>}>
-          <StationDashboard key={selected.code} station={selected} onOpenWorkspace={() => openWorkspace(selected)} />
+          <StationDashboard key={selected.code} station={selected} onOpenWorkspace={plants?.some(plant => plant.code === selected.code) ? () => openWorkspace(selected) : undefined} />
           </Suspense>
         </div>
       </aside>}
