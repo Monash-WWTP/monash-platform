@@ -10,14 +10,14 @@ import { useWorkspaceStore } from '../../stores/scenarioStore'
 import { Button, Card } from '../ui'
 
 export default function ResultsPanel({ plantId }: { plantId: number }) {
-  const { activeRunId, setActiveRunId } = useWorkspaceStore()
+  const { activeRunId, activateReplay } = useWorkspaceStore()
   const query = useRun(activeRunId)
   const run = query.data?.plant_id === plantId ? query.data : undefined
   const { data: ts } = useTimeseries(run?.status === 'completed' ? activeRunId : null)
   const qc = useQueryClient()
-  const retry = useMutation({ mutationFn: () => api.replayRun(run!.id), onSuccess: next => {
-    setActiveRunId(next.id)
-    void qc.invalidateQueries({ queryKey: ['scenarios', plantId] })
+  const retry = useMutation({ mutationFn: (sourceRunId: number) => api.replayRun(sourceRunId), onSuccess: (next, sourceRunId) => {
+    activateReplay(sourceRunId, next.id)
+    void qc.invalidateQueries({ queryKey: ['scenarios', next.plant_id] })
   } })
   if (activeRunId && query.isError) return <div role="alert" className="p-4 text-sm"><p>Run results are unavailable.</p><Button onClick={() => void query.refetch()}>Retry results</Button></div>
   if (activeRunId && query.isLoading) return <p role="status" className="p-4 text-sm">Loading saved run…</p>
@@ -25,7 +25,7 @@ export default function ResultsPanel({ plantId }: { plantId: number }) {
   if (run.status !== 'completed') return <div className="space-y-3 p-4 text-sm">
     <h2 className="font-semibold">{run.status === 'failed' ? 'Run failed' : 'Run in progress'} · #{run.id}</h2>
     <p>No completed results are available. Your scenario inputs have been kept.</p>
-    {run.status === 'failed' ? <Button disabled={retry.isPending} onClick={() => retry.mutate()}>{retry.isPending ? 'Retrying…' : 'Retry saved inputs'}</Button> : <Button onClick={() => void query.refetch()}>Refresh run status</Button>}
+    {run.status === 'failed' ? <Button disabled={retry.isPending} onClick={() => retry.mutate(run.id)}>{retry.isPending ? 'Retrying…' : 'Retry saved inputs'}</Button> : <Button onClick={() => void query.refetch()}>Refresh run status</Button>}
     {retry.isError && <p role="alert">{retry.error.message}</p>}
   </div>
 

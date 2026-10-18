@@ -19,7 +19,9 @@ export default function WorkspacePage() {
   const { centerTab, setCenterTab, activeRunId, resetWorkspace } =
     useWorkspaceStore()
   const { data: run } = useRun(activeRunId)
-  const { data: ts } = useTimeseries(run?.plant_id === id && run.status === 'completed' ? activeRunId : null)
+  const completedForPlant = run?.plant_id === id && run.status === 'completed'
+  const timeseries = useTimeseries(completedForPlant ? activeRunId : null)
+  const ts = timeseries.data
 
   // fresh workspace state when switching plants
   useEffect(() => {
@@ -101,7 +103,10 @@ export default function WorkspacePage() {
               {centerTab === 'trends' && <>
                 <h2 className="text-lg font-semibold">3. Inspect saved results</h2>
                 <ResultsPanel plantId={id} />
-                {ts ? <TrendsChart ts={ts} maintenance={run?.input_snapshot?.maintenance ?? []} /> : <EmptyCenter />}
+                {completedForPlant && timeseries.isError ? <div role="alert" className="space-y-3 rounded border border-destructive p-4 text-sm">
+                  <p>Chart data is unavailable. Saved results remain available above.</p>
+                  <Button onClick={() => void timeseries.refetch()}>Retry chart data</Button>
+                </div> : completedForPlant && timeseries.isLoading ? <p role="status">Loading chart data…</p> : ts ? <TrendsChart ts={ts} maintenance={run?.input_snapshot?.maintenance ?? []} /> : <EmptyCenter />}
               </>}
               {centerTab === 'compare' && <><h2 className="text-lg font-semibold">4. Compare scenarios</h2><ComparisonView plantId={id} /></>}
             </Suspense>

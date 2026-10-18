@@ -50,3 +50,27 @@ test('research is secondary and exposes methods before a run exists', () => {
   assert.doesNotMatch(html, /recovery is bounded at zero/)
   client.clear()
 })
+
+test('a completed run with unavailable chart data offers retry instead of an empty-run claim', async () => {
+  const { useWorkspaceStore } = await import('../src/stores/scenarioStore')
+  const initial = { ...useWorkspaceStore.getInitialState() }
+  useWorkspaceStore.getState().resetWorkspace()
+  useWorkspaceStore.setState({ activeRunId: 7 })
+  Object.assign(useWorkspaceStore.getInitialState(), useWorkspaceStore.getState())
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false, retryOnMount: false } } })
+  client.setQueryData(['plant', 1], { id: 1, name: 'Research plant', units: [], compliance_limits: [] })
+  client.setQueryData(['scenarios', 1], [])
+  client.setQueryData(['run', 7], { id: 7, plant_id: 1, status: 'completed', scenario_name: 'Saved run',
+    input_snapshot: {}, kpis: {}, exceedances: [], created_at: '2025-01-01', decision_use_permitted: false })
+  await client.fetchQuery({ queryKey: ['timeseries', 7], queryFn: async () => { throw new Error('Synthetic chart outage') } }).catch(() => {})
+  try {
+    const html = render(client, '/dashboard/plants/1', WorkspacePage)
+    assert.match(html, /Retry chart data/)
+    assert.match(html, /Saved results remain available/)
+    assert.doesNotMatch(html, /No completed simulation to chart/)
+  } finally {
+    Object.assign(useWorkspaceStore.getInitialState(), initial)
+    useWorkspaceStore.getState().resetWorkspace()
+    client.clear()
+  }
+})
