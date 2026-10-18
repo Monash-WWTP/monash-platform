@@ -1,7 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import * as maplibregl from 'maplibre-gl'
 import mapWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ChevronsLeft, ChevronsRight, X } from 'lucide-react'
 
 import type { Plant } from '../api/types'
@@ -61,7 +61,10 @@ export default function MapPage() {
     refetch: refetchCommunityObservations,
   } = useCommunityWastewaterObservations()
   const [mapUnavailable, setMapUnavailable] = useState(false)
-  const [selected, setSelected] = useState<Station | null>(null)
+  const [selectedStation, setSelected] = useState<Station | null>(null)
+  const [params] = useSearchParams()
+  const [returnSelectionDismissed, setReturnSelectionDismissed] = useState(false)
+  const selected = selectedStation ?? (!returnSelectionDismissed ? stations?.find(station => station.code === params.get('station')) ?? null : null)
   const [expanded, setExpanded] = useState(false)
   const [showCommunityObservations, setShowCommunityObservations] = useState(true)
   const navigate = useNavigate()
@@ -79,6 +82,7 @@ export default function MapPage() {
   }, [stations])
   const dismissPanel = useCallback(() => {
     setSelected(null)
+    setReturnSelectionDismissed(true)
     setExpanded(false)
   }, [])
   useEffect(() => {

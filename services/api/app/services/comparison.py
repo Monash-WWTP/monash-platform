@@ -1,6 +1,7 @@
 """Compatibility checks for like-for-like research comparisons, not model validation."""
 from datetime import date
 import math
+import re
 
 from ..db.models import SimulationRun
 from ..http.errors import ApiError
@@ -15,7 +16,7 @@ def validate_comparison(runs: list[SimulationRun]) -> None:
     if any(run.status != 'completed' for run in runs):
         reject('Only completed runs can be compared.')
     identities = {(run.scenario.plant_id, run.model_id, run.model_version, run.artifact_digest) for run in runs}
-    if len(identities) != 1 or any(not run.artifact_digest for run in runs):
+    if len(identities) != 1 or any(not re.fullmatch(r'sha256:[0-9a-f]{64}', run.artifact_digest or '') for run in runs):
         reject('Runs must belong to the same plant and use the same model version and artifact.')
 
     reference = runs[0].timeseries or {}

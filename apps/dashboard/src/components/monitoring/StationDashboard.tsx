@@ -42,6 +42,8 @@ export default function StationDashboard({
   const orderedSamples = useMemo(() => [...(samples ?? [])].sort((a, b) =>
     (a.sample_date || '').localeCompare(b.sample_date || '')), [samples])
   const latest = orderedSamples.filter(sample => /^\d{4}-\d{2}-\d{2}$/.test(sample.sample_date ?? '')).at(-1)
+  const latestValue = latest?.[metric as keyof typeof latest]
+  const latestBdl = latest?.[`${metric}_bdl` as keyof typeof latest]
   const meta = SAMPLE_METRICS[metric]
   const stats = useMemo(() => {
     if (!samples?.length) return null
@@ -67,6 +69,7 @@ export default function StationDashboard({
         {!isLoading && !isError && <div className="mt-3 border-t pt-3 text-sm">
           <p className="font-medium">Latest available sample in this selection</p>
           <p className="mt-1">{latest ? <time dateTime={latest.sample_date}>{latest.sample_date}</time> : 'Observation date unavailable'}</p>
+          <p className="mt-2 text-xs">Latest {meta.label} result: {latestBdl ? `Below detection limit${typeof latestValue === 'number' ? ` (<${latestValue} ${meta.unit})` : ' (limit not recorded)'}` : typeof latestValue === 'number' && Number.isFinite(latestValue) ? `${latestValue} ${meta.unit}` : 'Not recorded'}</p>
           <p className="mt-1 text-xs text-muted-foreground">{latest?.sample_point || 'Sampling point not recorded'} · Source dataset year: {latest?.source_year ?? 'not recorded'}</p>
           <p className="mt-1 text-xs text-muted-foreground">Source: imported laboratory dataset. Collection date does not indicate a current operating condition.</p>
         </div>}

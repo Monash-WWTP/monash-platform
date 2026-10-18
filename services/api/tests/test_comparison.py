@@ -4,7 +4,7 @@ from datetime import date
 import pytest
 from fastapi.testclient import TestClient
 
-from app.db.models import Plant, Scenario
+from app.db.models import Plant, Scenario, SimulationRun
 from app.db.session import SessionLocal
 from app.devdata import main as load_devdata
 from app.main import app
@@ -20,14 +20,29 @@ def comparison():
         scenario = db.query(Scenario).first()
         first = execute_run(db, scenario, 'effluent_v1', date(2025, 1, 1))
         second = execute_run(db, scenario, 'effluent_v1', date(2025, 1, 1))
-        with TestClient(app) as client:
-            yield client, db, first, second
-    app.dependency_overrides.clear()
+        ids = [first.id, second.id]
+        original_scenario_id = scenario.id
+        try:
+            with TestClient(app) as client:
+                yield client, db, first, second
+        finally:
+            db.rollback()
+            db.expire_all()
+            other = db.get(SimulationRun, ids[1])
+            other_scenario = other.scenario if other and other.scenario_id != original_scenario_id else None
+            other_plant = other_scenario.plant if other_scenario else None
+            db.query(SimulationRun).filter(SimulationRun.id.in_(ids)).delete(synchronize_session=False)
+            if other_scenario:
+                db.delete(other_scenario)
+                db.flush()
+                db.delete(other_plant)
+            db.commit()
+            app.dependency_overrides.clear()
 
 
 @pytest.mark.parametrize('case', [
     'duplicate', 'failed', 'running', 'plant', 'model', 'version', 'artifact',
-    'empty_dates', 'different_dates', 'repeated_dates', 'short_series', 'different_metrics',
+    'unknown_artifact', 'empty_dates', 'different_dates', 'repeated_dates', 'short_series', 'different_metrics',
 ])
 def test_incompatible_runs_are_rejected(comparison, case):
     client, db, first, second = comparison
@@ -46,6 +61,8 @@ def test_incompatible_runs_are_rejected(comparison, case):
         db.add(scenario)
         db.flush()
         second.scenario_id = scenario.id
+    elif case == 'unknown_artifact':
+        first.artifact_digest = second.artifact_digest = 'historical_unknown'
     elif case in ('model', 'version', 'artifact'):
         setattr(second, {'model': 'model_id', 'version': 'model_version', 'artifact': 'artifact_digest'}[case], 'different')
     else:

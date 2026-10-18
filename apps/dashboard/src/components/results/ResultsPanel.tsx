@@ -1,31 +1,44 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { api } from '../../api/client'
 import { useState } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 
 import { useRun, useTimeseries } from '../../api/hooks'
-import type { Exceedance, Run } from '../../api/types'
+import type { Exceedance } from '../../api/types'
 import { METRIC_LABELS } from '../../api/types'
 import { useWorkspaceStore } from '../../stores/scenarioStore'
-import { Card } from '../ui'
+import { Button, Card } from '../ui'
 
-export default function ResultsPanel() {
-  const { activeRunId, baselineRunId } = useWorkspaceStore()
-  const forecast = useWorkspaceStore((s) => s.draft.forecast)
-  const { data: run } = useRun(activeRunId)
-  const { data: baseline } = useRun(baselineRunId !== activeRunId ? baselineRunId : null)
-  const { data: ts } = useTimeseries(activeRunId)
-
-  if (!run) {
-    return (
-      <div className="flex h-full items-center justify-center p-6 text-center text-sm text-muted-foreground">
-        Configure a scenario and run an illustrative model screen to see scenario estimates here.
-      </div>
-    )
-  }
+export default function ResultsPanel({ plantId }: { plantId: number }) {
+  const { activeRunId, setActiveRunId } = useWorkspaceStore()
+  const query = useRun(activeRunId)
+  const run = query.data?.plant_id === plantId ? query.data : undefined
+  const { data: ts } = useTimeseries(run?.status === 'completed' ? activeRunId : null)
+  const qc = useQueryClient()
+  const retry = useMutation({ mutationFn: () => api.replayRun(run!.id), onSuccess: next => {
+    setActiveRunId(next.id)
+    void qc.invalidateQueries({ queryKey: ['scenarios', plantId] })
+  } })
+  if (activeRunId && query.isError) return <div role="alert" className="p-4 text-sm"><p>Run results are unavailable.</p><Button onClick={() => void query.refetch()}>Retry results</Button></div>
+  if (activeRunId && query.isLoading) return <p role="status" className="p-4 text-sm">Loading saved run…</p>
+  if (!run) return <p className="p-4 text-sm text-muted-foreground">Configure a scenario and run an illustrative model screen to inspect results.</p>
+  if (run.status !== 'completed') return <div className="space-y-3 p-4 text-sm">
+    <h2 className="font-semibold">{run.status === 'failed' ? 'Run failed' : 'Run in progress'} · #{run.id}</h2>
+    <p>No completed results are available. Your scenario inputs have been kept.</p>
+    {run.status === 'failed' ? <Button disabled={retry.isPending} onClick={() => retry.mutate()}>{retry.isPending ? 'Retrying…' : 'Retry saved inputs'}</Button> : <Button onClick={() => void query.refetch()}>Refresh run status</Button>}
+    {retry.isError && <p role="alert">{retry.error.message}</p>}
+  </div>
 
   const kpis = run.kpis
 
   return (
-    <div className="flex h-full flex-col gap-3 overflow-y-auto p-3">
+    <div className="flex flex-col gap-3 p-3">
+      <Card title={`Saved run #${run.id} · ${run.scenario_name}`}>
+        <p className="text-xs text-muted-foreground">{run.model_id} v{run.model_version} · {run.status} · {run.validation_status}</p>
+        <p className="mt-2 text-xs">Simulated period: {ts?.dates[0] ?? run.input_snapshot?.start_date ?? 'Not recorded'} → {ts?.dates.at(-1) ?? 'Not recorded'}</p>
+        <p className="mt-2 break-all font-mono text-[10px]">Artifact: {run.artifact_digest || 'Not recorded'}</p>
+        <details className="mt-3 text-xs"><summary className="cursor-pointer font-medium">Saved run inputs</summary><pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap break-all rounded bg-muted p-3">{JSON.stringify(run.input_snapshot ?? {}, null, 2)}</pre></details>
+      </Card>
       {!run.decision_use_permitted && (
         <p role="status" className="rounded border border-warning/40 bg-warning-soft p-2 text-xs text-foreground">
           Decision use is not permitted. This process model is illustrative and has not been
@@ -37,22 +50,22 @@ export default function ResultsPanel() {
         <div className="grid grid-cols-2 gap-2">
           <Kpi
             label="Days within screening thresholds"
-            value={`${kpis.compliance_pct}%`}
+            value={`${display(kpis.compliance_pct)}%`}
             note="heuristic result; not a compliance rate"
           />
           <Kpi
             label="Exceedance days"
-            value={String(kpis.exceedance_days)}
+            value={display(kpis.exceedance_days)}
             note={`of ${ts?.dates.length ?? '—'} simulated`}
           />
           <Kpi
             label="Capacity utilisation"
-            value={`${kpis.capacity_utilization_pct}%`}
+            value={`${display(kpis.capacity_utilization_pct)}%`}
             note="mean flow / hydraulic capacity"
           />
           <Kpi
             label="Scenario GHG estimate"
-            value={`${Number(kpis.ghg_mean_kgco2e_m3).toFixed(3)}`}
+            value={`${display(kpis.ghg_mean_kgco2e_m3, 3)}`}
             note="kg CO₂-eq/m³ (CH₄ + N₂O)"
           />
         </div>
@@ -60,9 +73,9 @@ export default function ResultsPanel() {
 
       <Card title="Estimated scenario GHG intensity">
         <div className="flex flex-col gap-1 text-sm">
-          <Row label="CH₄ (Eq. 5.25)" value={`${Number(kpis.ch4_mean_kgco2e_m3).toFixed(4)} kg CO₂-eq/m³`} />
-          <Row label="N₂O (Eq. 5.28)" value={`${Number(kpis.n2o_mean_kgco2e_m3).toFixed(4)} kg CO₂-eq/m³`} />
-          <Row label="Total" value={`${Number(kpis.ghg_mean_kgco2e_m3).toFixed(4)} kg CO₂-eq/m³`} />
+          <Row label="CH₄ (Eq. 5.25)" value={`${display(kpis.ch4_mean_kgco2e_m3, 4)} kg CO₂-eq/m³`} />
+          <Row label="N₂O (Eq. 5.28)" value={`${display(kpis.n2o_mean_kgco2e_m3, 4)} kg CO₂-eq/m³`} />
+          <Row label="Total" value={`${display(kpis.ghg_mean_kgco2e_m3, 4)} kg CO₂-eq/m³`} />
           <p className="mt-1 text-[10px] text-muted-foreground">
             Illustrative estimate from assumed influent BOD₅/TKN and emission factors; not a measured
             plant inventory. GWP CH₄ = 28, N₂O = 265 (IPCC AR5).
@@ -91,22 +104,6 @@ export default function ResultsPanel() {
         </div>
       </Card>
 
-      {baseline && <BaselineDelta run={run} baseline={baseline} />}
-
-      <WhatChanged run={run} baseline={baseline} forecast={forecast} />
-
-      <Card title="Methodology & assumptions">
-        <details className="text-xs text-muted-foreground">
-          <summary className="cursor-pointer font-medium text-foreground">How to read this workspace</summary>
-          <div className="mt-2 space-y-2 leading-relaxed">
-            <p><strong>Scenario estimate:</strong> heuristic treatment assumptions project effluent quality over the selected horizon; this is not a calibrated ASM1 implementation. TKN is influent Kjeldahl nitrogen, not a TN substitute.</p>
-            <p><strong>Guideline carbon accounting:</strong> CH₄ and N₂O intensity uses the configured influent/process factors and IPCC AR5 GWP values (28 and 265). Recovery inputs reduce net gas emissions; recovery is bounded at zero.</p>
-            <p><strong>Scenario inputs:</strong> demand changes the illustrative flow and load assumptions. Weather and rainfall are stored as context only and do not change model results; applying them requires a site-specific hydrologic response model. Maintenance changes unit availability and may affect the process beyond the marked window because the model state recovers gradually.</p>
-            <p>Results are scenario projections, not measured compliance or a substitute for plant instrumentation and engineering review.</p>
-          </div>
-        </details>
-      </Card>
-
       <Card title={`Screening-threshold exceedances (${run.exceedances.length})`}>
         {run.exceedances.length === 0 ? (
           <p className="text-xs text-muted-foreground">
@@ -126,34 +123,6 @@ export default function ResultsPanel() {
         {new Date(run.created_at).toLocaleString()}
       </p>
     </div>
-  )
-}
-
-function WhatChanged({
-  run,
-  baseline,
-  forecast,
-}: {
-  run: Run
-  baseline?: Run
-  forecast: ReturnType<typeof useWorkspaceStore.getState>['draft']['forecast']
-}) {
-  const changes: string[] = []
-  if (forecast.demand_change_pct) changes.push(`${forecast.demand_change_pct > 0 ? '+' : ''}${forecast.demand_change_pct}% demand versus baseline`)
-  if (forecast.rainfall_mm_day) changes.push(`${forecast.rainfall_mm_day} mm/day rainfall recorded (not applied)`)
-  if (forecast.influent.tkn !== undefined) changes.push(`TKN set to ${forecast.influent.tkn} mg N/L`)
-  if (baseline) {
-    const complianceDelta = Number(run.kpis.compliance_pct) - Number(baseline.kpis.compliance_pct)
-    const ghgDelta = Number(run.kpis.ghg_mean_kgco2e_m3) - Number(baseline.kpis.ghg_mean_kgco2e_m3)
-    if (Math.abs(complianceDelta) >= 0.05) changes.push(`model screening score changed by ${Math.abs(complianceDelta).toFixed(1)} percentage points`)
-    if (Math.abs(ghgDelta) >= 0.0005) changes.push(`scenario GHG estimate ${ghgDelta > 0 ? 'increased' : 'decreased'} by ${Math.abs(ghgDelta).toFixed(4)} kg CO₂-eq/m³`)
-  }
-  return (
-    <Card title="What changed">
-      <p className="text-xs text-muted-foreground">
-        {changes.length ? changes.join(' · ') + '.' : `Baseline projection for ${run.horizon.replace('_', ' ')}; no quantitative adjustments detected.`}
-      </p>
-    </Card>
   )
 }
 
@@ -213,49 +182,7 @@ function Row({ label, value }: { label: string; value: string }) {
   )
 }
 
-function BaselineDelta({ run, baseline }: { run: Run; baseline: Run }) {
-  const deltas = [
-    {
-      label: 'Model screen',
-      delta: Number(run.kpis.compliance_pct) - Number(baseline.kpis.compliance_pct),
-      unit: ' pp',
-    },
-    {
-      label: 'Exceedance days',
-      delta: Number(run.kpis.exceedance_days) - Number(baseline.kpis.exceedance_days),
-      unit: '',
-    },
-    {
-      label: 'Capacity utilisation',
-      delta:
-        Number(run.kpis.capacity_utilization_pct) -
-        Number(baseline.kpis.capacity_utilization_pct),
-      unit: ' pp',
-    },
-    {
-      label: 'Scenario GHG estimate',
-      delta: Number(run.kpis.ghg_mean_kgco2e_m3) - Number(baseline.kpis.ghg_mean_kgco2e_m3),
-      unit: ' kg CO₂-eq/m³',
-    },
-  ]
 
-  return (
-    <Card title="Difference vs Baseline">
-      <div className="flex flex-col gap-1 text-sm">
-        {deltas.map((d) => (
-          <div key={d.label} className="flex items-center justify-between">
-            <span className="text-muted-foreground">{d.label}</span>
-            <span className="font-mono text-xs">
-              {d.delta > 0 ? '+' : ''}
-              {Math.abs(d.delta) < 0.005 ? '0' : d.delta.toFixed(d.unit.includes('kg') ? 4 : 1)}
-              {d.unit}
-            </span>
-          </div>
-        ))}
-        <p className="mt-1 text-[10px] text-muted-foreground">
-          vs "{baseline.scenario_name}" (run #{baseline.id})
-        </p>
-      </div>
-    </Card>
-  )
+function display(value: unknown, digits = 1) {
+  return typeof value === 'number' && Number.isFinite(value) ? value.toLocaleString(undefined, { maximumFractionDigits: digits }) : '—'
 }

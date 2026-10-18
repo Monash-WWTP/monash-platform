@@ -54,6 +54,8 @@ export default function ComparisonView({ plantId }: { plantId: number }) {
           </div>
         })}
       </div>
+      {compareRunIds.length > 0 && <Button className="mt-3" onClick={() => compareRunIds.forEach(toggleCompareRun)}>Clear selected runs</Button>}
+      {selected.length !== compareRunIds.length && <p role="status" className="mt-2 text-xs text-muted-foreground">Some selected runs are unavailable or no longer listed as latest. Clear the selection and choose completed runs.</p>}
       {compareRunIds.length === 4 && <p role="status" className="mt-2 text-xs">Four runs selected. Remove one to choose another.</p>}
     </Card>
     <Card title="2. Choose a reference">
@@ -104,6 +106,22 @@ function InputChanges({ reference, candidate }: { reference: Record<string, unkn
   const changes = changedInputs(reference, candidate)
   return <div className="mt-3 text-xs">
     {changes.some(c => /emission_factors|compliance_limits/.test(c.path)) && <p className="mb-2 rounded border border-warning p-2">Accounting factors or screening thresholds differ. Result changes cannot be attributed solely to process inputs.</p>}
-    {changes.length ? <dl className="space-y-2">{changes.map(change => <div key={change.path} className="min-w-0 rounded bg-muted p-2 [overflow-wrap:anywhere]"><dt className="font-medium">{change.path}</dt><dd className="mt-1 text-muted-foreground">{inputValue(change.reference)} → {inputValue(change.candidate)}</dd></div>)}</dl> : <p className="text-muted-foreground">No saved input differences.</p>}
+    {changes.length ? <dl className="space-y-2">{changes.map(change => <div key={change.path} className="min-w-0 rounded bg-muted p-2 [overflow-wrap:anywhere]"><dt className="font-medium">{inputLabel(change.path)}</dt><dd className="mt-1 text-muted-foreground">{inputValue(change.reference)} → {inputValue(change.candidate)}</dd></div>)}</dl> : <p className="text-muted-foreground">No saved input differences.</p>}
   </div>
+}
+
+function inputLabel(path: string) {
+  const labels: Record<string, string> = {
+    'forecast.influent.flow': 'Assumed influent flow (MLD)', 'forecast.influent.bod': 'Assumed influent BOD₅ (mg/L)',
+    'forecast.influent.cod': 'Assumed influent COD (mg/L)', 'forecast.influent.tss': 'Assumed influent TSS (mg/L)',
+    'forecast.influent.ammonia': 'Assumed influent ammonia (mg/L)', 'forecast.influent.tkn': 'Assumed influent TKN (mg N/L)',
+    'forecast.rainfall_mm_day': 'Rainfall context (mm/day; not applied)', 'forecast.weather': 'Weather context (not applied)',
+    'forecast.demand_change_pct': 'Demand change (%)', 'forecast.demand_multiplier': 'Demand multiplier',
+    'emission_factors.ef_ch4': 'Methane factor (kg CH₄/kg BOD₅)', 'emission_factors.ef_n2o': 'Nitrous oxide factor (kg N₂O-N/kg TKN)',
+    'operating_parameters.capacity_mld': 'Assumed capacity (MLD)',
+    'operating_parameters.ch4_recovered_kg_m3': 'Recovered CH₄ (kg/m³)', 'operating_parameters.n2o_recovered_kg_m3': 'Recovered N₂O (kg/m³)',
+    'operating_parameters.aeration_availability': 'Aeration availability (%)', 'operating_parameters.pump_availability': 'Pump availability (%)',
+    'operating_parameters.clarifier_availability': 'Clarifier availability (%)',
+  }
+  return labels[path] ?? path.replaceAll('.', ' / ').replaceAll('_', ' ')
 }

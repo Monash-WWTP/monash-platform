@@ -7,6 +7,7 @@ import { useWorkspaceStore } from '../stores/scenarioStore'
 import ResultsPanel from '../components/results/ResultsPanel'
 import ScenarioPanel from '../components/scenario/ScenarioPanel'
 import OperatorHeader from '../components/OperatorHeader'
+import MethodsPanel from '../components/research/MethodsPanel'
 import { Button } from '../components/ui'
 const ComparisonView = lazy(() => import('../components/comparison/ComparisonView'))
 const TrendsChart = lazy(() => import('../components/dashboard/TrendsChart'))
@@ -18,7 +19,7 @@ export default function WorkspacePage() {
   const { centerTab, setCenterTab, activeRunId, resetWorkspace } =
     useWorkspaceStore()
   const { data: run } = useRun(activeRunId)
-  const { data: ts } = useTimeseries(run?.plant_id === id ? activeRunId : null)
+  const { data: ts } = useTimeseries(run?.plant_id === id && run.status === 'completed' ? activeRunId : null)
 
   // fresh workspace state when switching plants
   useEffect(() => {
@@ -26,10 +27,10 @@ export default function WorkspacePage() {
   }, [id, resetWorkspace])
 
   if (isLoading) {
-    return <div className="flex h-full flex-col"><OperatorHeader context="Workspace" /><p role="status" className="p-6 text-sm text-muted-foreground">Loading plant…</p></div>
+    return <div className="flex h-full flex-col"><OperatorHeader context="Research sandbox" /><p role="status" className="p-6 text-sm text-muted-foreground">Loading plant…</p></div>
   }
   if (isError) {
-    return <div className="flex h-full flex-col"><OperatorHeader context="Workspace" />
+    return <div className="flex h-full flex-col"><OperatorHeader context="Research sandbox" />
       <div role="alert" className="mx-auto max-w-xl space-y-4 p-6">
         <h1 className="text-2xl font-semibold">Plant information is unavailable</h1>
         <p className="text-sm text-muted-foreground">We couldn’t load this plant. Retry, or return to monitoring to select another plant.</p>
@@ -40,7 +41,7 @@ export default function WorkspacePage() {
   if (!plant) {
     return (
       <div className="flex h-full flex-col gap-4 text-muted-foreground">
-        <OperatorHeader context="Workspace" />
+        <OperatorHeader context="Research sandbox" />
         Plant not found.
         <Link to="/dashboard" className="text-primary underline">
           Back to map
@@ -51,7 +52,12 @@ export default function WorkspacePage() {
 
   return (
     <div className="flex h-full flex-col overflow-y-auto lg:overflow-hidden">
-      <OperatorHeader context="Workspace" />
+      <OperatorHeader context="Research sandbox" />
+      <div className="shrink-0 border-b bg-background px-4 py-3">
+        <Link to={`/dashboard?station=${encodeURIComponent(plant.code ?? '')}`} className="text-sm text-primary underline">← Back to monitoring this plant</Link>
+        <p className="mt-2 text-xs text-muted-foreground">Research sandbox · illustrative, unvalidated simulations. Observations remain in monitoring.</p>
+        <div className="mt-3"><MethodsPanel /></div>
+      </div>
       <div className="flex shrink-0 flex-wrap items-center justify-between gap-4 border-b border-border bg-card px-4 py-3">
         <div className="flex min-w-0 items-center gap-3">
           <Factory className="size-5 text-primary" />
@@ -66,8 +72,8 @@ export default function WorkspacePage() {
         <nav aria-label="Workspace views" className="flex max-w-full flex-wrap gap-1 rounded-md border border-border bg-muted p-0.5">
           {(
             [
-              ['trends', 'Effluent Trends'],
-              ['compare', 'Scenario Comparison'],
+              ['trends', 'Run results'],
+              ['compare', 'Compare scenarios'],
             ] as const
           ).map(([tab, label]) => (
             <button
@@ -84,26 +90,23 @@ export default function WorkspacePage() {
         </nav>
       </div>
 
-      <div className="grid min-w-0 flex-1 grid-cols-1 lg:min-h-0 lg:grid-cols-[300px_minmax(0,1fr)_280px] xl:grid-cols-[330px_minmax(0,1fr)_320px]">
-        <aside aria-label="Scenario settings" className="min-h-0 min-w-0 border-b border-border bg-background lg:border-b-0 lg:border-r">
-          <ScenarioPanel plantId={id} />
-        </aside>
+      <div className={`grid min-w-0 flex-1 grid-cols-1 lg:min-h-0 ${centerTab === 'trends' ? 'lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(0,1fr)]' : ''}`}>
+        <aside aria-label="Scenario settings" className={`min-h-0 min-w-0 border-b border-border bg-background lg:overflow-y-auto lg:border-b-0 lg:border-r ${centerTab === 'compare' ? 'hidden' : ''}`}>
 
-        <main className="min-h-[360px] min-w-0 overflow-y-auto p-3 lg:min-h-0">
-          <Suspense fallback={<p role="status" className="p-4 text-sm">Loading view…</p>}>
-          {centerTab === 'trends' &&
-            (ts ? (
-              <TrendsChart ts={ts} maintenance={run?.input_snapshot?.maintenance ?? []} />
-            ) : (
-              <EmptyCenter />
-            ))}
-          {centerTab === 'compare' && <ComparisonView plantId={id} />}
-          </Suspense>
+          <ScenarioPanel key={id} plantId={id} />
+        </aside>
+        <main className="min-h-[360px] min-w-0 overflow-y-auto p-4 lg:min-h-0">
+          <div className="mx-auto max-w-6xl space-y-4">
+            <Suspense fallback={<p role="status" className="p-4 text-sm">Loading view…</p>}>
+              {centerTab === 'trends' && <>
+                <h2 className="text-lg font-semibold">3. Inspect saved results</h2>
+                <ResultsPanel plantId={id} />
+                {ts ? <TrendsChart ts={ts} maintenance={run?.input_snapshot?.maintenance ?? []} /> : <EmptyCenter />}
+              </>}
+              {centerTab === 'compare' && <><h2 className="text-lg font-semibold">4. Compare scenarios</h2><ComparisonView plantId={id} /></>}
+            </Suspense>
+          </div>
         </main>
-
-        <aside aria-label="Simulation results" className="min-h-0 min-w-0 border-t border-border bg-background lg:border-l lg:border-t-0">
-          <ResultsPanel />
-        </aside>
       </div>
     </div>
   )
@@ -111,10 +114,10 @@ export default function WorkspacePage() {
 
 function EmptyCenter() {
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
+    <div className="flex min-h-40 flex-col items-center justify-center gap-2 rounded border border-dashed p-6 text-center">
       <Factory className="size-10 text-muted-foreground/40" />
       <p className="text-sm text-muted-foreground">
-        No simulation yet. Configure a scenario and press{' '}
+        No completed simulation to chart. Configure a scenario and press{' '}
         <span className="font-semibold text-foreground">Run Simulation</span>.
       </p>
       <p className="max-w-md text-xs text-muted-foreground/70">

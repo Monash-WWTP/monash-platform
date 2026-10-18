@@ -22,11 +22,12 @@ export const api = {
   updateScenario: (id: number, body: ScenarioInput) =>
     request<Scenario>(`/api/v1/scenarios/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
   deleteScenario: (id: number) => request<void>(`/api/v1/scenarios/${id}`, { method: 'DELETE' }),
-  runScenario: (id: number, modelId = 'effluent_v1') =>
+  runScenario: (id: number, modelId = 'effluent_v1', startDate?: string) =>
     request<Run>(`/api/v1/scenarios/${id}/run`, {
       method: 'POST',
-      body: JSON.stringify({ model_id: modelId }),
+      body: JSON.stringify({ model_id: modelId, start_date: startDate }),
     }),
+  replayRun: (id: number) => request<Run>(`/api/v1/runs/${id}/replay`, { method: 'POST' }),
   run: (id: number) => request<Run>(`/api/v1/runs/${id}`),
   timeseries: (runId: number) => request<Timeseries>(`/api/v1/runs/${runId}/timeseries`),
   compare: (runIds: number[]) =>

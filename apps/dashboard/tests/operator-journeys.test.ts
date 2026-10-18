@@ -39,3 +39,14 @@ test('a workspace service failure offers retry rather than claiming the plant do
   assert.doesNotMatch(html, /Plant not found/)
   client.clear()
 })
+
+test('research is secondary and exposes methods before a run exists', () => {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+  client.setQueryData(['plant', 1], { id: 1, name: 'Research plant', units: [], compliance_limits: [] })
+  client.setQueryData(['scenarios', 1], [])
+  const html = render(client, '/dashboard/plants/1', WorkspacePage)
+  for (const label of ['Research sandbox', 'Configure', 'Run results', 'Compare scenarios', 'Methods and sources', 'Context only', 'Assumed influent']) assert.ok(html.includes(label), label)
+  assert.match(html, /doi.org\/10.2166\/9781789064223/)
+  assert.doesNotMatch(html, /recovery is bounded at zero/)
+  client.clear()
+})

@@ -62,7 +62,7 @@ export function useDeleteScenario(plantId: number) {
 export function useRunScenario(plantId: number) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (scenarioId: number) => api.runScenario(scenarioId),
+    mutationFn: ({ scenarioId, startDate }: { scenarioId: number; startDate: string }) => api.runScenario(scenarioId, 'effluent_v1', startDate),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['scenarios', plantId] }),
   })
 }

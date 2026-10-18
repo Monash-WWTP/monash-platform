@@ -24,6 +24,8 @@ test('monitoring prioritizes dated observations and keeps research secondary', (
   assert.match(html, /Latest available sample/)
   assert.match(html, /2025-06-01/)
   assert.match(html, /Final effluent/)
+  assert.match(html, /Latest BOD result/)
+  assert.match(html, /Below detection limit/)
   assert.match(html, /No quantifiable readings/)
   assert.ok(html.indexOf('Recent Samples') < html.indexOf('Research sandbox'))
   assert.doesNotMatch(html, /Open Simulation Workspace/)

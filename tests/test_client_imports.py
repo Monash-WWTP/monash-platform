@@ -29,6 +29,7 @@ DASHBOARD_ADAPTATIONS = {
     "frontend/README.md",
     "frontend/.gitignore",
     "frontend/src/api/client.ts", "frontend/src/api/monitoring.ts",
+    "frontend/src/api/hooks.ts", "frontend/src/api/types.ts",
     "frontend/src/components/auth/OperatorAccess.tsx", "frontend/vite.config.ts",
     "frontend/src/lib/supabase.ts",
     "frontend/vercel.json",
