@@ -5,6 +5,7 @@ import { ArrowRight, FlaskConical } from 'lucide-react'
 import { useSamples, useSampleYears, type SampleFilters } from '@/api/monitoring'
 import { SAMPLE_METRICS, type Station } from '@/api/monitoring-types'
 import { CHART } from '@/components/dashboard/chartPalette'
+import { summarizeMetric } from './sampleSummary'
 import {
   Card,
   SegmentGroup,
@@ -36,21 +37,15 @@ export default function StationDashboard({
   const [metric, setMetric] = useState('bod')
 
   const { data: years } = useSampleYears(station.code)
-  const { data: samples, isLoading } = useSamples(station.code, { year, compliance })
+  const { data: samples, isLoading, isError, refetch } = useSamples(station.code, { year, compliance })
 
   const meta = SAMPLE_METRICS[metric]
   const stats = useMemo(() => {
     if (!samples?.length) return null
-    const vals = samples
-      .filter((s) => !s[`${metric}_bdl` as keyof typeof s])
-      .map((s) => s[metric as keyof typeof s] as number | null)
-      .filter((v): v is number => v != null)
     const reportedStatuses = samples.filter((s) => s.compliance === 'Comply' || s.compliance === 'Not Comply')
     const complyCount = reportedStatuses.filter((s) => s.compliance === 'Comply').length
     return {
-      n: samples.length,
-      avg: vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0,
-      max: vals.length ? Math.max(...vals) : 0,
+      ...summarizeMetric(samples, metric),
       reportedComplyPct: reportedStatuses.length ? (100 * complyCount) / reportedStatuses.length : null,
     }
   }, [samples, metric])
@@ -122,22 +117,36 @@ export default function StationDashboard({
         </div>
       </Card>
 
-      {stats && (
+      {isError && (
+        <div role="alert" className="rounded border border-destructive p-3 text-sm">
+          <p>Laboratory results are unavailable. Your filters have been kept.</p>
+          <Button className="mt-2" onClick={() => void refetch()}>Retry laboratory results</Button>
+        </div>
+      )}
+
+      {stats && !isError && (
         <Card title={`${meta.label} Summary`}>
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <Stat label="Samples" value={String(stats.n)} />
+            <Stat label="Samples" value={String(stats.totalCount)} />
             <Stat
               label="Dataset-reported comply"
               value={stats.reportedComplyPct == null ? '—' : `${stats.reportedComplyPct.toFixed(0)}%`}
             />
-            <Stat label={`Mean ${meta.label}`} value={`${stats.avg.toFixed(1)} ${meta.unit}`} />
-            <Stat label={`Max ${meta.label}`} value={`${stats.max.toFixed(1)} ${meta.unit}`} />
+            <Stat label={`Mean ${meta.label}`} value={stats.mean == null ? '—' : `${stats.mean.toFixed(1)} ${meta.unit}`} />
+            <Stat label={`Max ${meta.label}`} value={stats.max == null ? '—' : `${stats.max.toFixed(1)} ${meta.unit}`} />
           </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            {stats.quantifiedCount === 0 ? 'No quantifiable readings. ' : ''}
+            {stats.quantifiedCount} of {stats.totalCount} samples have quantified {meta.label} readings.
+            {' '}Mean and maximum exclude missing and below-detection results; no values are substituted.
+          </p>
         </Card>
       )}
 
       <Card title={`${meta.label} Trend (lab results)`}>
-        {isLoading ? (
+        {isError ? (
+          <p className="text-xs text-muted-foreground">Retry laboratory results to view the trend.</p>
+        ) : isLoading ? (
           <p className="text-xs text-muted-foreground">Loading samples…</p>
         ) : !samples?.length ? (
           <p className="text-xs text-muted-foreground">No samples match the current filters.</p>
@@ -187,7 +196,7 @@ export default function StationDashboard({
         </p>
       </Card>
 
-      {!!samples?.length && (
+      {!!samples?.length && !isError && (
         <Card title="Recent Samples">
           <div className="max-h-64 overflow-y-auto">
             <Table>
