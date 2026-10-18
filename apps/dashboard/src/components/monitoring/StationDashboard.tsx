@@ -97,7 +97,7 @@ export default function StationDashboard({
           <div>
             <p className="mb-1 text-xs font-medium text-muted-foreground">Parameter</p>
             <ShadSelect value={metric} onValueChange={setMetric}>
-              <SelectTrigger className="h-8 w-full border-border bg-muted text-sm">
+              <SelectTrigger className="h-8 min-h-11 w-full border-border bg-muted text-sm sm:min-h-8">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

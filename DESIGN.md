@@ -168,3 +168,7 @@ Account pages present scope and current release limitations before the primary c
 The public home pairs its download action with the actual published Android 1.0.0 report screen and an explicit release caption. Research and references use two flat columns below the hero. Account navigation says “Account availability” while the shared identity service is not public; login/register deep links explain staging status and offer a usable download path instead of disabled registration controls. Mobile account navigation is an unboxed text link.
 
 The operator map retains the shared green/neutral palette and now provides a searchable plant list alongside the map. Station panels fit narrow viewports, move focus to their named close control and return it on dismissal. Below-detection and missing laboratory readings have no numerical summary substitute; counts disclose which observations were quantified.
+
+## Operator consistency follow-up
+
+Monitoring, workspace and report review share an operator header with the platform link and a consistent route back to monitoring. Operator cards use flat borders; primary and destructive actions use shared semantic variants. Compact desktop controls expand to at least 44px on phones. At narrow widths, workspace columns stack in settings/view/results order and view buttons wrap. Text from private notes/account identifiers may wrap anywhere rather than widening the page. These conventions extend the shared palette and typography without replacing the public portal's roomier layout.

@@ -11,7 +11,7 @@ export default function OperatorAccess() {
     try { await fetchApi('/api/v1/auth/logout', { method: 'POST' }); queryClient.clear() }
     catch (e) { setError(e instanceof Error ? e.message : 'Sign out failed') }
   }
-  return <section className="rounded-md border bg-card p-2.5 text-xs" aria-label="Account access">
+  return <section className="rounded-lg border border-border bg-card p-3 text-sm [overflow-wrap:anywhere]" aria-label="Account access">
     {account ? <>
       <p>Signed in as {account.email}</p>
       {!account.capabilities.includes('scenario:operate') && <p>Scenario access requires an operator invitation.</p>}

@@ -57,3 +57,21 @@ Earlier logs show a past local empty-bucket restore exercise, but that is not cu
 User input on 2026-10-18: estimated 20–50 people. A recovery owner means the person with responsibility and access to restore service/data; no owner or RPO/RTO has yet been confirmed. No production domains/hosting or peak concurrency are assumed.
 
 Scientific decision use remains prohibited: `effluent_v1` is illustrative and unvalidated, regardless of software test results.
+
+## UI consistency follow-up
+
+The monitoring map, scenario workspace and moderation page now share `OperatorHeader`, including platform branding, monitoring navigation and current-surface context. The existing public palette/font remain canonical. Operator cards use flat borders, moderation uses shared primary/danger buttons, account blocks share the same typography/radius, and shared controls have a 44px minimum height on phones. Workspace view buttons expose their selected state. Public and operator layouts retain different density appropriate to their tasks.
+
+The workspace stacks settings, visualization and results below the desktop breakpoint instead of forcing three columns onto a phone. Workspace API failure now offers Retry rather than asserting that the plant does not exist. Moderation has a clear empty state/retry path; unbroken private notes wrap without widening the page. Desktop and mobile T3 checks used a temporary static preview with synthetic same-origin API responses; no private accounts or reports were accessed. Workspace/moderation widths 320/390/1280px and a 500-character unbroken note were checked. The note overflow was reproduced before the fix and absent afterward.
+
+Current frontend verification: 22 tests pass, lint and production build pass; the pinned client import tests also pass. Prior backend result remains 96 passed/one skipped; this follow-up changes frontend code only. Native Android consistency on the signed release and full assistive-technology checks remain open.
+
+## Resolve before launch, in order
+
+1. **Restore staging storage.** Recover its original private Garage configuration and repair the obsolete worktree mount without replacing keys or resetting volumes. Needed input: access to the original configuration/backup custody.
+2. **Confirm production hosting and addresses.** Supply the approved API and account domains and hosting access; prepare TLS, database, identity, private storage and the real browser proxy/callback configuration. Existing Vercel routes still point to legacy services.
+3. **Agree recovery responsibility and limits.** Name the person responsible for restoring service and choose acceptable data loss and downtime. Rehearse encrypted off-server restoration of app/identity databases, objects and required configuration/keys.
+4. **Pass integrated staging acceptance.** Test registration/email/recovery, invitations/MFA/revocation, report/photo/retry/moderation/privacy, monitoring and scenarios through both clients. Any private legacy import requires an authorized export and reconciliation.
+5. **Qualify the small-user deployment.** Use the 20–50-person estimate, confirm peak simultaneous use and photo volume, configure rate/concurrency controls and redacted alerts, then measure latency/error/resource behavior. Total registered users alone does not specify peak load.
+6. **Qualify Android and scientific scope.** Build the API-connected APK with the existing signing identity and higher versionCode; test physical installation/upgrade, sign-in and interrupted uploads. Keep simulations illustrative; decision use requires a separate validation record.
+7. **Review and release the exact artifacts.** Merge/deploy the reviewed UI and backend/client artifacts only after their applicable gates pass, rehearse rollback preserving new writes and observe an acceptance window. The web UI can be reviewed independently; this feature branch is not yet the public deployment.

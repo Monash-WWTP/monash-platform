@@ -42,7 +42,7 @@ export function Card({
   action?: ReactNode
 }) {
   return (
-    <ShadCard className={cn('gap-0 rounded-lg border-border bg-card py-0', className)}>
+    <ShadCard className={cn('gap-0 rounded-lg border-border bg-card py-0 shadow-none', className)}>
       {title && (
         <CardHeader className="flex-row items-center justify-between border-b border-border px-3 !py-2">
           <CardTitle className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
@@ -64,7 +64,7 @@ export function Input(props: React.ComponentProps<typeof ShadInput>) {
   return (
     <ShadInput
       {...props}
-      className={cn('h-8 border-border bg-muted text-sm text-foreground', props.className)}
+      className={cn('h-8 min-h-11 border-border bg-muted text-sm text-foreground sm:min-h-8', props.className)}
     />
   )
 }
@@ -75,7 +75,7 @@ export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
     <select
       {...props}
       className={cn(
-        'w-full rounded-md border border-border bg-muted px-2.5 py-1.5 text-sm text-foreground',
+        'min-h-11 w-full rounded-md border border-border bg-muted px-2.5 py-1.5 text-sm text-foreground sm:min-h-8',
         'focus:border-primary focus:outline-none',
         props.className,
       )}
@@ -96,7 +96,7 @@ export function Button({
     danger: { v: 'outline' as const, cls: 'border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20 hover:text-destructive' },
     ghost: { v: 'ghost' as const, cls: 'text-muted-foreground hover:bg-muted hover:text-foreground' },
   }[variant]
-  return <ShadButton variant={map.v} size="sm" className={cn(map.cls, className)} {...props} />
+  return <ShadButton variant={map.v} size="sm" className={cn('min-h-11 sm:min-h-8', map.cls, className)} {...props} />
 }
 
 export function SegmentGroup<T extends string>({
@@ -115,8 +115,9 @@ export function SegmentGroup<T extends string>({
           key={opt.value}
           type="button"
           onClick={() => onChange(opt.value)}
+          aria-pressed={value === opt.value}
           className={cn(
-            'flex-1 rounded px-2 py-1 text-xs font-medium transition-colors',
+            'min-h-11 flex-1 rounded px-2 py-1 text-xs font-medium transition-colors sm:min-h-8',
             value === opt.value
               ? 'bg-primary text-primary-foreground'
               : 'text-muted-foreground hover:text-foreground',

@@ -1,7 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import * as maplibregl from 'maplibre-gl'
 import mapWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { ChevronsLeft, ChevronsRight, X } from 'lucide-react'
 
 import type { Plant } from '../api/types'
@@ -9,6 +9,7 @@ import { usePlants } from '../api/hooks'
 import { useCommunityWastewaterObservations, useStations } from '@/api/monitoring'
 import type { CommunityWastewaterObservation, Station } from '@/api/monitoring-types'
 import { CHART } from '@/components/dashboard/chartPalette'
+import OperatorHeader from '@/components/OperatorHeader'
 
 // OpenFreeMap Liberty: free vector style with 3D building extrusions.
 const MAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty'
@@ -225,10 +226,7 @@ export default function MapPage() {
   return (
     <main className="relative h-full overflow-hidden" aria-label="Water monitoring">
       <div inert={selected !== null && narrow}>
-      <header className="absolute inset-x-0 top-0 z-10 flex h-14 items-center justify-between gap-3 border-b bg-background px-4">
-        <Link to="/" className="font-semibold text-primary">Monash Water</Link>
-        <span className="text-sm">Monitoring</span>
-      </header>
+      <div className="absolute inset-x-0 top-0 z-10"><OperatorHeader context="Monitoring" monitoring /></div>
       <div ref={mapContainer} style={{ position: 'absolute', inset: '56px 0 0' }} aria-label="Plant locations" />
       <section className={`absolute left-3 top-[68px] z-10 max-h-[calc(100%-80px)] w-[min(320px,calc(100%-24px))] overflow-y-auto rounded-lg border border-border bg-background p-4 ${mapUnavailable ? 'shadow-none' : 'shadow-sm'}`} aria-label="Find a plant">
         <h1 className="text-lg font-semibold">Water monitoring</h1>
