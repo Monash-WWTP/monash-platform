@@ -10,14 +10,14 @@
   min-height: 100vh;
   line-height: 1.65;
   caret-color: var(--action);
-  scrollbar-color: #999999 var(--brand-soft);
+  scrollbar-color: #8aab99 var(--brand-soft);
 }
 .public-portal * {
   box-sizing: border-box;
 }
 .public-portal ::selection {
-  background: #e5e5e5;
-  color: #202020;
+  background: #cce6d8;
+  color: #143f2d;
 }
 .public-portal a {
   color: var(--action);
@@ -846,3 +846,6 @@
 .landscape-image { margin: 0 0 24px; }
 .landscape-image img { display: block; width: 100%; height: auto; aspect-ratio: 2.4; object-fit: cover; border-radius: 12px; }
 .landscape-image figcaption { margin-top: 8px; color: var(--muted); font-size: 11px; }
+
+.home-guide-links { display: flex; flex-direction: column; align-items: flex-start; margin-top: 16px; }
+.home-guide-links a { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; font-size: 13px; font-weight: 600; text-underline-offset: 4px; }

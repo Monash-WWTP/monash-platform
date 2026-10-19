@@ -1,12 +1,12 @@
 ---
-name: Monash Water neutral interface
+name: Monash Water green product interface
 colors:
-  ink: "#202020"
-  muted: "#666666"
-  rule: "#e5e5e5"
-  primary: "#262626"
-  primary-hover: "#111111"
-  soft: "#f5f5f5"
+  ink: "#202724"
+  muted: "#58635d"
+  rule: "#dbe2dd"
+  primary: "#146346"
+  primary-hover: "#0c4d35"
+  soft: "#f2f6f3"
   white: "#fff"
 typography:
   family: "Manrope, sans-serif"
@@ -14,13 +14,13 @@ typography:
 
 # Monash Water interface
 
-The user requested a neutral palette and less clutter on 19 October 2026. This supersedes the former green interface accent. White, charcoal and true grey carry backgrounds, text, controls, selection and focus. Warning, danger and success colours retain their operational meaning; photographs, cartography and the immutable published APK screenshot retain their actual content.
+The user clarified on 19 October 2026 that the landing page, dashboard and Android app retain the original green identity (#146346 primary, #0c4d35 hover). Only the documentation site uses neutral white/charcoal/grey. This supersedes the earlier broad neutral interpretation. Preserve the quieter UX, semantic statuses, photographs and immutable published APK screenshot.
 
-Use the shared tokens in `apps/dashboard/src/index.css`; native Android uses `AppTheme` with the same neutral values and Material controls. Charts use charcoal/grey series and labelled red screening thresholds. Do not use colour alone to distinguish evidence or status. Typography, source labels, dates, missing values and below-detection notation remain explicit.
+Use the shared tokens in `apps/dashboard/src/index.css`; native Android uses `AppTheme` with the original green Material theme and Material controls. Charts use the original green-led series palette with distinct line patterns and labelled red screening thresholds. Do not use colour alone to distinguish evidence or status. Typography, source labels, dates, missing values and below-detection notation remain explicit.
 
 ## Public pages
 
-Keep one clear download action and a secondary dashboard route. The real Android 1.0.0 screenshot identifies that release. A separate generated river image accompanies documentation and is visibly labelled illustrative, never as a monitored location or scientific evidence. Flat surfaces, thin rules, self-hosted Manrope and restrained spacing maintain continuity. Preserve keyboard focus, readable links and 44px mobile targets.
+Keep one clear download action and a secondary dashboard route. The real Android 1.0.0 screenshot identifies that release. A separate generated river image accompanies documentation and is decorative, never presented as a monitored location or scientific evidence; provenance is retained in the asset README. Flat surfaces, thin rules, self-hosted Manrope and restrained spacing maintain continuity. Preserve keyboard focus, readable links and 44px mobile targets.
 
 ## Monitoring and research
 

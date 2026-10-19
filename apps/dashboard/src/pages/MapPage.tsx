@@ -240,8 +240,10 @@ export default function MapPage() {
         <input id="plant-search" type="search" value={search} onChange={event => setSearch(event.target.value)}
           className="mt-2 min-h-11 w-full rounded border bg-background px-3 text-sm" placeholder="Plant name or code" />
         {isLoading && <p role="status" className="mt-3 text-sm">Loading plants…</p>}
+        <p className="mt-2 text-xs text-muted-foreground">Design capacity is measured in MLD (million litres per day); it is not current measured flow.</p>
         {error ? <div role="alert" className="mt-3 text-sm">
-          <p>Plants are unavailable. Please try again.</p>
+          <p>Plant records could not be loaded. The data service may be unavailable.</p>
+          <p className="mt-2 text-xs text-muted-foreground">{error.message} No plant records are being displayed.</p>
           <button className="min-h-11 text-primary underline" onClick={() => void refetchPlants()}>Retry plants</button>
         </div> : !isLoading && <>
           <p role="status" className="mt-3 text-xs text-muted-foreground">{visiblePlants.length} {visiblePlants.length === 1 ? 'plant' : 'plants'}</p>

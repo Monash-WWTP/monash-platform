@@ -12,6 +12,7 @@ import type { MaintenanceEvent, Scenario, UnitType } from '../../api/types'
 import { useWorkspaceStore } from '../../stores/scenarioStore'
 import { Button, Card, Input, Label, SegmentGroup, Select, Spinner } from '../ui'
 import OperatorAccess from '../auth/OperatorAccess'
+import { revealInvalidField } from './validationFocus'
 
 const UNIT_LABEL: Record<UnitType, string> = {
   pump: 'Pump Station',
@@ -41,6 +42,7 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
     setCenterTab,
   } = useWorkspaceStore()
 
+  const panel = useRef<HTMLDivElement>(null)
   const mounted = useRef(true)
   useEffect(() => { mounted.current = true; return () => { mounted.current = false } }, [])
   const [startDate, setStartDate] = useState(() => new Date().toISOString().slice(0, 10))
@@ -49,12 +51,18 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
 
   async function saveAndRun() {
     setError(null)
+    panel.current?.querySelectorAll('[aria-invalid="true"]').forEach(field => {
+      field.removeAttribute('aria-invalid')
+      field.removeAttribute('aria-describedby')
+    })
     if (!draft.name.trim()) {
       setError('Give the scenario a name first.')
+      if (panel.current) revealInvalidField(panel.current, 'Scenario name')
       return
     }
     if (!startDate || !Number.isFinite(Date.parse(startDate))) {
       setError('Choose a valid simulation start date.')
+      if (panel.current) revealInvalidField(panel.current, 'Simulation start date (UTC)')
       return
     }
     const { influent } = draft.forecast
@@ -69,22 +77,27 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
       demand_change_pct > 100
     ) {
       setError('Demand change must be between −100% and +100%.')
+      if (panel.current) revealInvalidField(panel.current, 'Demand change (%)')
       return
     }
     if (!Number.isFinite(rainfall_mm_day) || rainfall_mm_day < 0 || rainfall_mm_day > 200) {
       setError('Rainfall must be between 0 and 200 mm/day.')
+      if (panel.current) revealInvalidField(panel.current, 'Average rainfall, context only (mm/day)')
       return
     }
     if (!Number.isFinite(tkn) || tkn < 0) {
       setError('TKN must be a non-negative value.')
+      if (panel.current) revealInvalidField(panel.current, 'TKN (mg N/L)')
       return
     }
     if (!Number.isFinite(ch4_recovered_kg_m3) || ch4_recovered_kg_m3 < 0) {
       setError('Recovered CH₄ must be a non-negative value.')
+      if (panel.current) revealInvalidField(panel.current, 'Recovered CH₄ (kg/m³)')
       return
     }
     if (!Number.isFinite(n2o_recovered_kg_m3) || n2o_recovered_kg_m3 < 0) {
       setError('Recovered N₂O must be a non-negative value.')
+      if (panel.current) revealInvalidField(panel.current, 'Recovered N₂O (kg/m³)')
       return
     }
     const payload = {
@@ -130,7 +143,7 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
   }
 
   return (
-    <div className="flex h-full flex-col gap-3 overflow-y-auto p-3">
+    <div ref={panel} className="flex h-full flex-col gap-3 overflow-y-auto p-3">
       <OperatorAccess />
       <Card
         title="Saved Scenarios"
@@ -199,7 +212,7 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
           </div>
           <div>
             <label htmlFor="run-start-date" className="mb-1 block text-xs font-medium text-muted-foreground">Simulation start date (UTC)</label>
-            <Input id="run-start-date" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+            <Input aria-label="Simulation start date (UTC)" id="run-start-date" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
             <p className="mt-1 text-xs text-muted-foreground">Use the same dates and horizon for comparable runs.</p>
           </div>
           <div>
@@ -354,7 +367,7 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
         </p>
       </InputDisclosure>
 
-      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+      {error && <p id="scenario-error" role="alert" className="text-sm text-destructive">{error}</p>}
 
       <Button variant="primary" className="flex items-center justify-center gap-2 py-2.5" onClick={saveAndRun} disabled={busy}>
         {busy ? <Spinner /> : <Play className="size-4" />}

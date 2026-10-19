@@ -31,11 +31,13 @@ IWA's benchmark framework specifies layout, state model, influent, test procedur
 
 The byte-preserved legacy carbon note incorrectly describes zero clamping, weather effects and ASM default-parameter provenance. Current code does not implement those claims. The legacy source is retained unchanged for provenance; this audit and VALIDATION.md govern current interpretation.
 
-## Comparison integrity defects
+## Comparison integrity findings at the original audit baseline
 
-The current endpoint accepts duplicate, failed, cross-plant and incompatible-date/model runs. UI selection uses each scenario's latest run even when failed; chart dates come from the first series. Switching plants does not clear comparison/reference selections. Tables omit immutable input differences, factor provenance and an explicit reference. Result differences must not be described as verified improvements.
+The defects below were subsequently corrected in the monitoring-first implementation: completed-run selection, explicit reference, immutable input differences, compatibility rejection and plant-state reset now exist in source. See `apps/dashboard/src/components/comparison/comparisonModel.ts`, `services/api/app/services/comparison.py` and their tests. This records the earlier findings, not current endpoint behavior. Production acceptance remains separate.
 
-Required redesign: completed immutable runs only; explicit reference; unique IDs; compatible plant/model/artifact/date axis and units; threshold differences surfaced before screening comparisons; changed inputs shown from run snapshots; absolute/percentage differences with missing/zero-reference handling; no automatic winner/ranking. Method/factor differences must be visible, not hidden as operational effects.
+At that original baseline, the endpoint accepted duplicate, failed, cross-plant and incompatible-date/model runs. UI selection used each scenario's latest run even when failed; chart dates came from the first series. Switching plants did not clear comparison/reference selections. Tables omitted immutable input differences, factor provenance and an explicit reference. Result differences must not be described as verified improvements.
+
+Implemented correction: completed immutable runs only; explicit reference; unique IDs; compatible plant/model/artifact/date axis and units; threshold differences surfaced before screening comparisons; changed inputs shown from run snapshots; absolute/percentage differences with missing/zero-reference handling; no automatic winner/ranking. Method/factor differences must be visible, not hidden as operational effects.
 
 ## Scientific release path
 

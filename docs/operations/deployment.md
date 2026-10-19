@@ -1,5 +1,7 @@
 # Standalone server readiness
 
+Current server setup runbook: [Production server setup](production-server-setup.md). The successor API is not deployed as of 2026-10-19; the legacy Render rewrite does not serve the dashboard’s `/api/v1` contract.
+
 ## Current assessment — 2026-10-18
 
 The shared API, OIDC/browser sessions, capability/MFA checks, monitoring/report/media/moderation routes, versioned source clients and immutable simulation runs exist. Source and test evidence are in the [current acceptance record](staging-acceptance-2026-10-18.md). Production cutover remains blocked on domains/configuration, integration, private migration reconciliation, physical-device release, operational acceptance and owner decisions.
