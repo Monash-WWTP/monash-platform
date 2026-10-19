@@ -847,15 +847,5 @@
 .landscape-image img { display: block; width: 100%; height: auto; aspect-ratio: 2.4; object-fit: cover; border-radius: 12px; }
 .landscape-image figcaption { margin-top: 8px; color: var(--muted); font-size: 11px; }
 
-/* Availability belongs beside the action it qualifies, not behind a failed request. */
-.home-availability {
-  max-width: 58ch;
-  margin-top: 20px !important;
-  padding-top: 16px;
-  border-top: 1px solid var(--rule);
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.65;
-}
 .home-guide-links { display: flex; flex-direction: column; align-items: flex-start; margin-top: 16px; }
 .home-guide-links a { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; font-size: 13px; font-weight: 600; text-underline-offset: 4px; }

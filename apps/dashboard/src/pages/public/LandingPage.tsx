@@ -15,26 +15,22 @@ export default function LandingPage() {
             A place for community reports, wastewater monitoring and research.
           </p>
           <p className="home-description">
-            Record local water observations with CitizenFlood and read the
-            documented methods. The monitoring dashboard is awaiting its
-            production data service.
+            Record local water observations with CitizenFlood. Explore
+            wastewater monitoring, research methods and the evidence behind
+            the platform.
           </p>
           <div className="home-actions">
             <Link className="apk-button" to="/download">
               <Download size={20} aria-hidden="true" />
               Get CitizenFlood
             </Link>
-            <Link className="quiet-action" to="/dashboard" aria-describedby="dashboard-availability">
-              Preview dashboard <ArrowRight size={18} aria-hidden="true" />
+            <Link className="quiet-action" to="/dashboard">
+              Open dashboard <ArrowRight size={18} aria-hidden="true" />
             </Link>
           </div>
           <p className="home-release">
             Android{currentRelease ? ` ${currentRelease.versionName}` : ""} ·
             direct APK download
-          </p>
-          <p id="dashboard-availability" className="home-availability">
-            Dashboard data service is not deployed yet. The interface is a preview;
-            plant records and shared sign-in are unavailable on this website.
           </p>
         </div>
         <figure className="app-preview home-preview">
