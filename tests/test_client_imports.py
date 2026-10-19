@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ROWS = json.loads((ROOT / "docs/migration/source-inventory.json").read_text())["files"]
 MOBILE_ADAPTATIONS = {
+    "scripts/run.sh",
     "android/gradle.properties",
     "android/app/build.gradle.kts",
     "android/app/src/debug/AndroidManifest.xml",

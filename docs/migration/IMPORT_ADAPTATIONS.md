@@ -74,3 +74,7 @@ The interface follow-up preserves missing/below-detection laboratory values, add
 ## Unsupported twin removal — 2026-10-18
 
 At the user's request, the illustrative 3D twin was removed from workspace navigation, source, state and dependency graph. Its pinned source inventory entry is now superseded with its origin hash retained; Git history retains the removed implementation. The import test verifies imported frontend files and explicitly records the scenario-store adaptation. No treatment geometry, model equations or scientific validity was inferred from the deleted view.
+
+## Documentation integration and launcher guidance
+
+The separate Fumadocs manual is linked from platform navigation and current READMEs. `apps/citizenflood/scripts/run.sh` intentionally differs from the imported `scripts/run.sh` only in comments and missing-config guidance: it now directs users to the shared API/OIDC staging template rather than legacy Supabase values. The launcher command and executable mode are unchanged. The exact source path is recorded in `MOBILE_ADAPTATIONS`; original source hashes and the inventory remain preserved.
