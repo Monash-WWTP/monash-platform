@@ -1,5 +1,7 @@
 # Neutral interface and progressive disclosure — 19 October 2026
 
+Historical checkpoint: the owner subsequently clarified that the landing page, dashboard and Android source retain their original green theme; only Fumadocs stays neutral. The owner also removed the decorative image captions. See [current dashboard audit resolutions](dashboard-audit-resolution.md) and `DESIGN.md` for the final state. The original verification record below is retained as history.
+
 User request: remove the documentation's Platform source shortcut, use a neutral palette, add a landing image and reduce dashboard/app clutter without losing functionality.
 
 ## Implementation
