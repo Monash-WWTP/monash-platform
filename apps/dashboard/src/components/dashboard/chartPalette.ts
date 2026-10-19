@@ -3,7 +3,7 @@ export const CHART = {
   series: '#262626',
   series2: '#666666',
   series3: '#808080',
-  series4: '#a3a3a3',
+  series4: '#737373',
   axis: '#666666',
   grid: '#e5e5e5',
   limit: '#a13d35',

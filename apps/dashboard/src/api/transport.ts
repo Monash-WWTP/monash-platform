@@ -7,13 +7,33 @@ export async function fetchApi<T>(path: string, init?: RequestInit): Promise<T> 
     if (csrf) headers.set('X-CSRF-Token', decodeURIComponent(csrf))
   }
   const base = import.meta.env?.VITE_API_BASE ?? ''
-  const response = await fetch(`${base}${path}`, { ...init, headers, credentials: 'include' })
-  if (!response.ok) {
-    const body = await response.json().catch(() => null)
-    throw new Error(body?.error?.message ?? `Request failed (${response.status})`)
+  const readOnly = ['GET', 'HEAD'].includes(init?.method ?? 'GET')
+  const controller = new AbortController()
+  const cancel = () => controller.abort(init?.signal?.reason)
+  if (init?.signal?.aborted) cancel()
+  else init?.signal?.addEventListener('abort', cancel, { once: true })
+  const timeout = setTimeout(() => controller.abort(new DOMException('Request deadline exceeded', 'TimeoutError')), readOnly ? 15_000 : 120_000)
+  try {
+    const response = await fetch(`${base}${path}`, { ...init, headers, credentials: 'include', signal: controller.signal })
+    if (!response.ok) {
+      const body = await response.json().catch(() => null)
+      throw new Error(body?.error?.message ?? (response.status === 404
+        ? 'The requested service is unavailable. Please retry later; if this continues, contact the platform maintainer.'
+        : `Request failed (${response.status}). Please try again.`))
+    }
+    if (response.status === 204) return undefined as T
+    return await response.json()
+  } catch (error) {
+    if (controller.signal.reason?.name === 'TimeoutError') {
+      throw new Error(readOnly
+        ? 'The service timed out. Please retry; your selection has been kept.'
+        : 'The service timed out. The action may have completed. Refresh and check its status before trying again.', { cause: error })
+    }
+    throw error
+  } finally {
+    clearTimeout(timeout)
+    init?.signal?.removeEventListener('abort', cancel)
   }
-  if (response.status === 204) return undefined as T
-  return response.json()
 }
 
 export interface Page<T> { items: T[]; total: number; offset: number; limit: number }

@@ -8,6 +8,7 @@ import { CHART } from '../dashboard/chartPalette'
 import { changedInputs, metricDifference, pairResults } from './comparisonModel'
 
 const PALETTE = [CHART.series, CHART.series2, CHART.series3, CHART.series4]
+const LINE_TYPES = ['solid', 'dashed', 'dotted', [8, 3, 2, 3]] as const
 const METRICS = ['bod', 'cod', 'tss', 'ammonia', 'phosphorus', 'turbidity']
 const KPIS = [
   ['compliance_pct', 'Days within screening thresholds', '%', true],
@@ -91,11 +92,11 @@ export default function ComparisonView({ plantId }: { plantId: number }) {
         </table></div>
       </Card>
       <Card title="Illustrative effluent overlay" action={<Select aria-label="Comparison metric" value={metric} onChange={e => setMetric(e.target.value)}>{METRICS.map(m => <option key={m} value={m}>{METRIC_LABELS[m]}</option>)}</Select>}>
-        <p className="mb-2 text-xs text-muted-foreground">Aligned by actual date. Configured screening thresholds are shown in input differences, not as a common permit limit.</p>
+        <p className="mb-2 text-xs text-muted-foreground">The reference run uses a thicker line; runs also use different line patterns. Aligned by actual date. Configured screening thresholds are shown in input differences, not as a common permit limit.</p>
         <ReactECharts notMerge style={{ height: 320 }} option={{ backgroundColor: 'transparent', tooltip: { trigger: 'axis' }, legend: { type: 'scroll', top: 0, textStyle: { color: CHART.axis, fontSize: 11 } }, grid: { left: 50, right: 15, top: 45, bottom: 28 },
           xAxis: { type: 'category', data: pairs[0].timeseries.dates, axisLabel: { color: CHART.axis, fontSize: 10 } },
           yAxis: { type: 'value', scale: true, name: METRIC_UNITS[metric], splitLine: { lineStyle: { color: CHART.grid } } },
-          series: pairs.map(({ run, timeseries }, i) => ({ name: `${run.scenario_name} #${run.id}`, type: 'line', data: timeseries.series[metric] ?? [], showSymbol: false, lineStyle: { width: run.id === reference.id ? 3 : 1.5, color: PALETTE[i] }, itemStyle: { color: PALETTE[i] } })),
+          series: pairs.map(({ run, timeseries }, i) => ({ name: `${run.scenario_name} #${run.id}`, type: 'line', data: timeseries.series[metric] ?? [], showSymbol: false, lineStyle: { width: run.id === reference.id ? 3 : 2, type: LINE_TYPES[i], color: PALETTE[i] }, itemStyle: { color: PALETTE[i] } })),
         }} />
       </Card>
     </>}

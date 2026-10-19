@@ -77,9 +77,9 @@ export default function StationDashboard({
 
       <div className="space-y-3 px-1">
           <div>
-            <p className="mb-1 text-xs font-medium text-muted-foreground">Parameter</p>
+            <label id="monitoring-parameter-label" className="mb-1 block text-xs font-medium text-muted-foreground">Parameter</label>
             <ShadSelect value={metric} onValueChange={setMetric}>
-              <SelectTrigger className="h-8 min-h-11 w-full border-border bg-muted text-sm sm:min-h-8">
+              <SelectTrigger aria-labelledby="monitoring-parameter-label" className="h-8 min-h-11 w-full border-border bg-muted text-sm sm:min-h-8">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -92,7 +92,17 @@ export default function StationDashboard({
               </SelectContent>
             </ShadSelect>
           </div>
-          <p className="text-[11px] text-muted-foreground">
+          <details className="text-xs text-muted-foreground">
+            <summary className="cursor-pointer py-2">Understand these measurements</summary>
+            <dl className="space-y-2 pt-2">
+              <div><dt className="font-medium">BOD / COD</dt><dd>Biochemical / chemical oxygen demand: oxygen needed to break down material in the sample.</dd></div>
+              <div><dt className="font-medium">TSS</dt><dd>Total suspended solids: particles suspended in the water.</dd></div>
+              <div><dt className="font-medium">NH₃-N / NO₃-N</dt><dd>Ammoniacal nitrogen / nitrate nitrogen, expressed as nitrogen.</dd></div>
+              <div><dt className="font-medium">mg/L</dt><dd>Milligrams per litre, a concentration. pH is unitless; temperature is in degrees Celsius.</dd></div>
+              <div><dt className="font-medium">Below detection limit (BDL)</dt><dd>The laboratory could not quantify a value below its reported detection limit. This does not mean zero.</dd></div>
+            </dl>
+          </details>
+          <p className="text-xs text-muted-foreground">
             Status is reported by the source dataset. No station-specific permit limits are
             configured, so these charts do not determine legal compliance.
           </p>
@@ -152,6 +162,7 @@ export default function StationDashboard({
       )}
 
       <Card title={`${meta.label} Trend (lab results)`}>
+        <p className="mb-3 text-xs text-muted-foreground">Missing and below-detection results appear as gaps, not zero. Points show individual laboratory samples; lines connect observations, not continuous monitoring.</p>
         {isError ? (
           <p className="text-xs text-muted-foreground">Retry laboratory results to view the trend.</p>
         ) : isLoading ? (
@@ -164,18 +175,19 @@ export default function StationDashboard({
             style={{ height: 220 }}
             option={{
               backgroundColor: 'transparent',
-              grid: { left: 38, right: 12, top: 14, bottom: 22 },
+              grid: { left: 48, right: 12, top: 30, bottom: 28 },
               tooltip: { trigger: 'axis' },
               xAxis: {
                 type: 'category',
                 data: orderedSamples.map((s) => s.sample_date),
-                axisLabel: { color: CHART.axis, fontSize: 9 },
+                axisLabel: { color: CHART.axis, fontSize: 11 },
                 axisLine: { lineStyle: { color: CHART.grid } },
               },
               yAxis: {
                 type: 'value',
                 scale: true,
-                axisLabel: { color: CHART.axis, fontSize: 9 },
+                name: meta.unit || 'pH (unitless)',
+                axisLabel: { color: CHART.axis, fontSize: 11 },
                 splitLine: { lineStyle: { color: CHART.grid } },
               },
               series: [

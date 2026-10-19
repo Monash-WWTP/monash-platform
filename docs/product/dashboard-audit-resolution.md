@@ -1,0 +1,15 @@
+# Dashboard audit resolutions — 2026-10-19
+
+| Priority | Problem | Result |
+| --- | --- | --- |
+| P0 | Live versioned API requests reach the legacy Render service and return 404 | **Open: infrastructure dependency.** Owner confirmed successor API is not deployed and no production URL exists. Do not route to local staging or invent records. Follow the [server setup runbook](../operations/production-server-setup.md), complete integrated acceptance, then change the Vercel destination. |
+| P1 | Requests can leave the dashboard loading indefinitely | Implemented 15-second read deadlines and 120-second write deadlines, caller cancellation, timer/listener cleanup, and actionable errors. Timed-out writes instruct users to check status before retrying because the server may have completed the action. Existing query retries remain bounded; mutations are not automatically retried. |
+| P2 | Unexplained lab/capacity abbreviations and chart gaps | Added an optional measurement glossary, MLD explanation, visible missing/BDL/connection explanation and chart axis units. Associated the metric selector with its visible label and increased axis text to 11px. |
+| P2 | Comparison runs difficult to distinguish | Added solid/dashed/dotted/custom dash patterns and darker fourth series; reference stays thicker. Dates, compatibility checks and numerical calculations are unchanged. |
+| P2 | Invalid scenario field hidden inside closed disclosure | Validation opens ancestor disclosures, focuses and marks the field, and associates it with the announced error. Draft values are retained. |
+
+Verification: 37 dashboard tests, ESLint and TypeScript/Vite production build pass. Vite retains a large-chunk warning for the existing map/chart bundles. Regression tests exercised a stalled API request, missing endpoint recovery and actual DOM disclosure/focus behavior. No API/model scientific semantics changed.
+
+Product-native browser checks used a temporary GET-only synthetic API, not production data. At 1440px and 390px monitoring showed the new explanation and units; 390px monitoring/workspace had no document horizontal overflow. In the actual scenario screen, entering negative recovered methane, closing Carbon accounting and running validation reopened the section and focused `Recovered CH₄ (kg/m³)` with the correct error. Some initial preview interactions failed because the disclosure/input was offscreen or closed; the final check explicitly closed it before validating. Production data loading remains blocked by P0; these checks do not establish production readiness or scientific validation.
+
+The [production server guide](../operations/production-server-setup.md) describes required domains, Linux/Docker/HTTPS, application and identity databases, OIDC/MFA/recovery provisioning, private photos, migrations/imports, off-server restore acceptance and same-origin Vercel cutover. Its Compose example is a preparation recipe, not a deployed or qualified stack.
