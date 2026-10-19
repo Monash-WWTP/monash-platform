@@ -34,8 +34,8 @@ export default function LandingPage() {
           </p>
         </div>
         <figure className="app-preview home-preview">
-          <img src="/assets/app/report-screen.png" alt="CitizenFlood report screen with rainfall, water level, temperature and wastewater observation categories" width="922" height="2048" />
-          <figcaption>Actual app screen · published Android version 1.0.0</figcaption>
+          <img src="/assets/app/report-screen-latest.webp" alt="CitizenFlood report screen with rainfall, water level, temperature and wastewater observation categories" width="1080" height="2400" />
+          <figcaption>Latest Android interface · source preview</figcaption>
         </figure>
       </section>
       <section className="platform-paths" aria-label="Explore the platform">

@@ -16,9 +16,9 @@ test('unavailable accounts explain status without offering a disabled registrati
   }
 })
 
-test('home presents an actual release preview and one download entry', () => {
+test('home presents the latest source preview and one download entry', () => {
   const html = renderToStaticMarkup(createElement(MemoryRouter, null, createElement(LandingPage)))
-  assert.match(html, /report-screen\.png/)
+  assert.match(html, /report-screen-latest\.webp/)
   assert.match(html, /Account availability/)
   assert.doesNotMatch(html, /Create an account/)
   assert.equal((html.match(/href="\/download"/g) ?? []).length, 1)
