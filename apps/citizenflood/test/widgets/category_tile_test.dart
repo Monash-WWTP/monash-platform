@@ -65,11 +65,11 @@ void main() {
   test('AppTheme shares the landing page primary and neutral colors', () {
     final theme = AppTheme.light();
 
-    expect(theme.colorScheme.primary, const Color(0xFF146346));
+    expect(theme.colorScheme.primary, const Color(0xFF262626));
     expect(theme.colorScheme.onPrimary, Colors.white);
     expect(theme.colorScheme.surface, Colors.white);
     expect(theme.scaffoldBackgroundColor, Colors.white);
-    expect(theme.colorScheme.onSurface, const Color(0xFF202724));
+    expect(theme.colorScheme.onSurface, const Color(0xFF202020));
   });
 
   testWidgets(
@@ -93,9 +93,40 @@ void main() {
         for (final segment in button.segments)
           segment.value: segment.icon! as Icon,
       };
-      expect(icons[Condition.normal]!.color, AppTheme.green);
+      expect(icons[Condition.normal]!.color, AppTheme.success);
       expect(icons[Condition.warning]!.color, AppTheme.warning);
       expect(icons[Condition.critical]!.color, AppTheme.danger);
+    },
+  );
+  testWidgets(
+    'optional report details expand and preserve a note when collapsed',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: const ReportFormScreen(category: ReportCategory.rainfall),
+        ),
+      );
+      await tester.pump();
+      expect(find.text('Camera'), findsNothing);
+      expect(find.text('Gallery'), findsNothing);
+      final disclosure = find.text('Photo and note');
+      await tester.tap(disclosure);
+      await tester.pumpAndSettle();
+      expect(find.text('Camera'), findsOneWidget);
+      expect(find.text('Gallery'), findsOneWidget);
+      final note = find.byWidgetPredicate(
+        (widget) => widget is TextField && widget.maxLines == 3,
+      );
+      await tester.ensureVisible(note);
+      await tester.enterText(note, 'Observation beside the bridge');
+      await tester.ensureVisible(disclosure);
+      await tester.tap(disclosure);
+      await tester.pumpAndSettle();
+      expect(find.text('Camera'), findsNothing);
+      await tester.tap(disclosure);
+      await tester.pumpAndSettle();
+      expect(find.text('Observation beside the bridge'), findsOneWidget);
     },
   );
 }

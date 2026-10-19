@@ -17,6 +17,7 @@ class _MapScreenState extends State<MapScreen> {
   final _repo = ReportRepository();
   late Future<List<Report>> _future = _repo.recent();
   final _mapController = MapController();
+  bool _showReadings = false;
 
   Color _pinColor(BuildContext context) =>
       Theme.of(context).colorScheme.primary;
@@ -31,75 +32,84 @@ class _MapScreenState extends State<MapScreen> {
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
-      builder: (_) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                ExcludeSemantics(
-                  child: Icon(r.category.icon, color: _pinColor(context)),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    r.category.label,
-                    style: Theme.of(context).textTheme.titleLarge,
+      isScrollControlled: true,
+      useSafeArea: true,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+      ),
+      builder: (_) => SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  ExcludeSemantics(
+                    child: Icon(r.category.icon, color: _pinColor(context)),
                   ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      r.category.label,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                r.readingLabel,
+                style: Theme.of(
+                  context,
+                ).textTheme.headlineMedium?.copyWith(color: _pinColor(context)),
+              ),
+              const SizedBox(height: 4),
+              Text(_time(r), style: Theme.of(context).textTheme.bodySmall),
+              if (r.note != null && r.note!.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Text(r.note!, style: Theme.of(context).textTheme.bodyMedium),
+              ],
+              if (r.photoPath != null) ...[
+                const SizedBox(height: 16),
+                FutureBuilder<Uint8List>(
+                  future: _repo.photoBytes(r.photoPath!),
+                  builder: (_, snapshot) {
+                    if (snapshot.hasError) {
+                      return const Text('Photo unavailable');
+                    }
+                    if (!snapshot.hasData) {
+                      return const SizedBox(
+                        height: 80,
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.memory(
+                        snapshot.data!,
+                        height: 220,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => const SizedBox(
+                          height: 60,
+                          child: Center(child: Text('Photo unavailable')),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              r.readingLabel,
-              style: Theme.of(
-                context,
-              ).textTheme.headlineMedium?.copyWith(color: _pinColor(context)),
-            ),
-            const SizedBox(height: 4),
-            Text(_time(r), style: Theme.of(context).textTheme.bodySmall),
-            if (r.note != null && r.note!.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Text(r.note!, style: Theme.of(context).textTheme.bodyMedium),
+              if (r.moderationStatus == ModerationStatus.pending) ...[
+                const SizedBox(height: 12),
+                const Chip(
+                  avatar: Icon(Icons.schedule, size: 16),
+                  label: Text('Pending review'),
+                ),
+              ],
             ],
-            if (r.photoPath != null) ...[
-              const SizedBox(height: 16),
-              FutureBuilder<Uint8List>(
-                future: _repo.photoBytes(r.photoPath!),
-                builder: (_, snapshot) {
-                  if (snapshot.hasError) return const Text('Photo unavailable');
-                  if (!snapshot.hasData) {
-                    return const SizedBox(
-                      height: 80,
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  }
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.memory(
-                      snapshot.data!,
-                      height: 220,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => const SizedBox(
-                        height: 60,
-                        child: Center(child: Text('Photo unavailable')),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-            if (r.moderationStatus == ModerationStatus.pending) ...[
-              const SizedBox(height: 12),
-              const Chip(
-                avatar: Icon(Icons.schedule, size: 16),
-                label: Text('Pending review'),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );
@@ -181,41 +191,50 @@ class _MapScreenState extends State<MapScreen> {
                   ],
                 ),
               ),
-              SizedBox(
-                height: 170,
-                child: reports.isEmpty
-                    ? const Center(
-                        child: Text('No readings yet — be the first!'),
-                      )
-                    : ListView(
-                        children: [
-                          for (final r in reports.take(20))
-                            ListTile(
-                              dense: true,
-                              onTap: () {
-                                _mapController.move(
-                                  LatLng(r.latitude, r.longitude),
-                                  15,
-                                );
-                                _showDetail(r);
-                              },
-                              leading: ExcludeSemantics(
-                                child: Icon(
-                                  r.category.icon,
-                                  color: _pinColor(context),
-                                ),
-                              ),
-                              title: Text(
-                                '${r.category.label} · ${r.readingLabel}',
-                              ),
-                              subtitle: Text(_time(r)),
-                              trailing: r.photoPath != null
-                                  ? const Icon(Icons.photo_outlined, size: 18)
-                                  : null,
-                            ),
-                        ],
-                      ),
+              ListTile(
+                title: const Text('Recent readings'),
+                subtitle: Text('${reports.length} observations available'),
+                trailing: Icon(
+                  _showReadings ? Icons.expand_less : Icons.expand_more,
+                ),
+                onTap: () => setState(() => _showReadings = !_showReadings),
               ),
+              if (_showReadings)
+                SizedBox(
+                  height: 170,
+                  child: reports.isEmpty
+                      ? const Center(
+                          child: Text('No readings yet — be the first!'),
+                        )
+                      : ListView(
+                          children: [
+                            for (final r in reports.take(20))
+                              ListTile(
+                                dense: true,
+                                onTap: () {
+                                  _mapController.move(
+                                    LatLng(r.latitude, r.longitude),
+                                    15,
+                                  );
+                                  _showDetail(r);
+                                },
+                                leading: ExcludeSemantics(
+                                  child: Icon(
+                                    r.category.icon,
+                                    color: _pinColor(context),
+                                  ),
+                                ),
+                                title: Text(
+                                  '${r.category.label} · ${r.readingLabel}',
+                                ),
+                                subtitle: Text(_time(r)),
+                                trailing: r.photoPath != null
+                                    ? const Icon(Icons.photo_outlined, size: 18)
+                                    : null,
+                              ),
+                          ],
+                        ),
+                ),
             ],
           );
         },

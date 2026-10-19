@@ -78,3 +78,7 @@ At the user's request, the illustrative 3D twin was removed from workspace navig
 ## Documentation integration and launcher guidance
 
 The separate Fumadocs manual is linked from platform navigation and current READMEs. `apps/citizenflood/scripts/run.sh` intentionally differs from the imported `scripts/run.sh` only in comments and missing-config guidance: it now directs users to the shared API/OIDC staging template rather than legacy Supabase values. The launcher command and executable mode are unchanged. The exact source path is recorded in `MOBILE_ADAPTATIONS`; original source hashes and the inventory remain preserved.
+
+## Neutral interface and progressive disclosure
+
+The user requested neutral interface colours and less clutter on 19 October 2026. Existing adapted dashboard tokens, chart palette, station/scenario interfaces and Android theme/report/map screens were revised. Labelled native disclosures retain all controls and values. The map observation detail sheet scrolls. Native reporting categories, severity labels, permissions, transport, model equations and immutable release artifacts are preserved. No new imported-file exemption is introduced; existing adaptations remain explicit in `tests/test_client_imports.py`.
