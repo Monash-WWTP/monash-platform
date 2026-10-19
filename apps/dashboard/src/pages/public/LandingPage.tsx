@@ -15,22 +15,26 @@ export default function LandingPage() {
             A place for community reports, wastewater monitoring and research.
           </p>
           <p className="home-description">
-            Record observations with CitizenFlood. Explore the laboratory record
-            in the dashboard. Read research as approved articles become
-            available.
+            Record local water observations with CitizenFlood and read the
+            documented methods. The monitoring dashboard is awaiting its
+            production data service.
           </p>
           <div className="home-actions">
             <Link className="apk-button" to="/download">
               <Download size={20} aria-hidden="true" />
               Get CitizenFlood
             </Link>
-            <Link className="quiet-action" to="/dashboard">
-              Open dashboard <ArrowRight size={18} aria-hidden="true" />
+            <Link className="quiet-action" to="/dashboard" aria-describedby="dashboard-availability">
+              Preview dashboard <ArrowRight size={18} aria-hidden="true" />
             </Link>
           </div>
           <p className="home-release">
             Android{currentRelease ? ` ${currentRelease.versionName}` : ""} ·
             direct APK download
+          </p>
+          <p id="dashboard-availability" className="home-availability">
+            Dashboard data service is not deployed yet. The interface is a preview;
+            plant records and shared sign-in are unavailable on this website.
           </p>
         </div>
         <figure className="app-preview home-preview">
@@ -42,8 +46,8 @@ export default function LandingPage() {
         <article>
           <h2>Explore the research.</h2>
           <p>
-            Read approved research and learn how published work informs the
-            platform.
+            No approved articles are published yet. Read the current methods and
+            limitations while this section is prepared.
           </p>
           <Link to="/research">
             Browse research <ArrowRight size={17} aria-hidden="true" />
@@ -64,7 +68,11 @@ export default function LandingPage() {
             <figcaption>Illustrative landscape · AI-generated</figcaption>
           </figure>
           <p>Read getting-started guides, reporting and monitoring workflows, model methods and release procedures. Start with a guide for your role, then follow the supporting sources and methods.</p>
-          <a className="quiet-action" href={documentationUrl}>Read the documentation <ArrowRight size={17} aria-hidden="true" /></a>
+          <nav className="home-guide-links" aria-label="Getting started guides">
+            <a href={`${documentationUrl}/docs/get-started/citizens/`}>Report a water observation <ArrowRight size={17} aria-hidden="true" /></a>
+            <a href={`${documentationUrl}/docs/guides/monitoring/`}>Understand monitoring records <ArrowRight size={17} aria-hidden="true" /></a>
+            <a href={documentationUrl}>Browse the full manual <ArrowRight size={17} aria-hidden="true" /></a>
+          </nav>
         </div>
       </section>
       <section className="evidence-note">
@@ -79,9 +87,9 @@ export default function LandingPage() {
         <div>
           <h2>Shared accounts are being prepared.</h2>
           <p>
-            Shared accounts are available in local staging for the dashboard and
-            API-connected app. The public APK 1.0.0 uses the existing
-            CitizenFlood account service.
+            Shared accounts are implemented in the new platform source and
+            still need production deployment and acceptance. The public APK
+            1.0.0 uses the existing CitizenFlood account service.
           </p>
         </div>
         <Link className="quiet-action" to="/register">

@@ -98,6 +98,8 @@ export default function StationDashboard({
               <div><dt className="font-medium">BOD / COD</dt><dd>Biochemical / chemical oxygen demand: oxygen needed to break down material in the sample.</dd></div>
               <div><dt className="font-medium">TSS</dt><dd>Total suspended solids: particles suspended in the water.</dd></div>
               <div><dt className="font-medium">NH₃-N / NO₃-N</dt><dd>Ammoniacal nitrogen / nitrate nitrogen, expressed as nitrogen.</dd></div>
+              <div><dt className="font-medium">Oil &amp; Grease</dt><dd>Material measured by the laboratory's oil-and-grease analysis; interpret with its sampling and analytical method.</dd></div>
+              <div><dt className="font-medium">pH / Temperature</dt><dd>pH describes acidity or alkalinity; temperature describes how warm the sample was. Interpret both with sampling context and applicable limits.</dd></div>
               <div><dt className="font-medium">mg/L</dt><dd>Milligrams per litre, a concentration. pH is unitless; temperature is in degrees Celsius.</dd></div>
               <div><dt className="font-medium">Below detection limit (BDL)</dt><dd>The laboratory could not quantify a value below its reported detection limit. This does not mean zero.</dd></div>
             </dl>
