@@ -12,12 +12,12 @@ const comparisonView = readFileSync(new URL('../src/components/comparison/Compar
 
 test('canonical browser tokens use the approved landing page palette and type', () => {
   for (const [name, value] of Object.entries({
-    ink: '#202020',
-    muted: '#666666',
-    rule: '#e5e5e5',
-    primary: '#262626',
-    'primary-hover': '#111111',
-    soft: '#f5f5f5',
+    ink: '#202724',
+    muted: '#58635d',
+    rule: '#dbe2dd',
+    primary: '#146346',
+    'primary-hover': '#0c4d35',
+    soft: '#f2f6f3',
   })) {
     assert.match(indexCss, new RegExp(`--brand-${name}:\\s*${value.replace('#', '\\#')}`, 'i'))
   }
@@ -27,9 +27,9 @@ test('canonical browser tokens use the approved landing page palette and type', 
   assert.match(indexCss, /--foreground:\s*var\(--brand-ink\)/)
   assert.match(publicCss, /--action:\s*var\(--brand-primary\)/)
   assert.match(publicCss, /--ink:\s*var\(--brand-ink\)/)
-  assert.match(chartPalette, /series:\s*'#262626'/)
-  assert.match(chartPalette, /axis:\s*'#666666'/)
-  assert.match(chartPalette, /grid:\s*'#e5e5e5'/)
+  assert.match(chartPalette, /series:\s*'#146346'/)
+  assert.match(chartPalette, /axis:\s*'#58635d'/)
+  assert.match(chartPalette, /grid:\s*'#dbe2dd'/)
 })
 
 test('dashboard statuses use shared warning and success roles', () => {

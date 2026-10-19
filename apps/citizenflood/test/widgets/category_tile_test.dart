@@ -62,14 +62,14 @@ void main() {
     semantics.dispose();
   });
 
-  test('AppTheme shares the landing page primary and neutral colors', () {
+  test('AppTheme shares the landing page original green palette', () {
     final theme = AppTheme.light();
 
-    expect(theme.colorScheme.primary, const Color(0xFF262626));
+    expect(theme.colorScheme.primary, const Color(0xFF146346));
     expect(theme.colorScheme.onPrimary, Colors.white);
     expect(theme.colorScheme.surface, Colors.white);
     expect(theme.scaffoldBackgroundColor, Colors.white);
-    expect(theme.colorScheme.onSurface, const Color(0xFF202020));
+    expect(theme.colorScheme.onSurface, const Color(0xFF202724));
   });
 
   testWidgets(

@@ -10,14 +10,14 @@
   min-height: 100vh;
   line-height: 1.65;
   caret-color: var(--action);
-  scrollbar-color: #999999 var(--brand-soft);
+  scrollbar-color: #8aab99 var(--brand-soft);
 }
 .public-portal * {
   box-sizing: border-box;
 }
 .public-portal ::selection {
-  background: #e5e5e5;
-  color: #202020;
+  background: #cce6d8;
+  color: #143f2d;
 }
 .public-portal a {
   color: var(--action);

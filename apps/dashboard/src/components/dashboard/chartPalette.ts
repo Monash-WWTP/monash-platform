@@ -1,11 +1,11 @@
 // Shared chart palette for scenario, comparison, and monitoring views.
 export const CHART = {
-  series: '#262626',
-  series2: '#666666',
-  series3: '#808080',
-  series4: '#737373',
-  axis: '#666666',
-  grid: '#e5e5e5',
+  series: '#146346',
+  series2: '#58635d',
+  series3: '#527668',
+  series4: '#7c6242',
+  axis: '#58635d',
+  grid: '#dbe2dd',
   limit: '#a13d35',
-  maintenance: 'rgba(38, 38, 38, 0.08)',
+  maintenance: 'rgba(20, 99, 70, 0.12)',
 }
