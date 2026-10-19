@@ -17,7 +17,7 @@ uv run --locked python scripts/check_import_inventory.py --verify-targets
 uv run --locked python scripts/check_repository.py
 ```
 
-For a synthetic API demo, set `APP_ENV=development`, run `uv run --locked python -m app.devdata`, then `uv run --locked uvicorn app.main:app --reload --host 127.0.0.1`. The seed is idempotent and rejects production. Confirm health with `curl --fail http://127.0.0.1:8000/api/v1/health`.
+For a synthetic API demo, set `APP_ENV=development`, run `uv run --locked python -m app.devdata`, then `uv run --locked uvicorn app.main:app --reload --host 127.0.0.1 --port 8181`. The seed is idempotent and rejects production. Confirm health with `curl --fail http://127.0.0.1:8181/api/v1/health`.
 
 API environment: `DATABASE_URL` is required. Current authentication uses OIDC issuer/discovery/JWKS, browser client secret/callback/web origin, issuer-subject account mapping, server-owned capabilities and operator MFA. Private photos require the configured S3 endpoint/bucket/access credentials. See `services/api/app/config.py` and `infra/staging/.env.example`; never copy real secrets into Git or chat. Legacy Supabase configuration remains for ownership-claim compatibility, not general operator authorization.
 

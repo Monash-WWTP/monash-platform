@@ -2,13 +2,15 @@
 
 Successor monorepo for CitizenFlood, the WWTP operator dashboard, and a shared FastAPI service. The three products build and release independently.
 
+**[Platform manual](https://monash-platform-docs.vercel.app)** covers getting started, workflows, architecture, exact simulation logic and release gates. The source-pinned Fumadocs manual is maintained in a [separate repository](https://github.com/Monash-WWTP/monash-platform-docs).
+
 | Product | Purpose | Current integration |
 | --- | --- | --- |
-| [CitizenFlood](apps/citizenflood/README.md) | Mobile citizen observations and reporting | Imported Supabase flows |
-| [WWTP dashboard](apps/dashboard/README.md) | Lab monitoring and illustrative scenarios | Imported Supabase reads and legacy `/api/*` service |
-| [Platform API](docs/api/README.md) | API-owned PostgreSQL, scenarios and simulation | Local `/api/v1`; clients are not cut over yet |
+| [CitizenFlood](apps/citizenflood/README.md) | Mobile citizen observations and reporting | Shared API/OIDC in source; published APK remains legacy |
+| [WWTP dashboard](apps/dashboard/README.md) | Lab monitoring and illustrative scenarios | Versioned `/api/v1` client in source; production cutover pending |
+| [Platform API](docs/api/README.md) | API-owned PostgreSQL, scenarios and simulation | API-owned application data; production acceptance pending |
 
-Authentik accounts, reporting/monitoring endpoints, client cutover and server deployment are the next [work packages](docs/migration/ROADMAP.md). The simulation is `illustrative_unvalidated`; see [scientific limits](docs/science/VALIDATION.md).
+Identity, reporting/monitoring and source clients are implemented; production identity, storage, recovery and client cutover acceptance remain open. See the [work packages](docs/migration/ROADMAP.md). The simulation is `illustrative_unvalidated`; see [scientific limits](docs/science/VALIDATION.md).
 
 ## First-day setup
 
@@ -24,10 +26,10 @@ export APP_ENV=development
 uv sync --locked
 uv run --locked alembic -c services/api/alembic.ini upgrade head
 uv run --locked python -m app.devdata
-uv run --locked uvicorn app.main:app --reload --host 127.0.0.1
+uv run --locked uvicorn app.main:app --reload --host 127.0.0.1 --port 8181
 ```
 
-Swagger: <http://127.0.0.1:8000/docs>; schema: <http://127.0.0.1:8000/openapi.json>. The seed is synthetic and idempotent. Tests reset the disposable schema. See [local development](docs/operations/local-development.md).
+Swagger: <http://127.0.0.1:8181/docs>; schema: <http://127.0.0.1:8181/openapi.json>. The seed is synthetic and idempotent. Tests reset the disposable schema. See [local development](docs/operations/local-development.md).
 
 Dashboard, in another terminal:
 
@@ -38,7 +40,7 @@ npm --prefix apps/dashboard run build
 npm --prefix apps/dashboard run dev
 ```
 
-Monitoring still uses legacy Supabase. Scenario calls need a compatible legacy API supplied with `VITE_API_BASE`; the successor service does not serve old `/api/*` paths.
+Visit http://127.0.0.1:8180/dashboard. Vite proxies `/api` to the API on port 8181. The source uses `/api/v1`; privileged actions still require configured identity, capabilities and MFA. The production Vercel rewrite remains legacy and is not a completed shared-API cutover.
 
 Mobile:
 
@@ -47,10 +49,10 @@ cd apps/citizenflood
 flutter pub get
 flutter analyze
 flutter test
-flutter build apk --debug --dart-define=SUPABASE_URL=https://example.supabase.co --dart-define=SUPABASE_ANON_KEY=synthetic-ci-key
+flutter build apk --debug --dart-define-from-file=staging-config.example.json
 ```
 
-Synthetic values produce a verification artifact. Configure an approved development project as described in the app README for an operational run.
+Synthetic values produce a verification artifact. Configure approved API/OIDC endpoints as described in the app README for an operational run.
 
 ## Engineering and research
 
