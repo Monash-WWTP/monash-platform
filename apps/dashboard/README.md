@@ -43,3 +43,5 @@ uv run --with playwright==1.63.0 python scripts/smoke_dashboard_map.py --url htt
 ```
 
 These checks block external requests. They cover public states, copy-link handoff, mobile legend, responsive widths, old deep links and synthetic map worker/attribution handling. They do not verify live integrations or real-device APK installation.
+
+The [platform manual](https://monash-platform-docs.vercel.app) covers operator onboarding, monitoring, scenario comparison and methods. Public and operator navigation link to the separately hosted Fumadocs manual.

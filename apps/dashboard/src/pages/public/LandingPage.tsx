@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Download } from "lucide-react";
+import { documentationUrl } from "../../lib/documentation";
 import { currentRelease } from "../../releases/release";
 export default function LandingPage() {
   return (
@@ -54,6 +55,13 @@ export default function LandingPage() {
           <a href="/references/urban-water-carbon-accounting-guidelines.pdf">Open the guideline PDF <ArrowRight size={17} aria-hidden="true" /></a>
           <Link to="/research/references">View all references <ArrowRight size={17} aria-hidden="true" /></Link>
         </article>
+      </section>
+      <section className="evidence-note" aria-labelledby="documentation-heading">
+        <h2 id="documentation-heading">Find your starting point.</h2>
+        <div>
+          <p>Read getting-started guides, reporting and monitoring workflows, model methods and release procedures. Start with a guide for your role, then follow the supporting sources and methods.</p>
+          <a className="quiet-action" href={documentationUrl}>Read the documentation <ArrowRight size={17} aria-hidden="true" /></a>
+        </div>
       </section>
       <section className="evidence-note">
         <h2>Understand what you’re looking at.</h2>
