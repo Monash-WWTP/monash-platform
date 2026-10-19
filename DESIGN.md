@@ -20,7 +20,7 @@ Use the shared tokens in `apps/dashboard/src/index.css`; native Android uses `Ap
 
 ## Public pages
 
-Keep one clear download action and a secondary dashboard route. The real Android 1.0.0 screenshot identifies that release. A separate generated river image accompanies documentation and is visibly labelled illustrative, never as a monitored location or scientific evidence. Flat surfaces, thin rules, self-hosted Manrope and restrained spacing maintain continuity. Preserve keyboard focus, readable links and 44px mobile targets.
+Keep one clear download action and a secondary dashboard route. The real Android 1.0.0 screenshot identifies that release. A separate generated river image accompanies documentation and is decorative, never presented as a monitored location or scientific evidence; provenance is retained in the asset README. Flat surfaces, thin rules, self-hosted Manrope and restrained spacing maintain continuity. Preserve keyboard focus, readable links and 44px mobile targets.
 
 ## Monitoring and research
 

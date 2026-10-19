@@ -61,7 +61,6 @@ export default function LandingPage() {
         <div>
           <figure className="landscape-image">
             <img src="/assets/illustrations/river-landscape.webp" alt="A quiet river bordered by trees and a concrete embankment" width="1536" height="1024" loading="lazy" />
-            <figcaption>Illustrative landscape · AI-generated</figcaption>
           </figure>
           <p>Read getting-started guides, reporting and monitoring workflows, model methods and release procedures. Start with a guide for your role, then follow the supporting sources and methods.</p>
           <nav className="home-guide-links" aria-label="Getting started guides">
