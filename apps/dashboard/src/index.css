@@ -10,16 +10,16 @@
 }
 
 :root {
-  --brand-ink: #202724;
-  --brand-muted: #58635d;
-  --brand-rule: #dbe2dd;
-  --brand-green: #146346;
-  --brand-green-hover: #0c4d35;
-  --brand-soft: #f2f6f3;
+  --brand-ink: #202020;
+  --brand-muted: #666666;
+  --brand-rule: #e5e5e5;
+  --brand-primary: #262626;
+  --brand-primary-hover: #111111;
+  --brand-soft: #f5f5f5;
   --brand-white: #fff;
   --status-danger: #a13d35;
   --status-warning: #805314;
-  --status-success: var(--brand-green);
+  --status-success: #276749;
   --status-warning-soft: #f5f0e6;
   --status-success-soft: #edf4ef;
 
@@ -30,7 +30,7 @@
   --card-foreground: var(--brand-ink);
   --popover: var(--brand-white);
   --popover-foreground: var(--brand-ink);
-  --primary: var(--brand-green);
+  --primary: var(--brand-primary);
   --primary-foreground: var(--brand-white);
   --secondary: var(--brand-soft);
   --secondary-foreground: var(--brand-ink);
@@ -41,13 +41,13 @@
   --destructive: var(--status-danger);
   --destructive-foreground: var(--brand-white);
   --border: var(--brand-rule);
-  --input: var(--brand-rule);
-  --ring: var(--brand-green);
-  --chart-1: var(--brand-green);
+  --input: #8c8c8c;
+  --ring: var(--brand-primary);
+  --chart-1: var(--brand-primary);
   --chart-2: var(--brand-ink);
-  --chart-3: #527668;
-  --chart-4: #7c6242;
-  --chart-5: #84968b;
+  --chart-3: #808080;
+  --chart-4: #a3a3a3;
+  --chart-5: #b8b8b8;
 }
 
 @theme inline {

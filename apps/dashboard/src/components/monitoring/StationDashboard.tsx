@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import ReactECharts from '../dashboard/Chart'
 import { ArrowRight, FlaskConical } from 'lucide-react'
 
@@ -75,8 +75,30 @@ export default function StationDashboard({
         </div>}
       </Card>
 
-      <Card title="Filters">
-        <div className="flex flex-col gap-3">
+      <div className="space-y-3 px-1">
+          <div>
+            <p className="mb-1 text-xs font-medium text-muted-foreground">Parameter</p>
+            <ShadSelect value={metric} onValueChange={setMetric}>
+              <SelectTrigger className="h-8 min-h-11 w-full border-border bg-muted text-sm sm:min-h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {METRIC_KEYS.map((k) => (
+                  <SelectItem key={k} value={k}>
+                    {SAMPLE_METRICS[k].label}
+                    {SAMPLE_METRICS[k].unit && ` (${SAMPLE_METRICS[k].unit})`}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </ShadSelect>
+          </div>
+          <p className="text-[11px] text-muted-foreground">
+            Status is reported by the source dataset. No station-specific permit limits are
+            configured, so these charts do not determine legal compliance.
+          </p>
+      </div>
+      <Disclosure title={`Filter records · ${year === 'all' ? 'All years' : year} · ${compliance === 'all' ? 'All statuses' : compliance}`}>
+        <div className="space-y-4">
           <div>
             <p className="mb-1 text-xs font-medium text-muted-foreground">Year</p>
             <SegmentGroup
@@ -100,28 +122,8 @@ export default function StationDashboard({
               onChange={(v) => setCompliance(v as SampleFilters['compliance'])}
             />
           </div>
-          <div>
-            <p className="mb-1 text-xs font-medium text-muted-foreground">Parameter</p>
-            <ShadSelect value={metric} onValueChange={setMetric}>
-              <SelectTrigger className="h-8 min-h-11 w-full border-border bg-muted text-sm sm:min-h-8">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {METRIC_KEYS.map((k) => (
-                  <SelectItem key={k} value={k}>
-                    {SAMPLE_METRICS[k].label}
-                    {SAMPLE_METRICS[k].unit && ` (${SAMPLE_METRICS[k].unit})`}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </ShadSelect>
-          </div>
-          <p className="text-[11px] text-muted-foreground">
-            Status is reported by the source dataset. No station-specific permit limits are
-            configured, so these charts do not determine legal compliance.
-          </p>
         </div>
-      </Card>
+      </Disclosure>
 
       {isError && (
         <div role="alert" className="rounded border border-destructive p-3 text-sm">
@@ -131,7 +133,7 @@ export default function StationDashboard({
       )}
 
       {stats && !isError && (
-        <Card title={`${meta.label} Summary`}>
+        <Disclosure title={`${meta.label} Summary`}>
           <div className="grid grid-cols-2 gap-2 text-sm">
             <Stat label="Samples" value={String(stats.totalCount)} />
             <Stat
@@ -146,7 +148,7 @@ export default function StationDashboard({
             {stats.quantifiedCount} of {stats.totalCount} samples have quantified {meta.label} readings.
             {' '}Mean and maximum exclude missing and below-detection results; no values are substituted.
           </p>
-        </Card>
+        </Disclosure>
       )}
 
       <Card title={`${meta.label} Trend (lab results)`}>
@@ -195,15 +197,10 @@ export default function StationDashboard({
         )}
       </Card>
 
-      <Card title="GHG emissions">
-        <p className="text-xs text-muted-foreground">
-          Not estimated from these lab samples. The available BOD and nitrogen values are effluent
-          measurements; the cited calculation requires influent measurements and plant operating data.
-        </p>
-      </Card>
+
 
       {!!samples?.length && !isError && (
-        <Card title="Recent Samples">
+        <Disclosure title="Recent Samples">
           <div className="max-h-64 overflow-y-auto">
             <Table>
               <TableHeader>
@@ -244,14 +241,19 @@ export default function StationDashboard({
               </TableBody>
             </Table>
           </div>
-        </Card>
+        </Disclosure>
       )}
-      <Card title="Research tools">
+      <Disclosure title="Methods and research">
+        <p className="text-xs text-muted-foreground">
+          Not estimated from these lab samples. The available BOD and nitrogen values are effluent
+          measurements; the cited calculation requires influent measurements and plant operating data.
+        </p>
+
         <p className="text-xs text-muted-foreground">Explore assumptions separately from these measured observations. Simulations are illustrative and unvalidated.</p>
         {onOpenWorkspace ? <Button className="mt-3 flex items-center gap-2" onClick={onOpenWorkspace}>
           Research sandbox <ArrowRight className="size-3.5" />
         </Button> : <p className="mt-2 text-xs text-muted-foreground">No linked treatment plant. Research is unavailable for this sampling location.</p>}
-      </Card>
+      </Disclosure>
     </div>
   )
 }
@@ -263,4 +265,11 @@ function Stat({ label, value }: { label: string; value: string }) {
       <div className="mt-0.5 text-base font-semibold">{value}</div>
     </div>
   )
+}
+
+function Disclosure({ title, children }: { title: string; children: ReactNode }) {
+  return <details className="rounded-lg border border-border bg-background p-4">
+    <summary className="min-h-6 cursor-pointer text-sm font-semibold">{title}</summary>
+    <div className="mt-4">{children}</div>
+  </details>
 }

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { CalendarClock, Play, Plus, Trash2 } from 'lucide-react'
 
 import {
@@ -282,15 +282,15 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
         </div>
       </Card>
 
-      <Card title="Maintenance Inputs">
+      <InputDisclosure title={`Maintenance · ${draft.maintenance.length} events`}>
         <MaintenanceEditor
           events={draft.maintenance}
           onAdd={addMaintenance}
           onRemove={removeMaintenance}
         />
-      </Card>
+      </InputDisclosure>
 
-      <Card title="Equipment Availability">
+      <InputDisclosure title={`Equipment availability · ${[draft.operating_parameters.aeration_availability, draft.operating_parameters.pump_availability, draft.operating_parameters.clarifier_availability].every(value => value === 100) ? 'all 100%' : 'adjusted'}`}>
         <div className="flex flex-col gap-2.5">
           {(
             [
@@ -316,9 +316,9 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
             </div>
           ))}
         </div>
-      </Card>
+      </InputDisclosure>
 
-      <Card title="Advanced Carbon Accounting">
+      <InputDisclosure title={`Carbon accounting · ${(draft.operating_parameters.ch4_recovered_kg_m3 ?? 0) !== 0 || (draft.operating_parameters.n2o_recovered_kg_m3 ?? 0) !== 0 ? 'recovery set' : 'no recovery'}`}>
         <div className="grid grid-cols-2 gap-2">
           <div>
             <div className="flex items-center gap-1">
@@ -352,9 +352,9 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
         <p className="mt-2 text-[10px] text-muted-foreground">
           Assumed unless replaced with measured recovery data. TKN is influent Kjeldahl nitrogen; ammonia is not a substitute.
         </p>
-      </Card>
+      </InputDisclosure>
 
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
 
       <Button variant="primary" className="flex items-center justify-center gap-2 py-2.5" onClick={saveAndRun} disabled={busy}>
         {busy ? <Spinner /> : <Play className="size-4" />}
@@ -470,4 +470,11 @@ function MaintenanceEditor({
       </div>
     </div>
   )
+}
+
+function InputDisclosure({ title, children }: { title: string; children: ReactNode }) {
+  return <details className="rounded-lg border border-border bg-background p-4">
+    <summary className="cursor-pointer text-sm font-semibold">{title}</summary>
+    <div className="mt-4">{children}</div>
+  </details>
 }

@@ -59,6 +59,10 @@ export default function LandingPage() {
       <section className="evidence-note" aria-labelledby="documentation-heading">
         <h2 id="documentation-heading">Find your starting point.</h2>
         <div>
+          <figure className="landscape-image">
+            <img src="/assets/illustrations/river-landscape.webp" alt="A quiet river bordered by trees and a concrete embankment" width="1536" height="1024" loading="lazy" />
+            <figcaption>Illustrative landscape · AI-generated</figcaption>
+          </figure>
           <p>Read getting-started guides, reporting and monitoring workflows, model methods and release procedures. Start with a guide for your role, then follow the supporting sources and methods.</p>
           <a className="quiet-action" href={documentationUrl}>Read the documentation <ArrowRight size={17} aria-hidden="true" /></a>
         </div>

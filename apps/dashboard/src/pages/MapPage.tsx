@@ -256,7 +256,9 @@ export default function MapPage() {
           </ul>
           {visiblePlants.length === 0 && <p className="mt-3 text-sm">{search.trim() ? 'No plants match your search. Try another name or code.' : 'No plants are available yet.'}</p>}
         </>}
-        <section className="mt-4 border-t pt-4" aria-label="Community observations">
+        <details className="mt-4 border-t pt-3">
+          <summary className="cursor-pointer py-2 text-sm font-medium">Community layer · {communityObservationsError ? 'Unavailable' : !showCommunityObservations ? 'Off' : communityObservationsLoading ? 'Loading' : 'On'}</summary>
+        <section className="pt-2" aria-label="Community observations">
           <label className="flex min-h-11 cursor-pointer items-center gap-2 text-sm font-medium">
             <input type="checkbox" checked={showCommunityObservations} onChange={event => setShowCommunityObservations(event.target.checked)} className="size-4 accent-primary" />
             Approved community wastewater
@@ -271,6 +273,7 @@ export default function MapPage() {
             </li>)}
           </ul>}
         </section>
+        </details>
       </section>
       </div>
       {selected && <aside className={`absolute inset-y-0 right-0 z-20 flex max-w-full flex-col border-l border-border bg-background ${expanded ? 'w-[min(880px,100%)]' : 'w-full sm:w-[380px]'}`}

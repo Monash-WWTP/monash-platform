@@ -189,7 +189,10 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
                 ButtonSegment(
                   value: Condition.normal,
                   label: Text('Normal'),
-                  icon: Icon(Icons.check_circle_outline, color: AppTheme.green),
+                  icon: Icon(
+                    Icons.check_circle_outline,
+                    color: AppTheme.success,
+                  ),
                 ),
                 ButtonSegment(
                   value: Condition.warning,
@@ -213,47 +216,79 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
             ),
           const SizedBox(height: 16),
 
-          // Photo
-          if (_photo != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.file(
-                  File(_photo!.path),
-                  height: 180,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => const SizedBox(),
-                ),
-              ),
+          ExpansionTile(
+            title: const Text('Photo and note'),
+            subtitle: ValueListenableBuilder<TextEditingValue>(
+              valueListenable: _noteController,
+              builder: (_, value, _) {
+                final details = [
+                  if (_photo != null) 'Photo attached',
+                  if (value.text.trim().isNotEmpty) 'Note added',
+                ];
+                return Text(
+                  details.isEmpty
+                      ? 'Optional supporting details'
+                      : details.join(' · '),
+                );
+              },
             ),
-          Row(
+            tilePadding: EdgeInsets.zero,
+            childrenPadding: const EdgeInsets.only(bottom: 16),
+            maintainState: true,
             children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => _pickPhoto(ImageSource.camera),
-                  icon: const Icon(Icons.photo_camera_outlined),
-                  label: const Text('Camera'),
+              // Photo
+              if (_photo != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.file(
+                      File(_photo!.path),
+                      height: 180,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => const SizedBox(),
+                    ),
+                  ),
                 ),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _pickPhoto(ImageSource.camera),
+                      icon: const Icon(Icons.photo_camera_outlined),
+                      label: const Text('Camera'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _pickPhoto(ImageSource.gallery),
+                      icon: const Icon(Icons.image_outlined),
+                      label: const Text('Gallery'),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => _pickPhoto(ImageSource.gallery),
-                  icon: const Icon(Icons.image_outlined),
-                  label: const Text('Gallery'),
+              const SizedBox(height: 16),
+
+              // Note
+              TextField(
+                controller: _noteController,
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  labelText: 'Note (optional)',
+                  border: OutlineInputBorder(),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-
           // Location status
           Card(
             color: _locationError == null
-                ? const Color(0xFFEAFAF2)
-                : const Color(0xFFFDECEA),
+                ? AppTheme.soft
+                : Theme.of(context).colorScheme.errorContainer,
             child: ListTile(
               leading: Icon(
                 _locationError == null ? Icons.location_on : Icons.location_off,
@@ -275,15 +310,6 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
           ),
           const SizedBox(height: 16),
 
-          // Note
-          TextField(
-            controller: _noteController,
-            maxLines: 3,
-            decoration: const InputDecoration(
-              labelText: 'Note (optional)',
-              border: OutlineInputBorder(),
-            ),
-          ),
           const SizedBox(height: 24),
 
           FilledButton(
