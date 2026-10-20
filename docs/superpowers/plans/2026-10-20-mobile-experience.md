@@ -101,3 +101,7 @@
 ## Plan self-review
 
 Approved spec sections map to Tasks1–6. Data interfaces use existing API boundaries; any review-reason addition is owner-only. The five review-focus failure classes have explicit tests in their owning tasks. Native rendering and browser email/callback behaviour have device/environment checks in addition to isolated widget tests. Cloud and public-release gates remain separate. Existing unresolved authentik loading is a required diagnostic, not a claimed fix.
+
+## Execution record — 20 October 2026
+
+Source implementation and one independent review are complete; reproduced findings were fixed RED→GREEN. See [Samsung acceptance](../../operations/samsung-mobile-acceptance-2026-10-20.md) for actual checks and remaining release gates. User approved a bounded refinement replacing Report here with a floating + menu of four report types; category is selected before location confirmation. The original checklist above is retained as the acceptance baseline, including checks not yet exercised physically.

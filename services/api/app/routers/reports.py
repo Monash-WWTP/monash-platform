@@ -26,12 +26,13 @@ from ..http.contracts import Page, ReportView, CommunityView, MediaView
 router = APIRouter(tags=["citizen reports"])
 
 
-def own_projection(report):
+def own_projection(report, review_reason=None):
     return {
         **report.payload,
         "id": report.id,
         "media_id": report.media_id,
         "moderation_status": report.status,
+        "review_reason": review_reason,
         "created_at": report.created_at.isoformat(),
     }
 
@@ -100,17 +101,14 @@ def history(
     db: Session = Depends(get_db),
 ):
     query = db.query(CitizenReport).filter_by(owner_id=account.id)
-    return {
-        "items": [
-            own_projection(r)
-            for r in query.order_by(CitizenReport.created_at.desc())
-            .offset(offset)
-            .limit(limit)
-        ],
-        "total": query.count(),
-        "offset": offset,
-        "limit": limit,
-    }
+    rows = query.order_by(CitizenReport.created_at.desc()).offset(offset).limit(limit).all()
+    reasons = {}
+    if rows:
+        events = db.query(AuditEvent).filter(AuditEvent.action == 'report.moderate',
+            AuditEvent.resource_id.in_([r.id for r in rows])).order_by(AuditEvent.created_at).all()
+        reasons = {event.resource_id: event.details.get('reason') for event in events}
+    return {"items": [own_projection(r, reasons.get(r.id)) for r in rows],
+        "total": query.count(), "offset": offset, "limit": limit}
 
 
 @router.get("/reports/{report_id}", response_model=ReportView)
@@ -126,7 +124,8 @@ def report_detail(
         raise ApiError(404, "report_not_found", "Report not found")
     if report.owner_id != account.id:
         require_mfa(account)
-    return own_projection(report)
+    event = db.query(AuditEvent).filter_by(action='report.moderate', resource_id=report.id).order_by(AuditEvent.created_at.desc()).first()
+    return own_projection(report, event.details.get('reason') if event else None)
 
 
 @router.get("/moderation/reports", response_model=Page[ReportView])
@@ -173,7 +172,7 @@ def moderate(
         )
     )
     db.commit()
-    return own_projection(report)
+    return own_projection(report, body.reason)
 
 
 @router.get("/community/observations", response_model=Page[CommunityView])

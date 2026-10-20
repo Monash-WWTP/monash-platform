@@ -60,6 +60,7 @@ class SampleView(BaseModel):
 
 
 class ReportView(ReportInput):
+    review_reason: str | None = None
     id: str
     moderation_status: Literal["pending", "approved", "rejected"]
     created_at: datetime

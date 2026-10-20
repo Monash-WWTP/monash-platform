@@ -1,6 +1,6 @@
 # Samsung mobile UX audit and proposed direction
 
-Status: read-only design audit; redesign not implemented or approved yet. Device: Samsung SM-A076B, Android16, current staging debug APK built from64c9144. Existing product green retained. Findings combine device screenshots with source review; TalkBack, large-text, landscape and full authenticated reporting remain unverified.
+Status: original pre-redesign audit. The approved implementation and measured device results are recorded in [Samsung acceptance](../operations/samsung-mobile-acceptance-2026-10-20.md); findings below describe the initial interface. Device: Samsung SM-A076B, Android16, current staging debug APK built from64c9144. Existing product green retained. Findings combine device screenshots with source review; TalkBack, large-text, landscape and full authenticated reporting remain unverified.
 
 ## Observed priorities
 

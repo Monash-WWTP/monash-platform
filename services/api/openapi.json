@@ -1896,6 +1896,17 @@
             ],
             "title": "Reading Value"
           },
+          "review_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Reason"
+          },
           "station_code": {
             "anyOf": [
               {

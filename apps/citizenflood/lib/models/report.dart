@@ -73,6 +73,8 @@ extension ModerationStatusX on ModerationStatus {
 }
 
 class Report {
+  final bool isOwner;
+  final String? reviewReason;
   final String? id;
   final ReportCategory category;
 
@@ -97,6 +99,8 @@ class Report {
 
   Report({
     this.id,
+    this.isOwner = true,
+    this.reviewReason,
     required this.category,
     this.readingValue,
     this.readingUnit,
@@ -139,6 +143,8 @@ class Report {
 
   factory Report.fromRow(Map<String, dynamic> row) => Report(
     id: row['id'] as String?,
+    isOwner: row['is_owner'] == true,
+    reviewReason: row['review_reason'] as String?,
     category: ReportCategoryX.fromWire(row['category'] as String),
     readingValue: (row['reading_value'] as num?)?.toDouble(),
     readingUnit: row['reading_unit'] as String?,
