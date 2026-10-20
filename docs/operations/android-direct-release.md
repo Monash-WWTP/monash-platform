@@ -2,7 +2,7 @@
 
 Google Play listing is optional for this distribution path. The project builds a signed APK and hosts it over HTTPS; visitors download it and approve Android's installation prompt. Signing identifies the publisher and enables updates signed by the same key. It does not certify scientific validity or constitute Google verification.
 
-## Current release configuration
+## Published legacy release (historical record)
 
 The user authorized the existing real Supabase backend during standalone API development. Its origin is `https://eaxekwlmvpvftpgxiwlu.supabase.co`; the app receives its public/publishable client key at build time. APK values are extractable. Never supply service-role keys, database credentials or private signing inputs as Dart defines.
 
@@ -16,20 +16,39 @@ The owner must keep a secure independent backup of the keystore, password and al
 
 An installed development APK signed with Android's debug key cannot be updated with the new project key. Such users must remove the development copy and install the release. Removing it clears local app/session state; authenticated server records are not deleted by uninstalling the APK. Preserve useful account access before replacing a development installation.
 
-## Build and verify
+## Build and verify the next API-connected release
 
 Use the isolated verified Flutter 3.44.7 SDK; Android build tools 36.0.0. Build inputs are pinned and `flutter pub get --enforce-lockfile` prevents silent dependency changes.
 
+The current source requires the successor API and identity configuration. The old Supabase `env.json` is only a historical release input and is rejected by the current builder. Deploy and qualify the backend first; compile a debug preview against local staging for development only.
+
+Save the following **public client configuration** outside Git, replacing every example URL with the approved deployed service. Its issuer must equal the API's shared issuer; obtain discovery metadata from the actual mobile provider. No client secret belongs in this file.
+
+```json
+{
+  "API_BASE_URL": "https://api.example.com",
+  "OIDC_ISSUER": "https://accounts.example.com/",
+  "OIDC_DISCOVERY_URL": "https://accounts.example.com/application/o/citizen-mobile/.well-known/openid-configuration",
+  "OIDC_CLIENT_ID": "citizen-mobile",
+  "LOCAL_STAGING": false
+}
+```
+
+Example command for the next candidate, after configuration and acceptance are complete (the placeholder URL is not a published artifact):
+
 ```sh
 uv run --locked python scripts/build_android_release.py \
-  --config /home/jienweng/projects/citizenflood/env.json \
+  --config /srv/monash/private/mobile-client.json \
   --signing-dir /home/jienweng/.local/share/monash-platform/signing \
   --flutter /home/jienweng/.cache/monash-platform/flutter-3.44.7/bin/flutter \
   --android-sdk /home/jienweng/Android/Sdk \
   --java-home /home/jienweng/Applications/android-studio/jbr \
-  --version 1.0.0 --version-code 2 --published-at 2026-10-03 \
-  --artifact-url https://monash-citizenflood-downloads.vercel.app/releases/1.0.0-2/citizenflood.apk
+  --version 1.0.1 --version-code 3 --published-at YYYY-MM-DD \
+  --artifact-url https://downloads.example.com/releases/1.0.1-3/citizenflood.apk
 ```
+
+Choose the actual release date and immutable artifact URL. The builder requires a versionCode greater than the dashboard's currently published code (2); update the candidate's name/code if another release has since shipped. Preserve the existing signing identity. Do not overwrite the public manifest/download until signature, runtime, fresh-install/upgrade, account-switch privacy, location, report/photo retry and backend acceptance all pass. Historical 1.0.0/code 2 evidence remains in `android-release-1.0.0.json`; reproduce it only from its historical source/tooling revision.
+
 
 Gradle's resolved app task graph refuses release tasks when project signing inputs are absent, including generic `assemble`/`build` entry points. Debug CI can still compile without the release key. The builder verifies the APK signature and exact project certificate, package ID, version, minimum Android API, byte size and SHA-256. A build alone does not demonstrate launch, backend behavior or successful user installation.
 

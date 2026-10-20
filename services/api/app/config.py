@@ -36,7 +36,13 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def secure_production(self):
+        if self.oidc_mobile_issuer and self.oidc_mobile_issuer != self.oidc_issuer:
+            raise ValueError(
+                "OIDC_MOBILE_ISSUER must match OIDC_ISSUER; a shared issuer is required"
+            )
         if self.app_env == "production":
+            if not self.identity_event_secret.strip():
+                raise ValueError("Production requires identity_event_secret for session revocation")
             if (
                 self.auth_mode != "oidc"
                 or not self.session_secure

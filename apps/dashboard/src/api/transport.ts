@@ -1,3 +1,12 @@
+export class ApiRequestError extends Error {
+  status: number
+  code?: string
+  details?: unknown
+  constructor(message: string, status: number, code?: string, details?: unknown) {
+    super(message); this.name = 'ApiRequestError'; this.status = status; this.code = code; this.details = details
+  }
+}
+
 /** Versioned API transport. Identity is held by the backend session cookie. */
 export async function fetchApi<T>(path: string, init?: RequestInit): Promise<T> {
   const headers = new Headers(init?.headers)
@@ -17,9 +26,9 @@ export async function fetchApi<T>(path: string, init?: RequestInit): Promise<T> 
     const response = await fetch(`${base}${path}`, { ...init, headers, credentials: 'include', signal: controller.signal })
     if (!response.ok) {
       const body = await response.json().catch(() => null)
-      throw new Error(body?.error?.message ?? (response.status === 404
+      throw new ApiRequestError(body?.error?.message ?? (response.status === 404
         ? 'The requested service is unavailable. Please retry later; if this continues, contact the platform maintainer.'
-        : `Request failed (${response.status}). Please try again.`))
+        : `Request failed (${response.status}). Please try again.`), response.status, body?.error?.code, body?.error?.details)
     }
     if (response.status === 204) return undefined as T
     return await response.json()

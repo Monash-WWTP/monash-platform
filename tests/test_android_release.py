@@ -77,3 +77,13 @@ def test_release_rejects_debug_signer_and_wrong_fingerprint():
         + "a" * 64,
         "a" * 64,
     )
+
+
+def test_new_release_must_advance_published_version_code():
+    m = release()
+    for value in (1, 2):
+        with pytest.raises(ValueError, match="greater"):
+            m.validate_release_version("1.0.1", value, 2)
+    m.validate_release_version("1.0.1", 3, 2)
+    with pytest.raises(ValueError):
+        m.validate_release_version("latest", 3, 2)

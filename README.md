@@ -67,3 +67,5 @@ Historical docs, Supabase migrations and helpers under `docs/legacy/` and `legac
 The [approved repository design](docs/superpowers/specs/2026-10-02-unified-platform-repository-design.md) and [implementation plan](docs/superpowers/plans/2026-10-02-unified-platform-repository.md) are retained as planning records; use the migration roadmap for current delivery status.
 
 See the [verification and review evidence](docs/migration/VERIFICATION.md) and [implementation decisions](docs/migration/IMPLEMENTATION_DECISIONS.md) for exact results and tradeoffs.
+
+Administration setup and operational boundaries: [platform administration](docs/operations/platform-administration.md). Production deployment artifacts: [server preparation](infra/production/README.md).

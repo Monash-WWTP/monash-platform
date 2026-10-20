@@ -11,25 +11,25 @@ Horizon = Literal["1_month", "3_months", "6_months"]
 # ---------- forecast / maintenance payloads ----------
 
 class InfluentIn(BaseModel):
-    flow: float = 40.0
+    flow: float = Field(default=40.0, ge=0, allow_inf_nan=False)
     bod: float = Field(
-        default=220.0,
+        default=220.0, ge=0, allow_inf_nan=False,
         description="Influent BOD5 concentration in mg/L (legacy property name: bod).",
     )
-    cod: float = 480.0
-    tss: float = 240.0
-    ammonia: float = 35.0
+    cod: float = Field(default=480.0, ge=0, allow_inf_nan=False)
+    tss: float = Field(default=240.0, ge=0, allow_inf_nan=False)
+    ammonia: float = Field(default=35.0, ge=0, allow_inf_nan=False)
     # Influent Kjeldahl nitrogen required by carbon-accounting Eq. 5.28.
     # Defaults server-side so the existing frontend payload remains valid.
-    tkn: float = Field(default=40.0, ge=0)
+    tkn: float = Field(default=40.0, ge=0, allow_inf_nan=False)
 
 
 class ForecastIn(BaseModel):
     demand: Literal["low", "normal", "high"] = "normal"
-    demand_multiplier: float | None = None
+    demand_multiplier: float | None = Field(default=None, ge=0, allow_inf_nan=False)
     demand_change_pct: float | None = Field(default=None, ge=-100, le=100)
     weather: Literal["dry", "normal", "wet"] = "normal"
-    rainfall_mm_day: float | None = Field(default=None, ge=0, le=200)
+    rainfall_mm_day: float | None = Field(default=None, ge=0, le=200, allow_inf_nan=False)
     influent: InfluentIn = Field(default_factory=InfluentIn)
 
 
@@ -41,12 +41,12 @@ class MaintenanceEventIn(BaseModel):
 
 
 class OperatingParametersIn(BaseModel):
-    capacity_mld: float | None = None  # default: plant capacity
+    capacity_mld: float | None = Field(default=None, gt=0, allow_inf_nan=False)  # default: plant capacity
     aeration_availability: float = Field(default=100.0, ge=0, le=100)
     pump_availability: float = Field(default=100.0, ge=0, le=100)
     clarifier_availability: float = Field(default=100.0, ge=0, le=100)
-    ch4_recovered_kg_m3: float = Field(default=0.0, ge=0)
-    n2o_recovered_kg_m3: float = Field(default=0.0, ge=0)
+    ch4_recovered_kg_m3: float = Field(default=0.0, ge=0, allow_inf_nan=False)
+    n2o_recovered_kg_m3: float = Field(default=0.0, ge=0, allow_inf_nan=False)
 
 
 # ---------- plants ----------

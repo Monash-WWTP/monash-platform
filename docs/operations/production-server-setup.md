@@ -4,6 +4,8 @@ Status: preparation guide, 2026-10-19. The successor API has **not been deployed
 
 This runbook uses the current API Dockerfile and settings. It is not a claim that a production Compose stack, identity provisioning or restore drill has been qualified. `infra/staging/compose.yaml`, `scripts/staging*.py` and `infra/staging/identity/bootstrap.py` are local staging tools with localhost URLs, test mail and local custody paths: **do not run them unchanged in production**.
 
+Concrete preparation templates are in [infra/production](../../infra/production/README.md). They retain Vercel hosting and require approved domains, image digests and private service configuration. They have not been deployed or accepted. Server provisioning is deferred by the owner.
+
 ## 1. Prepare the information and server
 
 For the estimated initial audience of 20–50 people, a Linux server with 4 vCPU, 8 GB RAM and 80 GB SSD is a planning starting point, not a measured capacity guarantee. Run one API process initially; simulations, simultaneous uploads and accumulated photos determine actual needs. Prefer Ubuntu 24.04 LTS or another OS supported by the chosen Docker release.
@@ -54,7 +56,7 @@ Provision these application contracts in authentik, using `infra/staging/identit
 - `citizen-mobile`: public client with PKCE, no embedded secret, exact callback `au.edu.monash.citizenflood:/oauthredirect`. The current published APK remains legacy; qualify the next build separately.
 - Match the reference's global issuer and stable `user_uuid` subject, signing key, scope mappings, verified-email claim, operator MFA/AMR claim, registration and recovery flows. The API checks these claims; standard OAuth providers alone are insufficient.
 - Configure real enrollment email verification and recovery. Replace all localhost redirects. Configure the credential-reset event hook with the same `IDENTITY_EVENT_SECRET` as the API, the exact issuer and a reachable `/api/v1/identity/events` endpoint. Verify that password recovery revokes existing application sessions.
-- Determine issuer, discovery and JWKS URLs from the actual provider metadata. They must agree exactly; do not infer the issuer from an example hostname. If the mobile provider has a distinct issuer, set `OIDC_MOBILE_ISSUER` accordingly.
+- Determine issuer, discovery and JWKS URLs from the actual provider metadata. They must agree exactly; do not infer the issuer from an example hostname. All clients must share the configured `OIDC_ISSUER` and trusted signing-key endpoint. Leave `OIDC_MOBILE_ISSUER` empty or set it to exactly the same issuer; distinct issuers are rejected at startup. Configure the provider's global issuer rather than trusting a token-provided discovery/JWKS URL.
 
 Store photos in a private S3-compatible bucket. Managed object storage is an option even when the API runs on this server. For on-server storage, provision a supported S3 service with persistent data and off-server backups; a single disk is not redundancy. Give the API only the bucket permissions required for head/list/read/write/delete operations. Keep storage credentials separate from backup/admin credentials. Test both allowed access and denial of anonymous reads. Set `STORAGE_REGION` to the service's real region; the source default `garage` is not universal.
 

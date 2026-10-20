@@ -94,6 +94,9 @@ class SimulationInput:
     compliance_limits: dict[str, float] = field(default_factory=dict)
     emission_factors: EmissionFactors = field(default_factory=EmissionFactors)
     seed: int = 42
+    # Canonical screening units retained for immutable run provenance.
+    compliance_limit_units: dict[str, str] = field(default_factory=dict)
+    configuration_provenance: dict = field(default_factory=dict)
 
 
 @dataclass

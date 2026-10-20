@@ -1,6 +1,6 @@
 # Scientific status and limits
 
-`effluent_v1` version 1.4.0 is **illustrative_unvalidated**. API model metadata and persisted runs carry `decision_use_permitted=false`; this is platform policy, not scientific validation. Passing software tests establishes implementation behavior, not scientific validity. Outputs must not determine plant control, legal compliance or certified emissions inventories.
+`effluent_v1` version 1.4.1 is **illustrative_unvalidated**. API model metadata and persisted runs carry `decision_use_permitted=false`; this is platform policy, not scientific validation. Passing software tests establishes implementation behavior, not scientific validity. Outputs must not determine plant control, legal compliance or certified emissions inventories.
 
 The engine is a deterministic daily heuristic with four bounded substeps, assumed influent, demand scaling, equipment availability and maintenance effects. Carbon/nitrogen surrogates are not calibrated ASM1 states or a reactor mass balance. MLD capacity is not reactor volume or hydraulic retention time. Weather/rainfall is retained as context but not applied without a site-specific hydrologic model. No quantified uncertainty or independent validation dataset is supplied.
 

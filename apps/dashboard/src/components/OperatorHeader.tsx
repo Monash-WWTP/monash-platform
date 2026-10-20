@@ -7,6 +7,7 @@ export default function OperatorHeader({ context, monitoring = false }: { contex
     <Link to="/" className="text-lg font-bold tracking-tight text-foreground">Monash Water</Link>
     <nav aria-label="Operator navigation" className="flex flex-wrap items-center gap-4 text-sm">
       {!monitoring && <Link to="/dashboard" className="text-primary underline underline-offset-4">Monitoring</Link>}
+      {context !== 'Administration' && <Link to="/dashboard/admin" className="text-primary underline underline-offset-4">Administration</Link>}
       <a href={documentationUrl} className="text-primary underline underline-offset-4">{documentationLabel}</a>
       <span aria-current="page">{context}</span>
     </nav>

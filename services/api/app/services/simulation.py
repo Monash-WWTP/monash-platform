@@ -28,20 +28,74 @@ def build_sim_input(scenario: Scenario, plant: Plant) -> SimulationInput:
     fc = scenario.forecast or {}
     influent = fc.get("influent") or {}
     op = scenario.operating_parameters or {}
+    from pydantic import ValidationError
+    from ..schemas import ForecastIn, MaintenanceEventIn, OperatingParametersIn
+    from ..http.errors import ApiError
+    try:
+        ForecastIn.model_validate(fc)
+        OperatingParametersIn.model_validate(op)
+        validated_maintenance = [MaintenanceEventIn.model_validate(ev) for ev in (scenario.maintenance or [])]
+    except ValidationError:
+        raise ApiError(422, "invalid_simulation_input", "Saved scenario contains invalid physical inputs; edit it before running.")
 
     maintenance = [
         MaintenanceEvent(
-            unit_type=ev["unit_type"],
-            start_date=date.fromisoformat(ev["start_date"]),
-            duration_days=int(ev["duration_days"]),
-            availability_pct=float(ev.get("availability_pct", 50.0)),
+            unit_type=ev.unit_type,
+            start_date=ev.start_date,
+            duration_days=ev.duration_days,
+            availability_pct=ev.availability_pct,
         )
-        for ev in (scenario.maintenance or [])
+        for ev in validated_maintenance
     ]
 
-    limits = {cl.metric: cl.limit_value for cl in plant.compliance_limits}
+    from ..http.errors import ApiError
+    import math
+
+    canonical_units = {
+        **dict.fromkeys(("bod", "cod", "tss", "ammonia", "nitrate", "phosphorus"), "mg/L"),
+        "turbidity": "NTU", "ph": "unitless",
+    }
+    from wwtp_sim.models.effluent_v1 import DEFAULT_LIMITS
+    limits = dict(DEFAULT_LIMITS)
+    limit_units = {metric: canonical_units[metric] for metric in limits}
+    screening_sources = {metric: "model_fallback_unverified" for metric in limits}
+    for cl in plant.compliance_limits:
+        expected = canonical_units.get(cl.metric)
+        if expected is None or cl.unit != expected or not math.isfinite(cl.limit_value) or cl.limit_value <= 0:
+            raise ApiError(422, "invalid_screening_limit",
+                           "Screening limits must use a supported metric, canonical unit and positive finite value.")
+        limits[cl.metric] = cl.limit_value
+        limit_units[cl.metric] = expected
+        screening_sources[cl.metric] = "plant_configuration_unverified"
+
+    from sqlalchemy.orm import object_session
+    from ..db.platform import PlantConfigurationRevision
+    db = object_session(plant) if isinstance(plant, Plant) else None
+    revision = (db.query(PlantConfigurationRevision).filter_by(plant_id=plant.id)
+                .order_by(PlantConfigurationRevision.version.desc()).first()) if db else None
+    provenance = ({"revision": revision.version,
+                   "configuration": revision.payload["configuration"],
+                   "provenance_status": "supplied_unverified"} if revision else {})
+    provenance["screening_sources"] = screening_sources
+    def baseline(unit):
+        values = [u.baseline_availability for u in getattr(plant, "units", []) if u.unit_type == unit]
+        return min(values) if values else 100.0
+
+    resolved_operating = {
+        **op,
+        "capacity_mld": op.get("capacity_mld") if op.get("capacity_mld") is not None else plant.capacity_mld,
+        **{f"{unit}_availability": op.get(f"{unit}_availability", baseline(unit))
+           for unit in ("aeration", "pump", "clarifier")},
+    }
+    try:
+        OperatingParametersIn.model_validate(resolved_operating)
+        if any(not math.isfinite(v) or v < 0 for v in (plant.ef_ch4, plant.ef_n2o)):
+            raise ValueError("Invalid emission factor")
+    except (ValidationError, ValueError, TypeError):
+        raise ApiError(422, "invalid_simulation_input", "Resolved plant inputs are invalid; review plant configuration.")
 
     return SimulationInput(
+        configuration_provenance=provenance,
         forecast=Forecast(
             demand=fc.get("demand", "normal"),
             demand_multiplier=fc.get("demand_multiplier"),
@@ -60,9 +114,9 @@ def build_sim_input(scenario: Scenario, plant: Plant) -> SimulationInput:
         maintenance=maintenance,
         operating_parameters=OperatingParameters(
             capacity_mld=float(op.get("capacity_mld") or plant.capacity_mld),
-            aeration_availability=float(op.get("aeration_availability", 100.0)),
-            pump_availability=float(op.get("pump_availability", 100.0)),
-            clarifier_availability=float(op.get("clarifier_availability", 100.0)),
+            aeration_availability=float(op.get("aeration_availability", baseline("aeration"))),
+            pump_availability=float(op.get("pump_availability", baseline("pump"))),
+            clarifier_availability=float(op.get("clarifier_availability", baseline("clarifier"))),
             ch4_recovered_kg_m3=float(op.get("ch4_recovered_kg_m3", 0.0)),
             n2o_recovered_kg_m3=float(op.get("n2o_recovered_kg_m3", 0.0)),
         ),
@@ -71,6 +125,7 @@ def build_sim_input(scenario: Scenario, plant: Plant) -> SimulationInput:
         .datetime.now(__import__("datetime").timezone.utc)
         .date(),
         compliance_limits=limits,
+        compliance_limit_units=limit_units,
         emission_factors=EmissionFactors(ef_ch4=plant.ef_ch4, ef_n2o=plant.ef_n2o),
     )
 
@@ -109,6 +164,9 @@ def input_from_snapshot(value: dict) -> SimulationInput:
         horizon=value["horizon"],
         start_date=date.fromisoformat(value["start_date"]),
         compliance_limits=value["compliance_limits"],
+        compliance_limit_units=value.get("compliance_limit_units", {}),
+        seed=value.get("seed", 42),
+        configuration_provenance=value.get("configuration_provenance", {}),
         emission_factors=EmissionFactors(**value["emission_factors"]),
     )
 
@@ -141,6 +199,8 @@ def persist_run(
             "capacity_mld": plant.capacity_mld,
             "limits": inputs.compliance_limits,
             "timezone": "UTC",
+            "configuration_provenance": inputs.configuration_provenance,
+            "compliance_limit_units": inputs.compliance_limit_units,
         },
         artifact_digest=artifact_digest(),
         validation_status="illustrative_unvalidated",
@@ -169,6 +229,10 @@ def persist_run(
 def execute_run(
     db: Session, scenario: Scenario, model_id: str, start_date: date | None = None
 ) -> SimulationRun:
+    # Serialize configuration reads with admin edits so references and values
+    # always describe the same accepted revision.
+    db.refresh(scenario.plant, with_for_update=True)
+    db.expire(scenario.plant, ["units", "compliance_limits"])
     inputs = build_sim_input(scenario, scenario.plant)
     if start_date is not None:
         from dataclasses import replace

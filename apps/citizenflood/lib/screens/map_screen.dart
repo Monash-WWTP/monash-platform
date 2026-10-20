@@ -6,29 +6,67 @@ import 'package:intl/intl.dart';
 
 import '../models/report.dart';
 import '../services/report_repository.dart';
+import '../services/account_session.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  const MapScreen({super.key, this.repository, this.session});
+  final ReportRepository? repository;
+  final AccountSession? session;
   @override
   State<MapScreen> createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreen> {
-  final _repo = ReportRepository();
+  late final _repo = widget.repository ?? ReportRepository();
+  late final _session = widget.session ?? AccountSession.instance;
   late Future<List<Report>> _future = _repo.recent();
-  final _mapController = MapController();
+  var _mapController = MapController();
   bool _showReadings = false;
+  late int _generation;
+  ModalRoute<dynamic>? _detailRoute;
+
+  @override
+  void initState() {
+    super.initState();
+    _generation = _session.generation;
+    _session.addListener(_sessionChanged);
+  }
+
+  void _sessionChanged() {
+    if (_generation == _session.generation) return;
+    _generation = _session.generation;
+    final oldController = _mapController;
+    _mapController = MapController();
+    _showReadings = false;
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => oldController.dispose(),
+    );
+    final route = _detailRoute;
+    _detailRoute = null;
+    if (route != null && route.isActive) route.navigator?.removeRoute(route);
+    _refresh();
+  }
+
+  @override
+  void dispose() {
+    _session.removeListener(_sessionChanged);
+    _mapController.dispose();
+    super.dispose();
+  }
 
   Color _pinColor(BuildContext context) =>
       Theme.of(context).colorScheme.primary;
 
-  void _refresh() => setState(() => _future = _repo.recent());
+  void _refresh() => setState(() {
+    _future = _repo.recent();
+  });
 
   String _time(Report r) => r.createdAt == null
       ? ''
       : DateFormat('d MMM, h:mm a').format(r.createdAt!.toLocal());
 
   void _showDetail(Report r) {
+    final generation = _generation;
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
@@ -37,81 +75,85 @@ class _MapScreenState extends State<MapScreen> {
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * 0.85,
       ),
-      builder: (_) => SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  ExcludeSemantics(
-                    child: Icon(r.category.icon, color: _pinColor(context)),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      r.category.label,
-                      style: Theme.of(context).textTheme.titleLarge,
+      builder: (context) {
+        _detailRoute = ModalRoute.of(context);
+        if (generation != _session.generation) return const SizedBox.shrink();
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    ExcludeSemantics(
+                      child: Icon(r.category.icon, color: _pinColor(context)),
                     ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        r.category.label,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  r.readingLabel,
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: _pinColor(context),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(_time(r), style: Theme.of(context).textTheme.bodySmall),
+                if (r.note != null && r.note!.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  Text(r.note!, style: Theme.of(context).textTheme.bodyMedium),
+                ],
+                if (r.photoPath != null) ...[
+                  const SizedBox(height: 16),
+                  FutureBuilder<Uint8List>(
+                    future: _repo.photoBytes(r.photoPath!),
+                    builder: (_, snapshot) {
+                      if (snapshot.hasError) {
+                        return const Text('Photo unavailable');
+                      }
+                      if (!snapshot.hasData) {
+                        return const SizedBox(
+                          height: 80,
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.memory(
+                          snapshot.data!,
+                          height: 220,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) => const SizedBox(
+                            height: 60,
+                            child: Center(child: Text('Photo unavailable')),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                r.readingLabel,
-                style: Theme.of(
-                  context,
-                ).textTheme.headlineMedium?.copyWith(color: _pinColor(context)),
-              ),
-              const SizedBox(height: 4),
-              Text(_time(r), style: Theme.of(context).textTheme.bodySmall),
-              if (r.note != null && r.note!.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                Text(r.note!, style: Theme.of(context).textTheme.bodyMedium),
+                if (r.moderationStatus == ModerationStatus.pending) ...[
+                  const SizedBox(height: 12),
+                  const Chip(
+                    avatar: Icon(Icons.schedule, size: 16),
+                    label: Text('Pending review'),
+                  ),
+                ],
               ],
-              if (r.photoPath != null) ...[
-                const SizedBox(height: 16),
-                FutureBuilder<Uint8List>(
-                  future: _repo.photoBytes(r.photoPath!),
-                  builder: (_, snapshot) {
-                    if (snapshot.hasError) {
-                      return const Text('Photo unavailable');
-                    }
-                    if (!snapshot.hasData) {
-                      return const SizedBox(
-                        height: 80,
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    }
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.memory(
-                        snapshot.data!,
-                        height: 220,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) => const SizedBox(
-                          height: 60,
-                          child: Center(child: Text('Photo unavailable')),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ],
-              if (r.moderationStatus == ModerationStatus.pending) ...[
-                const SizedBox(height: 12),
-                const Chip(
-                  avatar: Icon(Icons.schedule, size: 16),
-                  label: Text('Pending review'),
-                ),
-              ],
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -124,6 +166,7 @@ class _MapScreenState extends State<MapScreen> {
         child: const Icon(Icons.refresh),
       ),
       body: FutureBuilder<List<Report>>(
+        key: ValueKey(_generation),
         future: _future,
         builder: (context, snap) {
           if (snap.connectionState == ConnectionState.waiting) {

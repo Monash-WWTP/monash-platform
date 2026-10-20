@@ -168,3 +168,6 @@ require_citizen = capability("report:own")
 require_reviewer = capability("report:review")
 require_monitor = capability("monitor:read")
 require_scenario = capability("scenario:operate")
+
+# Grants are restricted to the trusted server CLI.
+require_admin = capability("platform:admin")

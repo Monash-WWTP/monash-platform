@@ -27,6 +27,375 @@
         "title": "AccountView",
         "type": "object"
       },
+      "AdminAccountView": {
+        "additionalProperties": false,
+        "properties": {
+          "capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Capabilities",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "capabilities",
+          "created_at"
+        ],
+        "title": "AdminAccountView",
+        "type": "object"
+      },
+      "AdminDependencies": {
+        "additionalProperties": false,
+        "properties": {
+          "database": {
+            "enum": [
+              "ready",
+              "unavailable"
+            ],
+            "title": "Database",
+            "type": "string"
+          },
+          "identity": {
+            "enum": [
+              "ready",
+              "unavailable"
+            ],
+            "title": "Identity",
+            "type": "string"
+          },
+          "storage": {
+            "enum": [
+              "ready",
+              "unavailable"
+            ],
+            "title": "Storage",
+            "type": "string"
+          }
+        },
+        "required": [
+          "database",
+          "storage",
+          "identity"
+        ],
+        "title": "AdminDependencies",
+        "type": "object"
+      },
+      "AdminHistoryDetails": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "$ref": "#/components/schemas/JsonValue"
+          },
+          "before": {
+            "$ref": "#/components/schemas/JsonValue"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "AdminHistoryDetails",
+        "type": "object"
+      },
+      "AdminHistoryEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "admin.account.capabilities",
+              "admin.plant.configuration",
+              "admin.station.metadata",
+              "account.capabilities"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "actor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "details": {
+            "$ref": "#/components/schemas/AdminHistoryDetails"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "resource_id": {
+            "title": "Resource Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "actor_id",
+          "action",
+          "resource_id",
+          "created_at",
+          "details"
+        ],
+        "title": "AdminHistoryEvent",
+        "type": "object"
+      },
+      "AdminModelStatus": {
+        "additionalProperties": false,
+        "properties": {
+          "decision_use_permitted": {
+            "const": false,
+            "title": "Decision Use Permitted",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "validation_status": {
+            "const": "illustrative_unvalidated",
+            "title": "Validation Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "validation_status",
+          "decision_use_permitted"
+        ],
+        "title": "AdminModelStatus",
+        "type": "object"
+      },
+      "AdminPlantView": {
+        "additionalProperties": false,
+        "properties": {
+          "capacity_mld": {
+            "title": "Capacity Mld",
+            "type": "number"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "configuration": {
+            "$ref": "#/components/schemas/ConfigurationView"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "latitude": {
+            "title": "Latitude",
+            "type": "number"
+          },
+          "longitude": {
+            "title": "Longitude",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "provenance_status": {
+            "enum": [
+              "supplied_unverified",
+              "legacy_unknown"
+            ],
+            "title": "Provenance Status",
+            "type": "string"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "stp_type": {
+            "title": "Stp Type",
+            "type": "string"
+          },
+          "units": {
+            "items": {
+              "$ref": "#/components/schemas/EquipmentView"
+            },
+            "title": "Units",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "latitude",
+          "longitude",
+          "capacity_mld",
+          "description",
+          "stp_type",
+          "status",
+          "revision",
+          "units",
+          "configuration",
+          "provenance_status"
+        ],
+        "title": "AdminPlantView",
+        "type": "object"
+      },
+      "AdminStationPayload": {
+        "additionalProperties": true,
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "latitude": {
+            "title": "Latitude",
+            "type": "number"
+          },
+          "longitude": {
+            "title": "Longitude",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "stp_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stp Type"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "category",
+          "stp_type",
+          "latitude",
+          "longitude",
+          "created_at"
+        ],
+        "title": "AdminStationPayload",
+        "type": "object"
+      },
+      "AdminStationView": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/AdminStationPayload"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "payload",
+          "revision"
+        ],
+        "title": "AdminStationView",
+        "type": "object"
+      },
+      "AdminStatus": {
+        "additionalProperties": false,
+        "properties": {
+          "dependencies": {
+            "$ref": "#/components/schemas/AdminDependencies"
+          },
+          "environment": {
+            "title": "Environment",
+            "type": "string"
+          },
+          "model": {
+            "$ref": "#/components/schemas/AdminModelStatus"
+          },
+          "release_acceptance": {
+            "const": "pending_external_acceptance",
+            "title": "Release Acceptance",
+            "type": "string"
+          }
+        },
+        "required": [
+          "environment",
+          "dependencies",
+          "model",
+          "release_acceptance"
+        ],
+        "title": "AdminStatus",
+        "type": "object"
+      },
       "Body_upload_api_v1_media_post": {
         "properties": {
           "file": {
@@ -231,6 +600,106 @@
         "title": "ComplianceLimitOut",
         "type": "object"
       },
+      "Configuration": {
+        "additionalProperties": false,
+        "properties": {
+          "emission_factors": {
+            "$ref": "#/components/schemas/Factors"
+          },
+          "thresholds": {
+            "items": {
+              "$ref": "#/components/schemas/Threshold"
+            },
+            "maxItems": 8,
+            "title": "Thresholds",
+            "type": "array"
+          }
+        },
+        "required": [
+          "thresholds",
+          "emission_factors"
+        ],
+        "title": "Configuration",
+        "type": "object"
+      },
+      "ConfigurationView": {
+        "additionalProperties": false,
+        "properties": {
+          "emission_factors": {
+            "$ref": "#/components/schemas/FactorView"
+          },
+          "thresholds": {
+            "items": {
+              "$ref": "#/components/schemas/ThresholdView"
+            },
+            "title": "Thresholds",
+            "type": "array"
+          }
+        },
+        "required": [
+          "thresholds",
+          "emission_factors"
+        ],
+        "title": "ConfigurationView",
+        "type": "object"
+      },
+      "Equipment": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline_availability": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Baseline Availability",
+            "type": "number"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "unit_type": {
+            "enum": [
+              "pump",
+              "aeration",
+              "clarifier"
+            ],
+            "title": "Unit Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "unit_type",
+          "name",
+          "baseline_availability"
+        ],
+        "title": "Equipment",
+        "type": "object"
+      },
+      "EquipmentView": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline_availability": {
+            "title": "Baseline Availability",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "unit_type": {
+            "title": "Unit Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "unit_type",
+          "name",
+          "baseline_availability"
+        ],
+        "title": "EquipmentView",
+        "type": "object"
+      },
       "ErrorBody": {
         "properties": {
           "code": {
@@ -321,6 +790,94 @@
         "title": "ExceedanceOut",
         "type": "object"
       },
+      "FactorView": {
+        "additionalProperties": false,
+        "properties": {
+          "applicability": {
+            "title": "Applicability",
+            "type": "string"
+          },
+          "ch4_unit": {
+            "const": "kg CH4/kg BOD5",
+            "title": "Ch4 Unit",
+            "type": "string"
+          },
+          "ef_ch4": {
+            "title": "Ef Ch4",
+            "type": "number"
+          },
+          "ef_n2o": {
+            "title": "Ef N2O",
+            "type": "number"
+          },
+          "n2o_unit": {
+            "const": "kg N2O-N/kg N",
+            "title": "N2O Unit",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ef_ch4",
+          "ef_n2o",
+          "ch4_unit",
+          "n2o_unit",
+          "source",
+          "applicability"
+        ],
+        "title": "FactorView",
+        "type": "object"
+      },
+      "Factors": {
+        "additionalProperties": false,
+        "properties": {
+          "applicability": {
+            "maxLength": 2000,
+            "minLength": 3,
+            "title": "Applicability",
+            "type": "string"
+          },
+          "ch4_unit": {
+            "const": "kg CH4/kg BOD5",
+            "title": "Ch4 Unit",
+            "type": "string"
+          },
+          "ef_ch4": {
+            "minimum": 0.0,
+            "title": "Ef Ch4",
+            "type": "number"
+          },
+          "ef_n2o": {
+            "minimum": 0.0,
+            "title": "Ef N2O",
+            "type": "number"
+          },
+          "n2o_unit": {
+            "const": "kg N2O-N/kg N",
+            "title": "N2O Unit",
+            "type": "string"
+          },
+          "source": {
+            "maxLength": 2000,
+            "minLength": 3,
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ef_ch4",
+          "ef_n2o",
+          "ch4_unit",
+          "n2o_unit",
+          "source",
+          "applicability"
+        ],
+        "title": "Factors",
+        "type": "object"
+      },
       "ForecastIn": {
         "properties": {
           "demand": {
@@ -349,6 +906,7 @@
           "demand_multiplier": {
             "anyOf": [
               {
+                "minimum": 0.0,
                 "type": "number"
               },
               {
@@ -391,22 +949,26 @@
         "properties": {
           "ammonia": {
             "default": 35.0,
+            "minimum": 0.0,
             "title": "Ammonia",
             "type": "number"
           },
           "bod": {
             "default": 220.0,
             "description": "Influent BOD5 concentration in mg/L (legacy property name: bod).",
+            "minimum": 0.0,
             "title": "Bod",
             "type": "number"
           },
           "cod": {
             "default": 480.0,
+            "minimum": 0.0,
             "title": "Cod",
             "type": "number"
           },
           "flow": {
             "default": 40.0,
+            "minimum": 0.0,
             "title": "Flow",
             "type": "number"
           },
@@ -418,6 +980,7 @@
           },
           "tss": {
             "default": 240.0,
+            "minimum": 0.0,
             "title": "Tss",
             "type": "number"
           }
@@ -425,6 +988,7 @@
         "title": "InfluentIn",
         "type": "object"
       },
+      "JsonValue": {},
       "MaintenanceEventIn": {
         "properties": {
           "availability_pct": {
@@ -556,6 +1120,7 @@
           "capacity_mld": {
             "anyOf": [
               {
+                "exclusiveMinimum": 0.0,
                 "type": "number"
               },
               {
@@ -592,6 +1157,130 @@
           }
         },
         "title": "OperatingParametersIn",
+        "type": "object"
+      },
+      "Page_AdminAccountView_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AdminAccountView"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "Page[AdminAccountView]",
+        "type": "object"
+      },
+      "Page_AdminHistoryEvent_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AdminHistoryEvent"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "Page[AdminHistoryEvent]",
+        "type": "object"
+      },
+      "Page_AdminPlantView_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AdminPlantView"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "Page[AdminPlantView]",
+        "type": "object"
+      },
+      "Page_AdminStationView_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AdminStationView"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "Page[AdminStationView]",
         "type": "object"
       },
       "Page_CommunityView_": {
@@ -870,6 +1559,97 @@
         "title": "PlantUnitOut",
         "type": "object"
       },
+      "PlantWrite": {
+        "additionalProperties": false,
+        "properties": {
+          "capacity_mld": {
+            "exclusiveMinimum": 0.0,
+            "title": "Capacity Mld",
+            "type": "number"
+          },
+          "code": {
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "title": "Code",
+            "type": "string"
+          },
+          "configuration": {
+            "$ref": "#/components/schemas/Configuration"
+          },
+          "description": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Description",
+            "type": "string"
+          },
+          "expected_revision": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Expected Revision",
+            "type": "integer"
+          },
+          "latitude": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude",
+            "type": "number"
+          },
+          "longitude": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude",
+            "type": "number"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          },
+          "status": {
+            "default": "unknown",
+            "enum": [
+              "unknown",
+              "operational",
+              "maintenance"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "stp_type": {
+            "default": "",
+            "maxLength": 100,
+            "title": "Stp Type",
+            "type": "string"
+          },
+          "units": {
+            "items": {
+              "$ref": "#/components/schemas/Equipment"
+            },
+            "maxItems": 100,
+            "title": "Units",
+            "type": "array"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "latitude",
+          "longitude",
+          "capacity_mld",
+          "configuration",
+          "reason"
+        ],
+        "title": "PlantWrite",
+        "type": "object"
+      },
       "ReportInput": {
         "additionalProperties": false,
         "properties": {
@@ -1139,6 +1919,44 @@
           "created_at"
         ],
         "title": "ReportView",
+        "type": "object"
+      },
+      "RoleChange": {
+        "additionalProperties": false,
+        "properties": {
+          "capabilities": {
+            "items": {
+              "enum": [
+                "report:own",
+                "report:review",
+                "monitor:read",
+                "scenario:operate"
+              ],
+              "type": "string"
+            },
+            "title": "Capabilities",
+            "type": "array"
+          },
+          "expected_capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Expected Capabilities",
+            "type": "array"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "capabilities",
+          "expected_capabilities",
+          "reason"
+        ],
+        "title": "RoleChange",
         "type": "object"
       },
       "RunOut": {
@@ -1668,6 +2486,162 @@
         "title": "StationView",
         "type": "object"
       },
+      "StationWrite": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "enum": [
+                  "A",
+                  "B"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "code": {
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "title": "Code",
+            "type": "string"
+          },
+          "expected_revision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Revision"
+          },
+          "latitude": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude",
+            "type": "number"
+          },
+          "longitude": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude",
+            "type": "number"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          },
+          "stp_type": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stp Type"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "latitude",
+          "longitude",
+          "reason"
+        ],
+        "title": "StationWrite",
+        "type": "object"
+      },
+      "Threshold": {
+        "additionalProperties": false,
+        "properties": {
+          "applicability": {
+            "maxLength": 2000,
+            "minLength": 3,
+            "title": "Applicability",
+            "type": "string"
+          },
+          "metric": {
+            "title": "Metric",
+            "type": "string"
+          },
+          "source": {
+            "maxLength": 2000,
+            "minLength": 3,
+            "title": "Source",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "value": {
+            "exclusiveMinimum": 0.0,
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "metric",
+          "value",
+          "unit",
+          "source",
+          "applicability"
+        ],
+        "title": "Threshold",
+        "type": "object"
+      },
+      "ThresholdView": {
+        "additionalProperties": false,
+        "properties": {
+          "applicability": {
+            "title": "Applicability",
+            "type": "string"
+          },
+          "metric": {
+            "title": "Metric",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "metric",
+          "value",
+          "unit",
+          "source",
+          "applicability"
+        ],
+        "title": "ThresholdView",
+        "type": "object"
+      },
       "TimeseriesOut": {
         "properties": {
           "compliance_limits": {
@@ -1727,6 +2701,786 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/admin/history": {
+      "get": {
+        "operationId": "history_api_v1_admin_history_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_AdminHistoryEvent_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "History",
+        "tags": [
+          "administration"
+        ]
+      }
+    },
+    "/api/v1/admin/plants": {
+      "get": {
+        "operationId": "plants_api_v1_admin_plants_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_AdminPlantView_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Plants",
+        "tags": [
+          "administration"
+        ]
+      },
+      "post": {
+        "operationId": "create_plant_api_v1_admin_plants_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlantWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminPlantView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Create Plant",
+        "tags": [
+          "administration"
+        ]
+      }
+    },
+    "/api/v1/admin/plants/{plant_id}": {
+      "put": {
+        "operationId": "update_plant_api_v1_admin_plants__plant_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlantWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminPlantView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Update Plant",
+        "tags": [
+          "administration"
+        ]
+      }
+    },
+    "/api/v1/admin/stations": {
+      "get": {
+        "operationId": "stations_api_v1_admin_stations_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_AdminStationView_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Stations",
+        "tags": [
+          "administration"
+        ]
+      },
+      "post": {
+        "operationId": "create_station_api_v1_admin_stations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StationWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminStationView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Create Station",
+        "tags": [
+          "administration"
+        ]
+      }
+    },
+    "/api/v1/admin/stations/{code}": {
+      "put": {
+        "operationId": "update_station_api_v1_admin_stations__code__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StationWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminStationView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Update Station",
+        "tags": [
+          "administration"
+        ]
+      }
+    },
+    "/api/v1/admin/status": {
+      "get": {
+        "operationId": "status_api_v1_admin_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Status",
+        "tags": [
+          "administration"
+        ]
+      }
+    },
+    "/api/v1/admin/users": {
+      "get": {
+        "operationId": "users_api_v1_admin_users_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 200,
+              "title": "Q",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_AdminAccountView_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Users",
+        "tags": [
+          "administration"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{account_id}": {
+      "patch": {
+        "operationId": "roles_api_v1_admin_users__account_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "title": "Account Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleChange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminAccountView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Roles",
+        "tags": [
+          "administration"
+        ]
+      }
+    },
     "/api/v1/auth/callback": {
       "get": {
         "operationId": "callback_api_v1_auth_callback_get",
