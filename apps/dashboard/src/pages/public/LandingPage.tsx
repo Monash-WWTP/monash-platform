@@ -35,7 +35,6 @@ export default function LandingPage() {
         </div>
         <figure className="app-preview home-preview">
           <img src="/assets/app/report-screen-latest.webp" alt="CitizenFlood report screen with rainfall, water level, temperature and wastewater observation categories" width="1080" height="2400" />
-          <figcaption>Latest Android interface · source preview</figcaption>
         </figure>
       </section>
       <section className="platform-paths" aria-label="Explore the platform">
@@ -77,19 +76,6 @@ export default function LandingPage() {
           measurements describe sampled water quality. Model outputs are
           illustrative and unvalidated. Each is labelled with its own context.
         </p>
-      </section>
-      <section className="shared-account-band">
-        <div>
-          <h2>Shared accounts are being prepared.</h2>
-          <p>
-            Shared accounts are implemented in the new platform source and
-            still need production deployment and acceptance. The public APK
-            1.0.0 uses the existing CitizenFlood account service.
-          </p>
-        </div>
-        <Link className="quiet-action" to="/register">
-          Account availability <ArrowRight size={18} aria-hidden="true" />
-        </Link>
       </section>
     </main>
   );

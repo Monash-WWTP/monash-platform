@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Download, ArrowRight, Copy, Smartphone } from "lucide-react";
+import { Download, Copy, Smartphone } from "lucide-react";
 import { currentRelease } from "../../releases/release";
 export default function DownloadPage() {
   const release = currentRelease;
@@ -93,9 +93,6 @@ export default function DownloadPage() {
             width="1080"
             height="2400"
           />
-          <figcaption>
-            Latest Android interface · source preview
-          </figcaption>
         </figure>
       </section>
       <section className="installation" aria-labelledby="install-title">
@@ -143,23 +140,8 @@ export default function DownloadPage() {
       </section>
       <section
         className="download-support"
-        aria-label="Release and account information"
+        aria-label="Release information"
       >
-        <div>
-          <h2>Your platform account</h2>
-          <p>
-            The new platform uses one verified account across the dashboard and
-            the API-connected CitizenFlood app. Operator access requires an
-            invitation and MFA.
-          </p>
-          <p>
-            Shared accounts are being verified in local staging. The public APK
-            above still uses the existing CitizenFlood account service.
-          </p>
-          <Link to="/login">
-            Account availability <ArrowRight size={16} aria-hidden="true" />
-          </Link>
-        </div>
         <div className="release-disclosures">
           <details>
             <summary>Version and release notes</summary>
