@@ -5,7 +5,7 @@ The CitizenFlood import was checked on 2026-10-02 using the official Flutter
 DevTools 2.57.0). Its release archive SHA-256 was verified against Flutter's
 release index: `a0edd646c159c0e816788c0e46a4f071199c1320495898f5a679599b583a05a4`.
 The local Android SDK has platforms 35 and 36 and build-tools 36.0.0. The
-local JDK is Android Studio's JBR 25.0.3; CI uses Temurin 17.
+local JDK is Android Studio's JBR 25.0.3; CI uses Temurin21, required by maplibre_gl0.27.1’s Java source/target level.
 
 Mobile verification commands from `apps/citizenflood`:
 

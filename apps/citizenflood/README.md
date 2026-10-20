@@ -2,7 +2,7 @@
 
 Flutter mobile app for citizen flood, rain, water-level and wastewater observations. The native client uses the shared FastAPI service and external-browser OIDC with PKCE. Refresh credentials are held in Android secure storage.
 
-Use Flutter 3.44.7, an Android SDK and JDK 17. From this directory:
+Use Flutter 3.44.7, an Android SDK and JDK 21. From this directory:
 
 ```sh
 flutter pub get
