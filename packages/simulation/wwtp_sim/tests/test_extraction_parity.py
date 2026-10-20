@@ -31,7 +31,7 @@ def test_extracted_model_retains_reference_case():
         )
     )
     assert result.model_id == "effluent_v1"
-    assert result.model_version == "1.4.0"
+    assert result.model_version == "1.4.1"
     assert len(result.dates) == 90
     assert result.ghg["ch4"][0] == pytest.approx(0.0847, rel=1e-3)
     assert result.ghg["n2o"][0] == pytest.approx(0.1549, rel=1e-3)

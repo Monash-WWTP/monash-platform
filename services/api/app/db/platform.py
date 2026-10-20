@@ -119,3 +119,16 @@ class AuditEvent(Base):
     resource_id: Mapped[str] = mapped_column(String, nullable=False)
     details: Mapped[dict] = mapped_column(JSON, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
+class PlantConfigurationRevision(Base):
+    """Append-only administrative configuration evidence; historical runs remain independent."""
+    __tablename__ = 'plant_configuration_revisions'
+    __table_args__ = (UniqueConstraint('plant_id', 'version'),)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    plant_id: Mapped[int] = mapped_column(ForeignKey('plants.id'), nullable=False, index=True)
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    actor_id: Mapped[str] = mapped_column(ForeignKey('accounts.id'), nullable=False)
+    reason: Mapped[str] = mapped_column(String, nullable=False)
+    payload: Mapped[dict] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)

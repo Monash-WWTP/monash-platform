@@ -17,6 +17,7 @@ from .routers import (
     reports,
     identity_events,
     migration_claim,
+    admin,
 )
 
 app = FastAPI(title="Monash WWTP Platform API", version="1.0.0")
@@ -45,6 +46,7 @@ for router in (
     reports.router,
     identity_events.router,
     migration_claim.router,
+    admin.router,
 ):
     app.include_router(router, prefix="/api/v1", responses=standard_errors)
 

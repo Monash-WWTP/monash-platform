@@ -1,0 +1,14 @@
+{$API_DOMAIN} {
+    @versioned path /api/v1 /api/v1/*
+    handle @versioned {
+        header Cache-Control "no-store"
+        reverse_proxy api:8000
+    }
+    handle {
+        respond "Not found" 404
+    }
+}
+
+{$IDENTITY_DOMAIN} {
+    reverse_proxy identity-server:9000
+}

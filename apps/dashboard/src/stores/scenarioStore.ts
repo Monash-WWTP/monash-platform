@@ -10,7 +10,7 @@ export const emptyDraft = (): ScenarioInput => ({
     demand_change_pct: 0,
     weather: 'normal',
     rainfall_mm_day: 0,
-    // typical Malaysian municipal influent for a small SBR plant (matches backend baseline)
+    // Illustrative draft assumptions, not measurements or calibrated site defaults.
     influent: { flow: 6, bod: 250, cod: 520, tss: 300, ammonia: 30, tkn: 40 },
   },
   maintenance: [],

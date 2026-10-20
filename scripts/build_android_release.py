@@ -65,6 +65,13 @@ def validate_signer(output, expected):
         raise ValueError("APK must use the expected project release signing identity.")
 
 
+def validate_release_version(version, version_code, published_code):
+    if not re.fullmatch(r"\d+\.\d+\.\d+", version):
+        raise ValueError("Release requires semantic version and positive version code.")
+    if version_code <= published_code:
+        raise ValueError("New release version code must be greater than the published version.")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, required=True)
@@ -78,8 +85,8 @@ def main():
     parser.add_argument("--published-at", type=date.fromisoformat, required=True)
     args = parser.parse_args()
     backend = validate_client_config(json.loads(args.config.read_text()))
-    if not re.fullmatch(r"\d+\.\d+\.\d+", args.version) or args.version_code < 1:
-        raise ValueError("Release requires semantic version and positive version code.")
+    published = json.loads((ROOT / "apps/dashboard/src/releases/current.json").read_text())
+    validate_release_version(args.version, args.version_code, published["versionCode"])
     parsed = urlparse(args.artifact_url)
     if (
         parsed.scheme != "https"

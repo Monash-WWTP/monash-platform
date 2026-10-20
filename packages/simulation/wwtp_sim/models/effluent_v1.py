@@ -42,7 +42,7 @@ DEFAULT_LIMITS = {
 class EffluentQualityModelV1(SimulationModel):
     model_id = "effluent_v1"
     name = "Effluent Quality Model v1"
-    version = "1.4.0"
+    version = "1.4.1"
     description = (
         "Deterministic heuristic scenario model with stateful carbon and "
         "nitrogen surrogates, demand-modulated influent, and bounded "
@@ -58,7 +58,8 @@ class EffluentQualityModelV1(SimulationModel):
         if fc.demand_change_pct is not None:
             demand_mult = max(0.0, 1.0 + fc.demand_change_pct / 100.0)
         else:
-            demand_mult = fc.demand_multiplier or DEMAND_MULTIPLIER[fc.demand]
+            demand_mult = (fc.demand_multiplier if fc.demand_multiplier is not None
+                           else DEMAND_MULTIPLIER[fc.demand])
 
         # --- daily unit availability (baseline minus maintenance windows) ---
         base_avail = {

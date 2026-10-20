@@ -209,12 +209,14 @@ def community(
 
 
 @router.post("/media", status_code=201, response_model=MediaView)
-async def upload(
+def upload(
     file: UploadFile,
     account: Account = Depends(require_citizen),
     db: Session = Depends(get_db),
 ):
-    content = await file.read(10 * 1024 * 1024 + 1)
+    # FastAPI runs this synchronous handler in its bounded worker pool, keeping
+    # image verification, object storage and database waits off the event loop.
+    content = file.file.read(10 * 1024 * 1024 + 1)
     if not content or len(content) > 10 * 1024 * 1024:
         raise ApiError(413, "photo_too_large", "Photo must be between 1 byte and 10 MB")
     try:

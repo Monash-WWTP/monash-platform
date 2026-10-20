@@ -1,0 +1,130 @@
+name: monash-production
+x-logging: &logging
+  driver: local
+  options:
+    max-size: 10m
+    max-file: '3'
+x-api-environment: &api-environment
+  DATABASE_URL: postgresql+psycopg://monash:${APP_DB_PASSWORD:?set URL-safe application DB password}@database:5432/monash
+  APP_ENV: production
+  AUTH_MODE: oidc
+  SESSION_SECURE: 'true'
+  WEB_ORIGIN: ${WEB_ORIGIN:?set existing HTTPS dashboard origin}
+  CORS_ORIGINS: ${WEB_ORIGIN:?set existing HTTPS dashboard origin}
+  OIDC_CALLBACK_URL: ${OIDC_CALLBACK_URL:?set exact dashboard proxy callback URL}
+  OIDC_ISSUER: ${OIDC_ISSUER:?set exact shared public issuer from metadata}
+  OIDC_DISCOVERY_URL: ${OIDC_DISCOVERY_URL:?set exact public discovery URL}
+  OIDC_JWKS_URL: ${OIDC_JWKS_URL:?set exact public JWKS URL}
+  OIDC_CLIENT_ID: monash-web
+  OIDC_OPERATOR_CLIENT_ID: monash-operator
+  OIDC_MOBILE_CLIENT_ID: citizen-mobile
+  OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:?set shared confidential client secret}
+  IDENTITY_EVENT_SECRET: ${IDENTITY_EVENT_SECRET:?set shared revocation event secret}
+  STORAGE_ENDPOINT: ${STORAGE_ENDPOINT:?set private HTTPS S3 endpoint}
+  STORAGE_ACCESS_KEY: ${STORAGE_ACCESS_KEY:?set scoped S3 access key}
+  STORAGE_SECRET_KEY: ${STORAGE_SECRET_KEY:?set scoped S3 secret key}
+  STORAGE_BUCKET: ${STORAGE_BUCKET:?set private bucket}
+  STORAGE_REGION: ${STORAGE_REGION:?set actual S3 region}
+x-identity-environment: &identity-environment
+  AUTHENTIK_SECRET_KEY: ${IDENTITY_SECRET:?set identity signing secret}
+  AUTHENTIK_POSTGRESQL__HOST: identity-db
+  AUTHENTIK_POSTGRESQL__NAME: authentik
+  AUTHENTIK_POSTGRESQL__USER: authentik
+  AUTHENTIK_POSTGRESQL__PASSWORD: ${IDENTITY_DB_PASSWORD:?set identity DB password}
+  AUTHENTIK_EMAIL__HOST: ${SMTP_HOST:?set verified SMTP host}
+  AUTHENTIK_EMAIL__PORT: ${SMTP_PORT:?set SMTP STARTTLS port}
+  AUTHENTIK_EMAIL__USERNAME: ${SMTP_USERNAME:?set SMTP username}
+  AUTHENTIK_EMAIL__PASSWORD: ${SMTP_PASSWORD:?set SMTP password}
+  AUTHENTIK_EMAIL__FROM: ${SMTP_FROM:?set verified sender}
+  AUTHENTIK_EMAIL__USE_TLS: 'true'
+  AUTHENTIK_EMAIL__USE_SSL: 'false'
+  IDENTITY_EVENT_SECRET: ${IDENTITY_EVENT_SECRET:?set shared revocation event secret}
+  MONASH_EVENT_ISSUER: ${OIDC_ISSUER:?set exact shared public issuer from metadata}
+  MONASH_EVENT_ENDPOINT: http://api:8000/api/v1/identity/events
+services:
+  database:
+    image: postgres:16.13
+    environment:
+      POSTGRES_DB: monash
+      POSTGRES_USER: monash
+      POSTGRES_PASSWORD: ${APP_DB_PASSWORD:?set URL-safe application DB password}
+    volumes: [application_db:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U monash -d monash']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging: *logging
+    restart: unless-stopped
+  identity-db:
+    image: postgres:16.13
+    environment:
+      POSTGRES_DB: authentik
+      POSTGRES_USER: authentik
+      POSTGRES_PASSWORD: ${IDENTITY_DB_PASSWORD:?set identity DB password}
+    volumes: [identity_db:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U authentik -d authentik']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging: *logging
+    restart: unless-stopped
+  identity-server:
+    image: ghcr.io/goauthentik/server:2026.8.3
+    command: server
+    environment: *identity-environment
+    volumes: [identity_data:/data]
+    depends_on:
+      identity-db: {condition: service_healthy}
+    logging: *logging
+    restart: unless-stopped
+  identity-worker:
+    image: ghcr.io/goauthentik/server:2026.8.3
+    command: worker
+    environment: *identity-environment
+    volumes: [identity_data:/data]
+    depends_on:
+      identity-db: {condition: service_healthy}
+    logging: *logging
+    restart: unless-stopped
+  migrate:
+    image: ${API_IMAGE:?set reviewed API release image digest}
+    command: [uv, run, --no-sync, alembic, -c, services/api/alembic.ini, upgrade, head]
+    environment: *api-environment
+    depends_on:
+      database: {condition: service_healthy}
+    logging: *logging
+    restart: 'no'
+  api:
+    image: ${API_IMAGE:?set reviewed API release image digest}
+    environment: *api-environment
+    depends_on:
+      database: {condition: service_healthy}
+      migrate: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, /workspace/.venv/bin/python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/ready',timeout=15)"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 30s
+    logging: *logging
+    restart: unless-stopped
+  caddy:
+    image: ${CADDY_IMAGE:?set reviewed Caddy release image digest}
+    environment:
+      API_DOMAIN: ${API_DOMAIN:?set public API hostname}
+      IDENTITY_DOMAIN: ${IDENTITY_DOMAIN:?set public identity hostname}
+    ports: ['80:80', '443:443']
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    logging: *logging
+    restart: unless-stopped
+volumes:
+  application_db:
+  identity_db:
+  identity_data:
+  caddy_data:
+  caddy_config:

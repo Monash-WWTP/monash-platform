@@ -47,7 +47,7 @@ def create_scenario(
         horizon=body.horizon,
         forecast=body.forecast.model_dump(mode="json"),
         maintenance=[m.model_dump(mode="json") for m in body.maintenance],
-        operating_parameters=body.operating_parameters.model_dump(mode="json"),
+        operating_parameters=body.operating_parameters.model_dump(mode="json", exclude_unset=True),
         is_baseline=body.is_baseline,
     )
     db.add(scenario)
@@ -82,7 +82,7 @@ def update_scenario(
     scenario.horizon = body.horizon
     scenario.forecast = body.forecast.model_dump(mode="json")
     scenario.maintenance = [m.model_dump(mode="json") for m in body.maintenance]
-    scenario.operating_parameters = body.operating_parameters.model_dump(mode="json")
+    scenario.operating_parameters = body.operating_parameters.model_dump(mode="json", exclude_unset=True)
     scenario.is_baseline = body.is_baseline
     db.commit()
     db.refresh(scenario)
