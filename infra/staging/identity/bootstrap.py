@@ -7,6 +7,9 @@ import django
 
 django.setup()
 from django.db import transaction
+from pathlib import Path
+import base64
+from authentik.brands.models import Brand
 from authentik.core.models import Application, Group
 from authentik.crypto.models import CertificateKeyPair
 from authentik.providers.oauth2.models import OAuth2Provider, ScopeMapping
@@ -23,6 +26,14 @@ from authentik.policies.expression.models import ExpressionPolicy
 from authentik.policies.models import PolicyBinding
 
 with transaction.atomic():
+    brand_dir = Path('/monash-brand')
+    if brand_dir.exists():
+        logo = 'data:image/png;base64,' + base64.b64encode((brand_dir / 'logo.png').read_bytes()).decode()
+        Brand.objects.update_or_create(domain='localhost', defaults={
+            'branding_title': 'CitizenFlood · Monash Water',
+            'branding_logo': logo, 'branding_favicon': logo,
+            'branding_custom_css': (brand_dir / 'branding.css').read_text(),
+        })
     flow, _ = Flow.objects.update_or_create(
         slug="monash-citizen-enrollment",
         defaults={
@@ -79,6 +90,7 @@ return len(password) >= 12 and password == data.get("password_repeat") and bool(
             "activate_user_on_success": True,
             "token_expiry": "minutes=30",
             "subject": "Verify your Monash Water account",
+            "template": "email/monash_confirmation.html",
         },
     )
     login, _ = UserLoginStage.objects.get_or_create(name="monash-enrollment-login")
@@ -124,6 +136,7 @@ return True"""
             "activate_user_on_success": False,
             "token_expiry": "minutes=30",
             "subject": "Reset your Monash Water password",
+            "template": "email/monash_recovery.html",
         },
     )
     recovery_prompt, _ = PromptStage.objects.get_or_create(

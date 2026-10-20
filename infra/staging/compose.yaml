@@ -44,7 +44,7 @@ services:
       AUTHENTIK_BOOTSTRAP_TOKEN: ${IDENTITY_BOOTSTRAP_TOKEN}
       AUTHENTIK_BOOTSTRAP_EMAIL: admin@monash.localhost
     ports: ['127.0.0.1:9100:9000']
-    volumes: [identity_data:/data]
+    volumes: [identity_data:/data, ./identity:/monash-brand:ro, ./identity/templates:/templates:ro]
     depends_on:
       identity-db: {condition: service_healthy}
     restart: unless-stopped
