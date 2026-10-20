@@ -21,3 +21,9 @@ def test_branded_confirmation_and_recovery_templates_have_distinct_actions():
     for template in (confirm, recovery):
         assert '{{ url }}' in template and 'CitizenFlood' in template
         assert 'Monash Water' in template
+
+
+def test_local_brand_matches_actual_identity_host_including_port():
+    source = Path('infra/staging/identity/bootstrap.py').read_text()
+    assert "domain='localhost:9100'" in source
+    assert "'base': 'light'" in source

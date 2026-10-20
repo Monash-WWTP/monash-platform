@@ -8,7 +8,6 @@ import django
 django.setup()
 from django.db import transaction
 from pathlib import Path
-import base64
 from authentik.brands.models import Brand
 from authentik.core.models import Application, Group
 from authentik.crypto.models import CertificateKeyPair
@@ -28,12 +27,15 @@ from authentik.policies.models import PolicyBinding
 with transaction.atomic():
     brand_dir = Path('/monash-brand')
     if brand_dir.exists():
-        logo = 'data:image/png;base64,' + base64.b64encode((brand_dir / 'logo.png').read_bytes()).decode()
-        Brand.objects.update_or_create(domain='localhost', defaults={
-            'branding_title': 'CitizenFlood · Monash Water',
+        logo = '/static/dist/assets/images/citizenflood.png'
+        Brand.objects.update_or_create(domain='localhost:9100', defaults={
+            'branding_title': 'CitizenFlood',
+            'attributes': {'settings': {'theme': {'base': 'light'}}},
             'branding_logo': logo, 'branding_favicon': logo,
             'branding_custom_css': (brand_dir / 'branding.css').read_text(),
         })
+    Flow.objects.filter(slug='default-authentication-flow').update(title='Sign in')
+    Application.objects.filter(slug='citizen-mobile').update(name='CitizenFlood')
     flow, _ = Flow.objects.update_or_create(
         slug="monash-citizen-enrollment",
         defaults={
@@ -304,7 +306,7 @@ except Exception:
             ]
         )
         Application.objects.update_or_create(
-            slug=slug, defaults={"name": "Monash Water " + slug, "provider": provider}
+            slug=slug, defaults={"name": "CitizenFlood" if slug == "citizen-mobile" else "Monash Water dashboard", "provider": provider}
         )
 print(
     "Monash OIDC providers and verified registration configured; no operational reports created."
