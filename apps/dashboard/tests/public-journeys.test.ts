@@ -10,7 +10,7 @@ test('unavailable accounts explain status without offering a disabled registrati
   for (const path of ['/login', '/register']) {
     const html = renderToStaticMarkup(createElement(MemoryRouter, { initialEntries: [path] }, createElement(AccountPage)))
     assert.match(html, /Account availability/)
-    assert.match(html, /Account service is in local staging/)
+    assert.match(html, /Open CitizenFlood on your Android phone/)
     assert.doesNotMatch(html, /<button|Create a platform account|Log in to your platform account/)
     assert.match(html, /href="\/download"/)
   }
@@ -19,7 +19,7 @@ test('unavailable accounts explain status without offering a disabled registrati
 test('home presents the latest source preview and one download entry', () => {
   const html = renderToStaticMarkup(createElement(MemoryRouter, null, createElement(LandingPage)))
   assert.match(html, /report-screen-latest\.webp/)
-  assert.match(html, /Account availability/)
+  assert.doesNotMatch(html, /source preview|local staging|production deployment/)
   assert.doesNotMatch(html, /Create an account/)
   assert.equal((html.match(/href="\/download"/g) ?? []).length, 1)
 })
