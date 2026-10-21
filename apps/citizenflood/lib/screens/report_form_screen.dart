@@ -4,6 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../models/report.dart';
+import '../models/report_draft.dart';
+import 'report_review_screen.dart';
+import 'location_picker_screen.dart';
+import '../maps/map_selection.dart';
+import 'package:latlong2/latlong.dart';
 import '../theme/app_theme.dart';
 import '../services/location_service.dart';
 import '../services/report_repository.dart';
@@ -18,7 +23,11 @@ class ReportFormScreen extends StatefulWidget {
     this.location,
     this.session,
     this.imagePicker,
+    this.selectedLocation,
+    this.onShowReports,
   });
+  final VoidCallback? onShowReports;
+  final SelectedLocation? selectedLocation;
   final ImagePicker? imagePicker;
   final ReportRepository? repository;
   final LocationService? location;
@@ -37,7 +46,9 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
   final _noteController = TextEditingController();
   final _valueController = TextEditingController();
 
-  Condition _condition = Condition.normal;
+  Condition? _condition;
+  SelectedLocation? _chosenLocation;
+  DateTime? _observedAt;
   XFile? _photo;
   CapturedLocation? _position;
   String? _locationError;
@@ -52,7 +63,16 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
     super.initState();
     _valueController.addListener(_resetRetry);
     _noteController.addListener(_resetRetry);
-    _captureLocation();
+    final selected = widget.selectedLocation;
+    _chosenLocation = selected;
+    if (selected != null) {
+      _position = CapturedLocation(
+        coordinates: LatLng(selected.latitude, selected.longitude),
+        accuracyM: selected.accuracyM ?? 0,
+      );
+    } else {
+      _captureLocation();
+    }
   }
 
   void _resetRetry() {
@@ -91,8 +111,8 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
     }
   }
 
-  Future<void> _submit() async {
-    if (_submitting) return;
+  Future<bool> _submit() async {
+    if (_submitting) return false;
     // Validate the reading first.
     double? value;
     if (_isNumeric) {
@@ -102,24 +122,24 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
           'Enter the ${widget.category.label.toLowerCase()} '
           'in ${widget.category.unit}.',
         );
-        return;
+        return false;
       }
     }
     if (_position == null) {
       _snack('Waiting for location — please enable GPS and try again.');
-      return;
+      return false;
     }
 
     final photo = _photo;
     final note = _noteController.text.trim();
     final condition = _condition;
     final position = _position!;
-    final observedAt = DateTime.now().toUtc();
+    final observedAt = _observedAt ?? DateTime.now().toUtc();
     setState(() => _submitting = true);
     try {
       if (!_session.signedIn) {
         await _session.signIn();
-        if (!mounted) return;
+        if (!mounted) return false;
         if (!_session.signedIn) {
           throw StateError('Sign in with a verified account to submit.');
         }
@@ -138,20 +158,69 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
         note: note.isEmpty ? null : note,
         latitude: position.coordinates.latitude,
         longitude: position.coordinates.longitude,
-        locationAccuracyM: position.accuracyM,
+        locationAccuracyM: _chosenLocation?.source == LocationSource.selected
+            ? null
+            : position.accuracyM,
         observedAt: observedAt,
         photoPath: photoPath,
       );
       _retryKey ??= const Uuid().v4();
       await _repo.submit(_retryReport!, idempotencyKey: _retryKey);
-      if (!mounted) return;
-      _snack('Reading submitted for review — thank you!');
-      Navigator.of(context).pop();
+      if (!mounted) return false;
+      return true;
     } catch (e) {
-      if (mounted) _snack('Could not submit: $e');
+      return false;
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
+  }
+
+  Future<void> _review() async {
+    final value = double.tryParse(_valueController.text.trim());
+    if (_isNumeric &&
+        (value == null ||
+            !value.isFinite ||
+            (widget.category != ReportCategory.temperature && value < 0))) {
+      _snack('Enter a valid ${widget.category.readingLabel.toLowerCase()}.');
+      return;
+    }
+    if (!_isNumeric && _condition == null) {
+      _snack('Choose a plant condition.');
+      return;
+    }
+    final pos = _position;
+    if (pos == null) {
+      _snack('Choose a location before continuing.');
+      return;
+    }
+    _observedAt ??= DateTime.now().toUtc();
+    final selected = _chosenLocation;
+    final draft = ReportDraft(
+      category: widget.category,
+      location: SelectedLocation(
+        latitude: pos.coordinates.latitude,
+        longitude: pos.coordinates.longitude,
+        accuracyM: selected?.source == LocationSource.selected
+            ? null
+            : pos.accuracyM,
+        source: selected?.source ?? LocationSource.current,
+      ),
+      observedAt: _observedAt!,
+      value: value,
+      condition: _condition,
+      note: _noteController.text.trim(),
+      photoPath: _photo?.path,
+    );
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ReportReviewScreen(
+          draft: draft,
+          submit: _submit,
+          onShowReports: widget.onShowReports,
+        ),
+      ),
+    );
   }
 
   void _snack(String msg) =>
@@ -172,7 +241,13 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
                 ),
               ),
               const SizedBox(width: 10),
-              Text(widget.category.label),
+              Expanded(
+                child: Text(
+                  widget.category.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ),
@@ -202,16 +277,31 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
                   border: const OutlineInputBorder(),
                 ),
               )
+            else if (MediaQuery.textScalerOf(context).scale(1) > 1.3)
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final condition in Condition.values)
+                    ChoiceChip(
+                      label: Text(condition.label),
+                      selected: _condition == condition,
+                      onSelected: _submitting
+                          ? null
+                          : (selected) => setState(() {
+                              _resetRetry();
+                              _condition = selected ? condition : null;
+                            }),
+                    ),
+                ],
+              )
             else
               SegmentedButton<Condition>(
                 segments: const [
                   ButtonSegment(
                     value: Condition.normal,
                     label: Text('Normal'),
-                    icon: Icon(
-                      Icons.check_circle_outline,
-                      color: AppTheme.success,
-                    ),
+                    icon: Icon(Icons.circle_outlined, color: AppTheme.success),
                   ),
                   ButtonSegment(
                     value: Condition.warning,
@@ -227,12 +317,13 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
                     icon: Icon(Icons.error_outline, color: AppTheme.danger),
                   ),
                 ],
-                selected: {_condition},
+                emptySelectionAllowed: true,
+                selected: {?_condition},
                 onSelectionChanged: _submitting
                     ? null
                     : (s) => setState(() {
                         _resetRetry();
-                        _condition = s.first;
+                        _condition = s.firstOrNull;
                       }),
               ),
             const SizedBox(height: 16),
@@ -321,11 +412,19 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
                       ? Icons.location_on
                       : Icons.location_off,
                 ),
+                subtitle: _position == null
+                    ? null
+                    : Text(
+                        '${_position!.coordinates.latitude.toStringAsFixed(5)}, ${_position!.coordinates.longitude.toStringAsFixed(5)}',
+                      ),
                 title: Text(
                   _locationError == null
                       ? (_position == null
                             ? 'Getting your location…'
-                            : 'Location captured automatically')
+                            : (_chosenLocation?.source ==
+                                      LocationSource.selected
+                                  ? 'Selected location'
+                                  : 'Current location'))
                       : _locationError!,
                 ),
                 trailing: _locationError != null
@@ -336,19 +435,48 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
                     : null,
               ),
             ),
+            TextButton.icon(
+              onPressed: _submitting
+                  ? null
+                  : () async {
+                      final selected = await Navigator.push<SelectedLocation>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => LocationPickerScreen(
+                            initialLocation: _chosenLocation,
+                          ),
+                        ),
+                      );
+                      if (!mounted || selected == null) return;
+                      setState(() {
+                        _resetRetry();
+                        _chosenLocation = selected;
+                        _position = CapturedLocation(
+                          coordinates: LatLng(
+                            selected.latitude,
+                            selected.longitude,
+                          ),
+                          accuracyM: selected.accuracyM ?? 0,
+                        );
+                        _locationError = null;
+                      });
+                    },
+              icon: const Icon(Icons.edit_location_alt_outlined),
+              label: const Text('Change location'),
+            ),
             const SizedBox(height: 16),
 
             const SizedBox(height: 24),
 
             FilledButton(
-              onPressed: _submitting ? null : _submit,
+              onPressed: _submitting ? null : _review,
               child: _submitting
                   ? const SizedBox(
                       height: 20,
                       width: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Submit reading'),
+                  : const Text('Review report'),
             ),
           ],
         ),

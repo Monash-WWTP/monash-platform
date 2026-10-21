@@ -5,24 +5,26 @@ import hashlib
 import secrets
 from datetime import timedelta
 from urllib.parse import urlencode
+
 import httpx
 import jwt
 from fastapi import APIRouter, Depends, Request
-from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.orm import Session
+
 from ..config import settings
+from ..db.platform import BrowserSession, LoginAttempt, now
 from ..db.session import get_db
-from ..db.platform import LoginAttempt, BrowserSession, now
+from ..http.contracts import AccountSettingsView, AccountView
+from ..http.errors import ApiError
 from ..identity.dependencies import (
-    digest,
     account_from_claims,
+    digest,
     require_account,
     signing_keys,
 )
+from ..identity.network import network_headers, network_url
 from ..identity.tokens import validate_token
-from ..http.errors import ApiError
-from ..http.contracts import AccountView
-from ..identity.network import network_url, network_headers
 
 router = APIRouter(prefix="/auth", tags=["accounts"])
 
@@ -44,7 +46,11 @@ def discovery():
 
 
 @router.get("/login")
-def login(operator: bool = False, db: Session = Depends(get_db)):
+def login(
+    operator: bool = False,
+    account_settings: bool = False,
+    db: Session = Depends(get_db),
+):
     metadata = discovery()
     state, browser, verifier, nonce = [secrets.token_urlsafe(32) for _ in range(4)]
     db.add(
@@ -92,6 +98,18 @@ def login(operator: bool = False, db: Session = Depends(get_db)):
         max_age=300,
         path="/api/v1/auth",
     )
+    if account_settings:
+        result.set_cookie(
+            "monash_account_return",
+            "1",
+            httponly=True,
+            secure=settings.session_secure,
+            samesite="lax",
+            max_age=300,
+            path="/api/v1/auth",
+        )
+    else:
+        result.delete_cookie("monash_account_return", path="/api/v1/auth")
     return result
 
 
@@ -162,8 +180,18 @@ def callback(
         )
     )
     db.commit()
-    result = RedirectResponse(settings.web_origin + "/dashboard", status_code=303)
+    result = RedirectResponse(
+        settings.web_origin
+        + (
+            "/account"
+            if request.cookies.get("monash_account_return") == "1"
+            else "/dashboard"
+        ),
+        status_code=303,
+    )
+    result.delete_cookie("monash_account_return", path="/api/v1/auth")
     result.delete_cookie("monash_login", path="/api/v1/auth")
+    result.delete_cookie("monash_session", path="/api/v1")
     result.set_cookie(
         "monash_session",
         token,
@@ -171,7 +199,7 @@ def callback(
         secure=settings.session_secure,
         samesite="lax",
         max_age=1800,
-        path="/api/v1",
+        path="/api",
     )
     # CSRF is intentionally browser-readable; identity/session tokens are not.
     result.set_cookie(
@@ -188,6 +216,7 @@ def callback(
 @router.get("/me", response_model=AccountView)
 def me(account=Depends(require_account)):
     return {
+        "display_name": account.display_name,
         "id": account.id,
         "email": account.email,
         "capabilities": account.capabilities,
@@ -204,6 +233,7 @@ def logout(
         db.commit()
     result = JSONResponse(content=None, status_code=204)
     result.delete_cookie("monash_session", path="/api/v1")
+    result.delete_cookie("monash_session", path="/api")
     result.delete_cookie("monash_csrf", path="/")
     result.headers["Cache-Control"] = "no-store"
     return result
@@ -217,3 +247,42 @@ def register():
         + urlencode({"next": settings.web_origin + "/api/v1/auth/login"}),
         status_code=303,
     )
+
+
+@router.get("/account-settings", response_model=AccountSettingsView)
+def account_settings(account=Depends(require_account)):
+    from urllib.parse import urlsplit
+
+    parsed = urlsplit(settings.oidc_issuer)
+    loopback = (
+        settings.app_env in {"development", "test", "staging"}
+        and parsed.scheme == "http"
+        and parsed.hostname in {"localhost", "127.0.0.1", "::1"}
+    )
+    if (
+        not settings.account_settings_enabled
+        or not parsed.hostname
+        or parsed.username
+        or parsed.password
+        or parsed.query
+        or parsed.fragment
+        or parsed.path not in {"", "/"}
+        or not (parsed.scheme == "https" or loopback)
+    ):
+        return {"available": False, "origin": None, "actions": {}}
+    origin = f"{parsed.scheme}://{parsed.netloc}"
+    paths = {
+        "profile": "monash-account-profile",
+        "email": "monash-account-email",
+        "password": "monash-account-password",
+        "security": "monash-account-security",
+        "sessions": "monash-account-security",
+        "signout_all": "monash-account-signout-all",
+    }
+    return {
+        "available": True,
+        "origin": origin,
+        "actions": {
+            key: origin + "/if/flow/" + slug + "/" for key, slug in paths.items()
+        },
+    }

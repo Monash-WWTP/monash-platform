@@ -1,19 +1,21 @@
 """Shared account resolution and server-owned capabilities."""
 
 import hashlib
-from datetime import datetime, timezone
+from datetime import datetime
 from functools import lru_cache
+
 import jwt
 from fastapi import Depends, Request
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials, APIKeyCookie
-from sqlalchemy.orm import Session
+from fastapi.security import APIKeyCookie, HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
+
 from ..config import settings
+from ..db.platform import Account, AuditEvent, BrowserSession, now
 from ..db.session import get_db
-from ..db.platform import Account, BrowserSession, AuditEvent, now
 from ..http.errors import ApiError
+from .network import network_headers, network_url
 from .tokens import validate_token
-from .network import network_url, network_headers
 
 
 def digest(value: str) -> str:
@@ -35,19 +37,25 @@ def account_from_claims(db: Session, claims: dict) -> Account:
         resource = hashlib.sha256(
             (claims["iss"] + "\0" + claims["sub"]).encode()
         ).hexdigest()
-        event = (
+        events = (
             db.query(AuditEvent)
             .filter(
                 AuditEvent.resource_id == resource,
                 AuditEvent.action.in_(
-                    ["identity.credentials.reset", "identity.account.disabled"]
+                    [
+                        "identity.credentials.reset",
+                        "identity.account.disabled",
+                        "identity.account.email_changed",
+                        "identity.credentials.changed",
+                        "identity.sessions.revoked",
+                    ]
                 ),
             )
-            .order_by(AuditEvent.created_at.desc())
-            .first()
+            .all()
         )
-        boundary = (
-            datetime.fromisoformat(event.details["occurred_at"]) if event else None
+        boundary = max(
+            (datetime.fromisoformat(event.details["occurred_at"]) for event in events),
+            default=None,
         )
         if boundary and claims.get("iat", 0) <= boundary.timestamp():
             raise ApiError(
@@ -78,6 +86,18 @@ def account_from_claims(db: Session, claims: dict) -> Account:
         raise ApiError(
             401, "session_revoked", "Sign in again after the account security change"
         )
+    claimed_at = claims.get("iat")
+    if isinstance(claimed_at, (int, float)) and (
+        account.profile_claim_iat is None or claimed_at > account.profile_claim_iat
+    ):
+        value = claims.get("name")
+        account.display_name = (
+            value.strip() or None
+            if isinstance(value, str) and len(value.strip()) <= 120
+            else None
+        )
+        account.profile_claim_iat = int(claimed_at)
+        db.commit()
     if account.email != claims.get("email", ""):
         account.email = claims.get("email", "")
         db.commit()
@@ -171,3 +191,5 @@ require_scenario = capability("scenario:operate")
 
 # Grants are restricted to the trusted server CLI.
 require_admin = capability("platform:admin")
+
+require_responder = capability("report:respond")

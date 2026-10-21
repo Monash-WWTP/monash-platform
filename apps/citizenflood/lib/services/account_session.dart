@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../config/env.dart';
@@ -103,6 +104,12 @@ class AccountSession extends ChangeNotifier {
     return generation == _generation ? _access : null;
   }
 
+  Future<void> refreshAccountProof() async {
+    _access = null;
+    _expiry = null;
+    await token();
+  }
+
   Future<void> _refreshToken(int generation) async {
     try {
       final result = await _auth.token(
@@ -116,8 +123,22 @@ class AccountSession extends ChangeNotifier {
         ),
       );
       await _save(result, generation);
-    } catch (_) {
+    } catch (error) {
       if (generation != _generation) return;
+      final revoked = error is FlutterAppAuthPlatformException
+          ? error.platformErrorDetails.error ==
+                FlutterAppAuthOAuthError.invalidGrant
+          : error is PlatformException &&
+                error.details is Map &&
+                error.details['error'] == 'invalid_grant';
+      if (revoked) {
+        _invalidate();
+        await _persist(() async {
+          await _storage.delete(key: 'refresh_token');
+          await _storage.delete(key: 'id_token');
+        });
+        throw StateError('Your session ended. Sign in again.');
+      }
       // A transient provider outage must not erase the user's refresh identity.
       throw StateError(
         'Unable to refresh your session. Check your connection or sign in again.',

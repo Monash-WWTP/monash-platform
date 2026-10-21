@@ -1,15 +1,26 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:intl/intl.dart';
-
+import '../maps/citizen_map.dart';
+import '../maps/map_selection.dart';
 import '../models/report.dart';
 import '../services/report_repository.dart';
 import '../services/account_session.dart';
+import '../services/location_service.dart';
+import '../widgets/report_detail_sheet.dart';
+import 'location_picker_screen.dart';
+import 'observation_form_screen.dart';
+import '../widgets/report_menu.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key, this.repository, this.session});
+  const MapScreen({
+    super.key,
+    this.repository,
+    this.session,
+    this.location,
+    this.onShowReports,
+  });
+  final VoidCallback? onShowReports;
+  final LocationService? location;
   final ReportRepository? repository;
   final AccountSession? session;
   @override
@@ -20,268 +31,362 @@ class _MapScreenState extends State<MapScreen> {
   late final _repo = widget.repository ?? ReportRepository();
   late final _session = widget.session ?? AccountSession.instance;
   late Future<List<Report>> _future = _repo.recent();
-  var _mapController = MapController();
-  bool _showReadings = false;
-  late int _generation;
+  late int _generation = _session.generation;
   ModalRoute<dynamic>? _detailRoute;
-
+  String? _selectedId;
+  SelectedLocation _center = const SelectedLocation(
+    latitude: 3.1390,
+    longitude: 101.6869,
+    source: LocationSource.selected,
+  );
+  SelectedLocation? _device;
+  SelectedLocation? _viewportCenter;
+  bool _locating = false;
   @override
   void initState() {
     super.initState();
-    _generation = _session.generation;
-    _session.addListener(_sessionChanged);
+    _session.addListener(_changed);
   }
 
-  void _sessionChanged() {
+  void _changed() {
     if (_generation == _session.generation) return;
     _generation = _session.generation;
-    final oldController = _mapController;
-    _mapController = MapController();
-    _showReadings = false;
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => oldController.dispose(),
-    );
     final route = _detailRoute;
     _detailRoute = null;
-    if (route != null && route.isActive) route.navigator?.removeRoute(route);
-    _refresh();
+    if (route?.isActive ?? false) route!.navigator?.removeRoute(route);
+    setState(() {
+      _locating = false;
+      _selectedId = null;
+      _device = null;
+      _viewportCenter = null;
+      _center = const SelectedLocation(
+        latitude: 3.1390,
+        longitude: 101.6869,
+        source: LocationSource.selected,
+      );
+      _future = _repo.recent();
+    });
   }
 
   @override
   void dispose() {
-    _session.removeListener(_sessionChanged);
-    _mapController.dispose();
+    _session.removeListener(_changed);
     super.dispose();
   }
 
-  Color _pinColor(BuildContext context) =>
-      Theme.of(context).colorScheme.primary;
-
-  void _refresh() => setState(() {
-    _future = _repo.recent();
-  });
-
-  String _time(Report r) => r.createdAt == null
-      ? ''
-      : DateFormat('d MMM, h:mm a').format(r.createdAt!.toLocal());
-
-  void _showDetail(Report r) {
+  void _refresh() => setState(() => _future = _repo.recent());
+  Future<void> _locate() async {
     final generation = _generation;
-    showModalBottomSheet(
+    setState(() => _locating = true);
+    try {
+      final p = await (widget.location ?? LocationService()).current().timeout(
+        const Duration(seconds: 20),
+      );
+      if (!mounted || generation != _generation) return;
+      setState(() {
+        _device = SelectedLocation(
+          latitude: p.coordinates.latitude,
+          longitude: p.coordinates.longitude,
+          accuracyM: p.accuracyM,
+          source: LocationSource.current,
+        );
+        _center = _device!;
+      });
+    } catch (_) {
+      if (mounted && generation == _generation) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Location unavailable. You can still choose a point on the map.',
+            ),
+          ),
+        );
+      }
+    } finally {
+      if (mounted && generation == _generation) {
+        setState(() => _locating = false);
+      }
+    }
+  }
+
+  Future<void> _report(ReportCategory category) async {
+    String? kind = switch (category) {
+      ReportCategory.waterLevel => 'flooding',
+      ReportCategory.rainfall => 'rain_occurrence',
+      ReportCategory.wastewater => 'water_appearance',
+      _ => null,
+    };
+    if (kind == null) {
+      kind = await showModalBottomSheet<String>(
+        context: context,
+        showDragHandle: true,
+        builder: (c) => SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final option in const [
+                ('rainfall_accumulation', 'Gauge rainfall'),
+                ('water_reading', 'Water reading'),
+                ('temperature', 'Temperature'),
+              ])
+                ListTile(
+                  title: Text(option.$2),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => Navigator.pop(c, option.$1),
+                ),
+            ],
+          ),
+        ),
+      );
+      if (!mounted || kind == null) return;
+    }
+    final selectedKind = kind;
+
+    final selected = await Navigator.push<SelectedLocation>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => LocationPickerScreen(
+          initialLocation: _viewportCenter ?? _device ?? _center,
+        ),
+      ),
+    );
+    if (!mounted || selected == null) return;
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ObservationFormScreen(
+          kind: selectedKind,
+          location: selected,
+          onShowReports: widget.onShowReports,
+        ),
+      ),
+    );
+    _refresh();
+  }
+
+  void _showDetail(Report report, List<Report> reports) async {
+    final generation = _generation;
+    final nearby = reports
+        .where(
+          (r) =>
+              (r.latitude - report.latitude).abs() < 0.00015 &&
+              (r.longitude - report.longitude).abs() < 0.00015,
+        )
+        .toList();
+    if (nearby.length > 1) {
+      final chosen = await showModalBottomSheet<Report>(
+        context: context,
+        showDragHandle: true,
+        builder: (c) {
+          _detailRoute = ModalRoute.of(c);
+          return SafeArea(
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                const ListTile(title: Text('Observations at this location')),
+                for (final r in nearby)
+                  ListTile(
+                    leading: Icon(r.icon),
+                    title: Text(r.label),
+                    subtitle: Text(r.readingLabel),
+                    onTap: () => Navigator.pop(c, r),
+                  ),
+              ],
+            ),
+          );
+        },
+      );
+      _detailRoute = null;
+      if (!mounted || generation != _generation || chosen == null) return;
+      report = chosen;
+    }
+    setState(() {
+      _selectedId = report.id;
+      _center = SelectedLocation(
+        latitude: report.latitude,
+        longitude: report.longitude,
+        source: LocationSource.selected,
+      );
+    });
+    final update = await showModalBottomSheet<bool>(
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
       useSafeArea: true,
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.sizeOf(context).height * 0.85,
-      ),
-      builder: (context) {
-        _detailRoute = ModalRoute.of(context);
-        if (generation != _session.generation) return const SizedBox.shrink();
-        return SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+      builder: (c) {
+        _detailRoute = ModalRoute.of(c);
+        return generation == _session.generation
+            ? ReportDetailSheet(
+                report: report,
+                ownerView: report.isOwner,
+                repository: _repo,
+                onUpdate: () => Navigator.pop(c, true),
+              )
+            : const SizedBox.shrink();
+      },
+    );
+    _detailRoute = null;
+    if (mounted) setState(() => _selectedId = null);
+    if (mounted &&
+        generation == _session.generation &&
+        update == true &&
+        report.isOwner) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ObservationFormScreen(
+            kind: 'flooding',
+            previous: report,
+            location: SelectedLocation(
+              latitude: report.latitude,
+              longitude: report.longitude,
+              source: LocationSource.selected,
+            ),
+            reports: _repo,
+            session: _session,
+            onShowReports: widget.onShowReports,
+          ),
+        ),
+      );
+      _refresh();
+    }
+  }
+
+  Future<void> _showObservations(List<Report> reports) async {
+    final generation = _generation;
+    final chosen = await showModalBottomSheet<Report>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (c) {
+        _detailRoute = ModalRoute.of(c);
+        return SafeArea(
+          child: SizedBox(
+            height: MediaQuery.sizeOf(c).height * .65,
             child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    ExcludeSemantics(
-                      child: Icon(r.category.icon, color: _pinColor(context)),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        r.category.label,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  r.readingLabel,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: _pinColor(context),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    'Observations',
+                    style: Theme.of(c).textTheme.titleLarge,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(_time(r), style: Theme.of(context).textTheme.bodySmall),
-                if (r.note != null && r.note!.isNotEmpty) ...[
-                  const SizedBox(height: 12),
-                  Text(r.note!, style: Theme.of(context).textTheme.bodyMedium),
-                ],
-                if (r.photoPath != null) ...[
-                  const SizedBox(height: 16),
-                  FutureBuilder<Uint8List>(
-                    future: _repo.photoBytes(r.photoPath!),
-                    builder: (_, snapshot) {
-                      if (snapshot.hasError) {
-                        return const Text('Photo unavailable');
-                      }
-                      if (!snapshot.hasData) {
-                        return const SizedBox(
-                          height: 80,
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      }
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.memory(
-                          snapshot.data!,
-                          height: 220,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => const SizedBox(
-                            height: 60,
-                            child: Center(child: Text('Photo unavailable')),
-                          ),
+                Expanded(
+                  child: reports.isEmpty
+                      ? const Center(child: Text('No observations yet.'))
+                      : ListView.builder(
+                          itemCount: reports.length,
+                          itemBuilder: (_, i) {
+                            final report = reports[i];
+                            final observed =
+                                report.observedAt ?? report.createdAt;
+                            final time = observed == null
+                                ? ''
+                                : '\n${DateFormat('d MMM · HH:mm').format(observed.toLocal())}';
+                            return ListTile(
+                              leading: Icon(report.icon),
+                              title: Text(report.label),
+                              subtitle: Text(
+                                '${report.readingLabel} · ${report.isOwner ? 'Your observation' : 'Community · approximate location'}$time',
+                              ),
+                              trailing: const Icon(Icons.chevron_right),
+                              onTap: () => Navigator.pop(c, report),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-                ],
-                if (r.moderationStatus == ModerationStatus.pending) ...[
-                  const SizedBox(height: 12),
-                  const Chip(
-                    avatar: Icon(Icons.schedule, size: 16),
-                    label: Text('Pending review'),
-                  ),
-                ],
+                ),
               ],
             ),
           ),
         );
       },
     );
+    _detailRoute = null;
+    if (!mounted || generation != _generation || chosen == null) return;
+    _showDetail(chosen, [chosen]);
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton.small(
-        onPressed: _refresh,
-        tooltip: 'Refresh',
-        child: const Icon(Icons.refresh),
-      ),
-      body: FutureBuilder<List<Report>>(
-        key: ValueKey(_generation),
-        future: _future,
-        builder: (context, snap) {
-          if (snap.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snap.hasError) {
-            return Center(
-              child: Column(
+  Widget build(BuildContext context) => FutureBuilder<List<Report>>(
+    key: ValueKey(_generation),
+    future: _future,
+    builder: (context, snapshot) {
+      final reports = snapshot.data ?? <Report>[];
+      return Stack(
+        children: [
+          Positioned.fill(
+            child: CitizenMap(
+              key: ValueKey(_generation),
+              resetKey: _generation,
+              center: _center,
+              deviceLocation: _device,
+              reports: reports,
+              selectedId: _selectedId,
+              onObservation: (r) => _showDetail(r, reports),
+              onCenterChanged: (p) {
+                _viewportCenter = p;
+              },
+            ),
+          ),
+          Positioned(
+            top: 12,
+            left: 16,
+            child: Material(
+              elevation: 1,
+              borderRadius: BorderRadius.circular(16),
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('Could not load readings.'),
-                  TextButton(onPressed: _refresh, child: const Text('Retry')),
+                  Tooltip(
+                    message: 'List observations',
+                    child: TextButton.icon(
+                      onPressed: () => _showObservations(reports),
+                      icon: const Icon(Icons.list_alt),
+                      label: Text(
+                        snapshot.connectionState == ConnectionState.waiting
+                            ? '…'
+                            : '${reports.length}',
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: snapshot.hasError
+                        ? 'Observations unavailable. Retry'
+                        : 'Refresh observations',
+                    onPressed: _refresh,
+                    icon: Icon(
+                      snapshot.hasError ? Icons.sync_problem : Icons.refresh,
+                    ),
+                  ),
                 ],
               ),
-            );
-          }
-          final reports = snap.data ?? [];
-          final center = reports.isNotEmpty
-              ? LatLng(reports.first.latitude, reports.first.longitude)
-              : const LatLng(3.1390, 101.6869); // Kuala Lumpur fallback
-
-          return Column(
-            children: [
-              Expanded(
-                child: FlutterMap(
-                  mapController: _mapController,
-                  options: MapOptions(initialCenter: center, initialZoom: 12),
-                  children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'au.edu.monash.citizenflood',
-                    ),
-                    RichAttributionWidget(
-                      attributions: [
-                        TextSourceAttribution('© OpenStreetMap contributors'),
-                      ],
-                    ),
-                    MarkerLayer(
-                      markers: [
-                        for (final r in reports)
-                          Marker(
-                            point: LatLng(r.latitude, r.longitude),
-                            width: 40,
-                            height: 40,
-                            child: GestureDetector(
-                              onTap: () => _showDetail(r),
-                              child: Semantics(
-                                button: true,
-                                label:
-                                    '${r.category.label} observation at map location',
-                                child: Tooltip(
-                                  message: r.category.label,
-                                  child: Icon(
-                                    r.category.icon,
-                                    color: _pinColor(context),
-                                    size: 32,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              ListTile(
-                title: const Text('Recent readings'),
-                subtitle: Text('${reports.length} observations available'),
-                trailing: Icon(
-                  _showReadings ? Icons.expand_less : Icons.expand_more,
-                ),
-                onTap: () => setState(() => _showReadings = !_showReadings),
-              ),
-              if (_showReadings)
-                SizedBox(
-                  height: 170,
-                  child: reports.isEmpty
-                      ? const Center(
-                          child: Text('No readings yet — be the first!'),
-                        )
-                      : ListView(
-                          children: [
-                            for (final r in reports.take(20))
-                              ListTile(
-                                dense: true,
-                                onTap: () {
-                                  _mapController.move(
-                                    LatLng(r.latitude, r.longitude),
-                                    15,
-                                  );
-                                  _showDetail(r);
-                                },
-                                leading: ExcludeSemantics(
-                                  child: Icon(
-                                    r.category.icon,
-                                    color: _pinColor(context),
-                                  ),
-                                ),
-                                title: Text(
-                                  '${r.category.label} · ${r.readingLabel}',
-                                ),
-                                subtitle: Text(_time(r)),
-                                trailing: r.photoPath != null
-                                    ? const Icon(Icons.photo_outlined, size: 18)
-                                    : null,
-                              ),
-                          ],
-                        ),
-                ),
-            ],
-          );
-        },
-      ),
-    );
-  }
+            ),
+          ),
+          Positioned(
+            top: 12,
+            right: 16,
+            child: FloatingActionButton.small(
+              heroTag: 'locate',
+              tooltip: 'Use current location',
+              onPressed: _locating ? null : _locate,
+              child: _locating
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.my_location),
+            ),
+          ),
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: ReportMenu(onSelected: _report),
+          ),
+        ],
+      );
+    },
+  );
 }

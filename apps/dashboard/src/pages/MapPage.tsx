@@ -1,3 +1,4 @@
+import { observationSummary } from "../api/observations"
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import * as maplibregl from 'maplibre-gl'
 import mapWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
@@ -21,12 +22,12 @@ function observationPopupContent(observation: CommunityWastewaterObservation): H
   content.style.maxWidth = '260px'
 
   const heading = document.createElement('strong')
-  heading.textContent = 'Community wastewater observation'
+  heading.textContent = observation.observation ? 'Community observation' : 'Legacy wastewater observation'
   content.append(heading)
 
   const condition = document.createElement('p')
   condition.style.margin = '8px 0 4px'
-  condition.textContent = `Reported condition: ${observation.condition}`
+  condition.textContent = observation.observation ? observationSummary(observation.observation) : `Legacy reported condition: ${observation.condition}`
   content.append(condition)
 
   const observed = document.createElement('p')
@@ -191,9 +192,9 @@ export default function MapPage() {
       const marker = document.createElement('button')
       marker.type = 'button'
       marker.className = 'community-wastewater-marker'
-      marker.setAttribute('aria-label', 'Approved community wastewater observation')
+      marker.setAttribute('aria-label', observation.observation ? observationSummary(observation.observation) : 'Approved community wastewater observation')
       marker.title = 'Approved community wastewater observation — not a lab result'
-      marker.textContent = 'W'
+      marker.textContent = observation.observation ? '•' : 'W'
       marker.style.width = '26px'
       marker.style.height = '26px'
       marker.style.border = '2px solid white'
@@ -271,7 +272,7 @@ export default function MapPage() {
           {!communityObservationsLoading && !communityObservationsError && !communityObservations?.length && <p className="mt-2 text-xs text-muted-foreground">No approved observations yet.</p>}
           {mapUnavailable && showCommunityObservations && !!communityObservations?.length && <ul className="mt-3 max-h-40 overflow-y-auto divide-y">
             {communityObservations.map(observation => <li key={observation.id} className="py-2 text-sm">
-              <span className="capitalize">{observation.condition}</span> · <time dateTime={observation.observed_at}>{new Date(observation.observed_at).toLocaleDateString()}</time>
+              <span className="capitalize">{observation.observation ? observationSummary(observation.observation) : observation.condition}</span> · <time dateTime={observation.observed_at}>{new Date(observation.observed_at).toLocaleDateString()}</time>
             </li>)}
           </ul>}
         </section>

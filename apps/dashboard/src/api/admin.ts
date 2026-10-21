@@ -1,7 +1,7 @@
 import { ApiRequestError, fetchApi, type Page } from './transport'
 
-export const ordinaryCapabilities = ['report:own', 'report:review', 'monitor:read', 'scenario:operate'] as const
-export const capabilityLabels: Record<string, string> = { 'report:own': 'Submit own reports', 'report:review': 'Review reports', 'monitor:read': 'Read monitoring data', 'scenario:operate': 'Run research scenarios', 'platform:admin': 'Platform administrator' }
+export const ordinaryCapabilities = ['report:own', 'report:respond', 'report:review', 'monitor:read', 'scenario:operate'] as const
+export const capabilityLabels: Record<string, string> = { 'report:own': 'Submit own reports', 'report:respond': 'Respond to citizen reports', 'report:review': 'Review reports', 'monitor:read': 'Read monitoring data', 'scenario:operate': 'Run research scenarios', 'platform:admin': 'Platform administrator' }
 export interface AdminUser { id: string; email: string; capabilities: string[] }
 export interface Equipment { unit_type: string; name: string; baseline_availability: number }
 export interface Threshold { metric: string; value: number; unit: string; source: string; applicability: string }

@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 from ..db.platform import Account, AuditEvent, BrowserSession
 
-ALLOWED = {"report:own", "report:review", "monitor:read", "scenario:operate", "platform:admin"}
+ALLOWED = {"report:own", "report:respond", "report:review", "monitor:read", "scenario:operate", "platform:admin"}
 
 
 def set_capabilities(

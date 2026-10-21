@@ -68,9 +68,107 @@ class Repository extends ReportRepository {
   }
 }
 
+Future<void> review(WidgetTester tester) async {
+  await tester.scrollUntilVisible(
+    find.text('Review report'),
+    200,
+    scrollable: find
+        .descendant(
+          of: find.byType(ListView),
+          matching: find.byType(Scrollable),
+        )
+        .first,
+  );
+  await tester.tap(find.text('Review report'));
+  await tester.pumpAndSettle();
+}
+
+Future<void> send(WidgetTester tester) async {
+  await tester.scrollUntilVisible(
+    find.text('Submit report'),
+    200,
+    scrollable: find
+        .descendant(
+          of: find.byType(ListView),
+          matching: find.byType(Scrollable),
+        )
+        .first,
+  );
+  await tester.tap(find.text('Submit report'));
+  await tester.pump();
+}
+
+Future<void> dismissError(WidgetTester tester) async {
+  tester
+      .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
+      .removeCurrentSnackBar();
+  await tester.pumpAndSettle();
+}
+
+Future<void> enterNote(WidgetTester tester, String text) async {
+  await tester.tap(find.text('Photo and note'));
+  await tester.pumpAndSettle();
+  final note = find.byWidgetPredicate((w) => w is TextField && w.maxLines == 3);
+  await tester.ensureVisible(note);
+  await tester.enterText(note, text);
+}
+
 void main() {
+  testWidgets('Android Back after success exits the submitted draft', (tester) async {
+    final repo=Repository();
+    await tester.pumpWidget(MaterialApp(home:Builder(builder:(context)=>Scaffold(body:TextButton(onPressed:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>ReportFormScreen(category:ReportCategory.wastewater,session:Session(),location:Location(),repository:repo))),child:const Text('Map home'))))));
+    await tester.tap(find.text('Map home'));await tester.pumpAndSettle();await tester.tap(find.text('Normal'));await review(tester);await send(tester);repo.requests.single.complete();await tester.pumpAndSettle();
+    expect(find.text('Pending review'),findsOneWidget);await tester.binding.handlePopRoute();await tester.pumpAndSettle();
+    expect(find.text('Map home'),findsOneWidget);expect(find.byType(ReportFormScreen),findsNothing);
+  });
+
+  testWidgets('condition selection is explicit and review does not submit', (
+    tester,
+  ) async {
+    final repo = Repository();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ReportFormScreen(
+          category: ReportCategory.wastewater,
+          session: Session(),
+          location: Location(),
+          repository: repo,
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(
+      tester
+          .widget<SegmentedButton<Condition>>(
+            find.byType(SegmentedButton<Condition>),
+          )
+          .selected,
+      isEmpty,
+    );
+    await tester.scrollUntilVisible(
+      find.text('Review report'),
+      200,
+      scrollable: find
+          .descendant(
+            of: find.byType(ListView),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tester.tap(find.text('Review report'));
+    await tester.pump();
+    expect(repo.reports, isEmpty);
+    expect(find.text('Choose a plant condition.'), findsOneWidget);
+    await dismissError(tester);
+    await tester.ensureVisible(find.text('Normal'));
+    await tester.tap(find.text('Normal'));
+    await review(tester);
+    expect(find.text('Review report'), findsOneWidget);
+    expect(repo.reports, isEmpty);
+    expect(find.text('Normal'), findsOneWidget);
+  });
   testWidgets(
-    'in-flight report locks every editor and uncertain retry keeps payload and key',
+    'uncertain retry reuses snapshot and key; edit starts a new payload',
     (tester) async {
       final repo = Repository();
       await tester.pumpWidget(
@@ -84,65 +182,55 @@ void main() {
         ),
       );
       await tester.pump();
-      await tester.tap(find.text('Photo and note'));
+      await tester.tap(find.text('Normal'));
+      await enterNote(tester, 'original');
+      await review(tester);
+      await send(tester);
+      expect(
+        tester
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Submitting…'),
+            )
+            .onPressed,
+        isNull,
+      );
+      repo.requests.first.completeError(TimeoutException('response lost'));
+      await dismissError(tester);
+      await send(tester);
+      expect(repo.reports.length, 2);
+      expect(identical(repo.reports.first, repo.reports.last), isTrue);
+      expect(repo.keys.first, repo.keys.last);
+      repo.requests.last.completeError(TimeoutException('response lost'));
+      await dismissError(tester);
+      await tester.tap(find.text('Edit report'));
       await tester.pumpAndSettle();
       final note = find.byWidgetPredicate(
         (w) => w is TextField && w.maxLines == 3,
       );
-      await tester.ensureVisible(note);
-      await tester.enterText(note, 'original');
-      final submit = find.text('Submit reading');
-      await tester.ensureVisible(submit);
-      await tester.tap(submit);
-      await tester.pump();
-      expect(tester.widget<TextField>(note).enabled, isFalse);
-      expect(
-        tester
-            .widget<SegmentedButton<Condition>>(
-              find.byType(SegmentedButton<Condition>),
+      await tester.scrollUntilVisible(
+        note,
+        -200,
+        scrollable: find
+            .descendant(
+              of: find.byType(ListView),
+              matching: find.byType(Scrollable),
             )
-            .onSelectionChanged,
-        isNull,
+            .first,
       );
-      for (final button in tester.widgetList<OutlinedButton>(
-        find.byType(OutlinedButton),
-      )) {
-        expect(button.onPressed, isNull);
-      }
-      repo.requests.first.completeError(TimeoutException('response lost'));
-      await tester.pump();
-      tester
-          .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
-          .removeCurrentSnackBar();
-      await tester.pumpAndSettle();
-      await tester.ensureVisible(submit);
-      await tester.tap(submit);
-      await tester.pump();
-      expect(repo.reports.length, 2);
-      expect(identical(repo.reports[0], repo.reports[1]), isTrue);
-      expect(repo.keys[1], repo.keys[0]);
-      repo.requests.last.completeError(TimeoutException('response lost'));
-      await tester.pump();
-      tester
-          .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
-          .removeCurrentSnackBar();
-      await tester.pumpAndSettle();
-      await tester.ensureVisible(note);
       await tester.enterText(note, 'edited');
-      await tester.ensureVisible(submit);
-      await tester.tap(submit);
-      await tester.pump();
+      await review(tester);
+      await send(tester);
       expect(repo.reports.last.note, 'edited');
       expect(repo.keys.last, isNot(repo.keys.first));
       repo.requests.last.completeError(TimeoutException('response lost'));
-      await tester.pumpAndSettle();
+      await dismissError(tester);
     },
   );
-  testWidgets('numeric and note snapshots are fixed before awaiting sign in', (
+  testWidgets('reviewed values are fixed before waiting for sign in', (
     tester,
   ) async {
-    final session = DelayedSession();
     final repo = Repository();
+    final session = DelayedSession();
     await tester.pumpWidget(
       MaterialApp(
         home: ReportFormScreen(
@@ -158,30 +246,25 @@ void main() {
       (w) => w is TextField && w.maxLines == 1,
     );
     await tester.enterText(value, '12');
-    await tester.tap(find.text('Photo and note'));
-    await tester.pumpAndSettle();
+    final valueController = tester.widget<TextField>(value).controller!;
+    await enterNote(tester, 'original');
     final note = find.byWidgetPredicate(
       (w) => w is TextField && w.maxLines == 3,
     );
-    await tester.ensureVisible(note);
-    await tester.enterText(note, 'original');
-    await tester.ensureVisible(find.text('Submit reading'));
-    await tester.tap(find.text('Submit reading'));
-    await tester.pump();
-    expect(tester.widget<TextField>(value).enabled, isFalse);
-    expect(tester.widget<TextField>(note).enabled, isFalse);
-    // A non-user controller update must not alter the already captured payload either.
-    tester.widget<TextField>(value).controller!.text = '99';
-    tester.widget<TextField>(note).controller!.text = 'later';
+    final noteController = tester.widget<TextField>(note).controller!;
+    await review(tester);
+    await send(tester);
+    valueController.text = '99';
+    noteController.text = 'later';
     session.authorization.complete();
     await tester.pump();
     expect(repo.reports.single.readingValue, 12);
     expect(repo.reports.single.note, 'original');
     repo.requests.single.completeError(TimeoutException('response lost'));
-    await tester.pumpAndSettle();
+    await dismissError(tester);
   });
   testWidgets(
-    'photo upload preserves one snapshot and timeout retry reuses the uploaded photo',
+    'photo upload is reused after uncertain submission; success is pending review',
     (tester) async {
       final repo = Repository();
       await tester.pumpWidget(
@@ -200,80 +283,25 @@ void main() {
         (w) => w is TextField && w.maxLines == 1,
       );
       await tester.enterText(value, '12');
-      final valueController = tester.widget<TextField>(value).controller!;
-      await tester.tap(find.text('Photo and note'));
-      await tester.pumpAndSettle();
+      await enterNote(tester, 'original');
       await tester.ensureVisible(find.text('Gallery'));
       await tester.tap(find.text('Gallery'));
       await tester.pumpAndSettle();
-      final note = find.byWidgetPredicate(
-        (w) => w is TextField && w.maxLines == 3,
-      );
-      await tester.ensureVisible(note);
-      await tester.enterText(note, 'original');
-      final submit = find.text('Submit reading');
-      await tester.ensureVisible(submit);
-      await tester.tap(submit);
-      await tester.pump();
+      await review(tester);
+      await send(tester);
       expect(repo.uploadCalls, 1);
-      expect(tester.widget<TextField>(note).enabled, isFalse);
-      valueController.text = '99';
-      tester.widget<TextField>(note).controller!.text = 'later';
       repo.upload.complete('uploaded-photo');
       await tester.pump();
-      expect(repo.reports.single.readingValue, 12);
-      expect(repo.reports.single.note, 'original');
       expect(repo.reports.single.photoPath, 'uploaded-photo');
       repo.requests.single.completeError(TimeoutException('response lost'));
-      await tester.pump();
-      tester
-          .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
-          .removeCurrentSnackBar();
-      await tester.pumpAndSettle();
-      await tester.ensureVisible(submit);
-      await tester.tap(submit);
-      await tester.pump();
+      await dismissError(tester);
+      await send(tester);
       expect(repo.uploadCalls, 1);
-      expect(repo.reports.length, 2);
-      expect(identical(repo.reports.first, repo.reports.last), isTrue);
       expect(repo.keys.first, repo.keys.last);
-      repo.requests.last.completeError(TimeoutException('response lost'));
+      repo.requests.last.complete();
       await tester.pumpAndSettle();
+      expect(find.text('Pending review'), findsOneWidget);
+      expect(find.text('Back to map'), findsOneWidget);
     },
   );
-  testWidgets('successful submission returns from the locked form', (
-    tester,
-  ) async {
-    final repo = Repository();
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Builder(
-          builder: (context) => Scaffold(
-            body: TextButton(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => ReportFormScreen(
-                    category: ReportCategory.wastewater,
-                    session: Session(),
-                    location: Location(),
-                    repository: repo,
-                  ),
-                ),
-              ),
-              child: const Text('Open report'),
-            ),
-          ),
-        ),
-      ),
-    );
-    await tester.tap(find.text('Open report'));
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Submit reading'));
-    await tester.tap(find.text('Submit reading'));
-    await tester.pump();
-    repo.requests.single.complete();
-    await tester.pumpAndSettle();
-    expect(find.byType(ReportFormScreen), findsNothing);
-    expect(find.text('Open report'), findsOneWidget);
-  });
 }

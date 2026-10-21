@@ -8,7 +8,7 @@ class StrictInput(BaseModel):
 
 
 class RoleChange(StrictInput):
-    capabilities: list[Literal['report:own','report:review','monitor:read','scenario:operate']]
+    capabilities: list[Literal['report:own','report:respond','report:review','monitor:read','scenario:operate']]
     expected_capabilities: list[str]
     reason: str = Field(min_length=3,max_length=1000)
 

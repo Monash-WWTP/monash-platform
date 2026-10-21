@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     # Only these confirmed Supabase Auth users may change scenarios or run models.
     wwtp_operator_emails: str = ""
 
+    account_settings_enabled: bool = False
     auth_mode: Literal["oidc"] = "oidc"
     oidc_issuer: str = ""
     oidc_backchannel_origin: str = ""
@@ -42,7 +43,9 @@ class Settings(BaseSettings):
             )
         if self.app_env == "production":
             if not self.identity_event_secret.strip():
-                raise ValueError("Production requires identity_event_secret for session revocation")
+                raise ValueError(
+                    "Production requires identity_event_secret for session revocation"
+                )
             if (
                 self.auth_mode != "oidc"
                 or not self.session_secure

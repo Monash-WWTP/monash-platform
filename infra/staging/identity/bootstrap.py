@@ -7,6 +7,8 @@ import django
 
 django.setup()
 from django.db import transaction
+from pathlib import Path
+from authentik.brands.models import Brand
 from authentik.core.models import Application, Group
 from authentik.crypto.models import CertificateKeyPair
 from authentik.providers.oauth2.models import OAuth2Provider, ScopeMapping
@@ -23,6 +25,17 @@ from authentik.policies.expression.models import ExpressionPolicy
 from authentik.policies.models import PolicyBinding
 
 with transaction.atomic():
+    brand_dir = Path('/monash-brand')
+    if brand_dir.exists():
+        logo = '/static/dist/assets/images/citizenflood.png'
+        Brand.objects.update_or_create(domain='localhost:9100', defaults={
+            'branding_title': 'CitizenFlood',
+            'attributes': {'settings': {'theme': {'base': 'light'}}},
+            'branding_logo': logo, 'branding_favicon': logo,
+            'branding_custom_css': (brand_dir / 'branding.css').read_text(),
+        })
+    Flow.objects.filter(slug='default-authentication-flow').update(title='Sign in')
+    Application.objects.filter(slug='citizen-mobile').update(name='CitizenFlood')
     flow, _ = Flow.objects.update_or_create(
         slug="monash-citizen-enrollment",
         defaults={
@@ -79,6 +92,7 @@ return len(password) >= 12 and password == data.get("password_repeat") and bool(
             "activate_user_on_success": True,
             "token_expiry": "minutes=30",
             "subject": "Verify your Monash Water account",
+            "template": "email/monash_confirmation.html",
         },
     )
     login, _ = UserLoginStage.objects.get_or_create(name="monash-enrollment-login")
@@ -124,6 +138,7 @@ return True"""
             "activate_user_on_success": False,
             "token_expiry": "minutes=30",
             "subject": "Reset your Monash Water password",
+            "template": "email/monash_recovery.html",
         },
     )
     recovery_prompt, _ = PromptStage.objects.get_or_create(
@@ -264,7 +279,7 @@ except Exception:
             defaults={
                 "client_id": client,
                 "client_type": kind,
-                "client_secret": os.environ.get("MONASH_WEB_SECRET", "")
+                "client_secret": os.environ["MONASH_WEB_SECRET"]
                 if kind == "confidential"
                 else "",
                 "authentication_flow": operator_flow
@@ -291,8 +306,13 @@ except Exception:
             ]
         )
         Application.objects.update_or_create(
-            slug=slug, defaults={"name": "Monash Water " + slug, "provider": provider}
+            slug=slug, defaults={"name": "CitizenFlood" if slug == "citizen-mobile" else "Monash Water dashboard", "provider": provider}
         )
 print(
     "Monash OIDC providers and verified registration configured; no operational reports created."
 )
+
+import sys
+sys.path.insert(0, '/monash-brand')
+from bootstrap_accounts import provision
+provision()

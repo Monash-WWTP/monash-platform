@@ -8,6 +8,7 @@ from .http.limits import RequestLimits
 from .http.errors import ApiError, ErrorEnvelope, error_response, http_error_code
 from .http.request_id import assign_request_id
 from .routers import (
+    observations,
     plants,
     scenarios,
     simulations,
@@ -18,6 +19,7 @@ from .routers import (
     identity_events,
     migration_claim,
     admin,
+    operator_response,
 )
 
 app = FastAPI(title="Monash WWTP Platform API", version="1.0.0")
@@ -47,8 +49,12 @@ for router in (
     identity_events.router,
     migration_claim.router,
     admin.router,
+    operator_response.router,
 ):
     app.include_router(router, prefix="/api/v1", responses=standard_errors)
+
+
+app.include_router(observations.router, prefix="/api/v2", responses=standard_errors)
 
 
 @app.exception_handler(ApiError)

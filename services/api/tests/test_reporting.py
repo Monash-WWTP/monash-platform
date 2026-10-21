@@ -69,10 +69,14 @@ def test_owner_idempotency_and_privacy():
             ).status_code
             == 200
         )
+        app.dependency_overrides[require_account] = lambda: citizen
+        owner_view = client.get('/api/v1/reports/' + report['id']).json()
+        assert owner_view['review_reason'] == 'reviewed'
         public = client.get("/api/v1/community/observations").json()["items"]
         row = next(r for r in public if r["id"] == report["id"])
         assert (
             not {
+                "review_reason",
                 "owner_id",
                 "note",
                 "photo_path",

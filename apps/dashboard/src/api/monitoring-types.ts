@@ -35,6 +35,8 @@ export interface EffluentSample {
 /** Moderator-approved CitizenFlood wastewater report, not a lab sample. */
 export interface CommunityWastewaterObservation {
   id: string
+  protocol_id?: string
+  observation?: Record<string,unknown>
   category: 'wastewater'
   condition: 'normal' | 'warning' | 'critical'
   latitude: number

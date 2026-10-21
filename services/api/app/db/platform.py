@@ -3,6 +3,7 @@
 from datetime import datetime, timezone
 from uuid import uuid4
 from sqlalchemy import (
+    BigInteger,
     Boolean,
     String,
     DateTime,
@@ -32,6 +33,8 @@ class Account(Base):
     issuer: Mapped[str] = mapped_column(String, nullable=False)
     subject: Mapped[str] = mapped_column(String, nullable=False)
     email: Mapped[str] = mapped_column(String, nullable=False)
+    display_name: Mapped[str | None] = mapped_column(String(120))
+    profile_claim_iat: Mapped[int | None] = mapped_column(BigInteger)
     capabilities: Mapped[list] = mapped_column(JSON, default=lambda: ["report:own"])
     revoked_before: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
@@ -123,12 +126,45 @@ class AuditEvent(Base):
 
 class PlantConfigurationRevision(Base):
     """Append-only administrative configuration evidence; historical runs remain independent."""
-    __tablename__ = 'plant_configuration_revisions'
-    __table_args__ = (UniqueConstraint('plant_id', 'version'),)
+
+    __tablename__ = "plant_configuration_revisions"
+    __table_args__ = (UniqueConstraint("plant_id", "version"),)
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    plant_id: Mapped[int] = mapped_column(ForeignKey('plants.id'), nullable=False, index=True)
+    plant_id: Mapped[int] = mapped_column(
+        ForeignKey("plants.id"), nullable=False, index=True
+    )
     version: Mapped[int] = mapped_column(Integer, nullable=False)
-    actor_id: Mapped[str] = mapped_column(ForeignKey('accounts.id'), nullable=False)
+    actor_id: Mapped[str] = mapped_column(ForeignKey("accounts.id"), nullable=False)
     reason: Mapped[str] = mapped_column(String, nullable=False)
     payload: Mapped[dict] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
+class ReportResponse(Base):
+    __tablename__ = "report_responses"
+    report_id: Mapped[str] = mapped_column(
+        ForeignKey("citizen_reports.id"), primary_key=True
+    )
+    revision: Mapped[int] = mapped_column(Integer, nullable=False)
+    state: Mapped[str] = mapped_column(String, nullable=False)
+    assignee_id: Mapped[str | None] = mapped_column(ForeignKey("accounts.id"))
+    plant_id: Mapped[int | None] = mapped_column(ForeignKey("plants.id"))
+    station_code: Mapped[str | None] = mapped_column(
+        ForeignKey("monitoring_stations.code")
+    )
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
+class ReportResponseEvent(Base):
+    __tablename__ = "report_response_events"
+    __table_args__ = (UniqueConstraint("report_id", "revision"),)
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=identifier)
+    report_id: Mapped[str] = mapped_column(
+        ForeignKey("citizen_reports.id"), nullable=False, index=True
+    )
+    revision: Mapped[int] = mapped_column(Integer, nullable=False)
+    actor_id: Mapped[str] = mapped_column(ForeignKey("accounts.id"), nullable=False)
+    action: Mapped[str] = mapped_column(String, nullable=False)
+    reason: Mapped[str] = mapped_column(String, nullable=False)
+    details: Mapped[dict] = mapped_column(JSON, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)

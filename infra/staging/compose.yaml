@@ -32,6 +32,8 @@ services:
       IDENTITY_EVENT_SECRET: ${IDENTITY_EVENT_SECRET:?generate local staging secrets}
       MONASH_EVENT_ISSUER: http://localhost:9100/
       MONASH_EVENT_ENDPOINT: http://api:8000/api/v1/identity/events
+      MONASH_ACCOUNT_RETURN_ORIGIN: http://localhost:8180
+      MONASH_WEB_SECRET: ${MONASH_WEB_SECRET:?generate local staging secrets}
       AUTHENTIK_SECRET_KEY: ${IDENTITY_SECRET:?generate local staging secrets}
       AUTHENTIK_POSTGRESQL__HOST: identity-db
       AUTHENTIK_POSTGRESQL__NAME: authentik
@@ -44,7 +46,7 @@ services:
       AUTHENTIK_BOOTSTRAP_TOKEN: ${IDENTITY_BOOTSTRAP_TOKEN}
       AUTHENTIK_BOOTSTRAP_EMAIL: admin@monash.localhost
     ports: ['127.0.0.1:9100:9000']
-    volumes: [identity_data:/data]
+    volumes: [identity_data:/data, ./identity:/monash-brand:ro, ./identity/templates:/templates:ro, ./identity/logo.png:/web/dist/assets/images/citizenflood.png:ro, ./identity/user_settings.py:/data/user_settings.py:ro]
     depends_on:
       identity-db: {condition: service_healthy}
     restart: unless-stopped
@@ -77,6 +79,7 @@ services:
       DATABASE_URL: postgresql+psycopg://monash:${APP_DB_PASSWORD}@database:5432/monash
       APP_ENV: staging
       AUTH_MODE: oidc
+      ACCOUNT_SETTINGS_ENABLED: 'true'
       OIDC_ISSUER: http://localhost:9100/
       OIDC_DISCOVERY_URL: http://localhost:9100/application/o/monash-web/.well-known/openid-configuration
       OIDC_JWKS_URL: http://localhost:9100/application/o/monash-web/jwks/

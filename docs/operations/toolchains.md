@@ -5,7 +5,7 @@ The CitizenFlood import was checked on 2026-10-02 using the official Flutter
 DevTools 2.57.0). Its release archive SHA-256 was verified against Flutter's
 release index: `a0edd646c159c0e816788c0e46a4f071199c1320495898f5a679599b583a05a4`.
 The local Android SDK has platforms 35 and 36 and build-tools 36.0.0. The
-local JDK is Android Studio's JBR 25.0.3; CI uses Temurin 17.
+local JDK is Android Studio's JBR 25.0.3; CI uses Temurin21, required by maplibre_gl0.27.1’s Java source/target level.
 
 Mobile verification commands from `apps/citizenflood`:
 
@@ -13,18 +13,16 @@ Mobile verification commands from `apps/citizenflood`:
 flutter pub get
 flutter analyze
 flutter test
-flutter build apk --debug \
-  --dart-define=SUPABASE_URL=https://example.supabase.co \
-  --dart-define=SUPABASE_ANON_KEY=synthetic-ci-key
+flutter build apk --debug --dart-define-from-file=staging-config.example.json
 test -s build/app/outputs/flutter-apk/app-debug.apk
 ```
 
-Synthetic values are only for a build check; the resulting APK is not an
-operational client. Do not use production signing keys or credentials in CI.
+The checked-in configuration targets loopback local staging. A physical device
+needs USB reverse mappings for ports8181 and9100 and running local services. Do not use production signing keys or credentials in CI.
 
 ## API, dashboard and research
 
-Local tooling: uv 0.12.1, Python 3.12, Node v22.22.1, npm 9.2.0, PostgreSQL 16. Optional research plotting resolves to matplotlib 3.11.2 in the root lock. CI's toolchain configuration is committed; GitHub CI has not run before remote creation.
+Local tooling: uv 0.12.1, Python 3.12, Node v22.22.1, npm 9.2.0, PostgreSQL 16. Optional research plotting resolves to matplotlib 3.11.2 in the root lock. CI's toolchain configuration is committed; GitHub CI runs the checked-in workflows on pull requests.
 
 The dashboard production map smoke was run using Playwright 1.63.0 and Chrome 154.0.8037.92. It intercepts application services with synthetic fixtures and blocks external requests. Start the built dashboard using `npm --prefix apps/dashboard run preview -- --host 127.0.0.1 --port 5174`, then run:
 

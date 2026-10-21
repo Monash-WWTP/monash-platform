@@ -16,6 +16,7 @@ class Page(BaseModel, Generic[T]):
 
 
 class AccountView(BaseModel):
+    display_name: str | None = None
     id: str
     email: str
     capabilities: list[str]
@@ -60,6 +61,7 @@ class SampleView(BaseModel):
 
 
 class ReportView(ReportInput):
+    review_reason: str | None = None
     id: str
     moderation_status: Literal["pending", "approved", "rejected"]
     created_at: datetime
@@ -84,3 +86,10 @@ class CommunityView(BaseModel):
     location_precision: Literal["rounded_0.001_degree"]
     observed_at: datetime
     created_at: datetime
+
+
+class AccountSettingsView(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    available: bool
+    origin: str | None = None
+    actions: dict[str, str] = {}
