@@ -17,6 +17,7 @@ class CitizenMap extends StatefulWidget {
     this.selectedId,
     this.onObservation,
     this.onCenterChanged,
+    this.onPointSelected,
     this.deviceLocation,
     this.resetKey = 0,
   });
@@ -26,6 +27,7 @@ class CitizenMap extends StatefulWidget {
   final String? selectedId;
   final ValueChanged<Report>? onObservation;
   final ValueChanged<SelectedLocation>? onCenterChanged;
+  final ValueChanged<SelectedLocation>? onPointSelected;
   final int resetKey;
   @override
   State<CitizenMap> createState() => _CitizenMapState();
@@ -213,6 +215,13 @@ class _CitizenMapState extends State<CitizenMap> {
           compassEnabled: true,
           rotateGesturesEnabled: false,
           tiltGesturesEnabled: false,
+          onMapClick: (_, point) => widget.onPointSelected?.call(
+            SelectedLocation(
+              latitude: point.latitude,
+              longitude: point.longitude,
+              source: LocationSource.selected,
+            ),
+          ),
           onMapCreated: (controller) {
             _controller = controller;
             _styleAssets = null;

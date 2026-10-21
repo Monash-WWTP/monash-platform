@@ -66,6 +66,10 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
               CitizenMap(
                 center: _center,
                 deviceLocation: _device,
+                onPointSelected: (point) => setState(() {
+                  _center = point;
+                  _selected = point;
+                }),
                 onCenterChanged: (point) {
                   if ((_selected.latitude - point.latitude).abs() > 0.00001 ||
                       (_selected.longitude - point.longitude).abs() > 0.00001) {
@@ -105,10 +109,11 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                                 : 'Selected point',
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
-                          Text(
-                            '${_selected.label}${_selected.accuracyM == null ? '' : ' · ±${_selected.accuracyM!.round()} m'}',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
+                          if (_selected.accuracyM != null)
+                            Text(
+                              '±${_selected.accuracyM!.round()} m',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
                         ],
                       ),
                     ),
@@ -127,6 +132,17 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                     ),
                   ],
                 ),
+                ExpansionTile(
+                  title: const Text('Location details'),
+                  tilePadding: EdgeInsets.zero,
+                  dense: true,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(_selected.label),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 8),
                 if (_error != null)
                   Padding(
@@ -142,7 +158,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                   onPressed: _locating
                       ? null
                       : () => Navigator.pop(context, _selected),
-                  child: const Text('Confirm location'),
+                  child: const Text('Use this location'),
                 ),
               ],
             ),
