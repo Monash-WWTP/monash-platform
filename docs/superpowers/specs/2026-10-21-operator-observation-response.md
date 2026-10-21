@@ -1,6 +1,6 @@
 # Operator verification and response to citizen observations
 
-Status: written design approved21October2026; implementation plan prepared for review. No operational workflow code implemented yet.
+Status: approved and implemented in source/local staging21October2026. Production and operational-team acceptance remain pending.
 
 ## Purpose
 

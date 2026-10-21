@@ -47,3 +47,7 @@ There is no browser secret/password editor, shell, SQL console, historical resul
 Before production, verify role/MFA/CSRF denial, user revocation, configuration save/reload/conflict behavior, public station contracts, immutable prior runs and redacted history using the actual deployed clients. See [production preparation](../../infra/production/README.md) and the [server setup guide](production-server-setup.md).
 
 Screening supports upper limits for BOD, COD, TSS, ammonia, nitrate, phosphorus and turbidity. pH is not configurable here because a single upper limit does not represent its range semantics. When a configured BOD/COD/TSS limit is absent, the model retains its existing 50/200/100 mg/L fallback; each new run records these effective limits, units and `model_fallback_unverified` provenance. Removing a setting does not disable fallback screening. Scenario API omissions inherit plant equipment availability; explicitly supplied scenario values remain overrides.
+
+## Operator response permission
+
+`report:respond` grants the separate [operator response workflow](operator-response.md), with MFA on every read/write. It permits assignment, inspection/action records and closure history, not public-summary approval, configuration administration or scientific certification. Administration can grant/revoke it with a reason through the existing protected user permissions form; trusted CLI grants also support it. Removing permission revokes browser sessions. Existing `report:review` remains publication moderation.
