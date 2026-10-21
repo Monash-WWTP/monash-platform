@@ -315,7 +315,7 @@ def download(
 ):
     media = db.get(Media, media_id)
     reviewable = (
-        "report:review" in account.capabilities
+        ("report:review" in account.capabilities or "report:respond" in account.capabilities)
         and db.query(CitizenReport).filter_by(media_id=media_id).first()
     )
     if not media or (media.owner_id != account.id and not reviewable):

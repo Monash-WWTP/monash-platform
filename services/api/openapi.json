@@ -791,6 +791,121 @@
         "title": "ErrorEnvelope",
         "type": "object"
       },
+      "EventInput": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "acknowledge",
+              "assign",
+              "associate",
+              "inspect",
+              "act",
+              "close",
+              "reopen"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "assignee_id": {
+            "anyOf": [
+              {
+                "maxLength": 36,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assignee Id"
+          },
+          "expected_revision": {
+            "minimum": 0.0,
+            "title": "Expected Revision",
+            "type": "integer"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "minLength": 3,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "observed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed At"
+          },
+          "plant_id": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plant Id"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "enum": [
+                  "confirmed",
+                  "not_confirmed",
+                  "unable_to_verify"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result"
+          },
+          "station_code": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Station Code"
+          }
+        },
+        "required": [
+          "expected_revision",
+          "action",
+          "reason"
+        ],
+        "title": "EventInput",
+        "type": "object"
+      },
       "ExceedanceOut": {
         "properties": {
           "end_day": {
@@ -1997,6 +2112,92 @@
         "title": "OperatingParametersIn",
         "type": "object"
       },
+      "OperationsDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseEvent"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "report": {
+            "anyOf": [
+              {
+                "discriminator": {
+                  "mapping": {
+                    "1": "#/components/schemas/ObservationViewV1",
+                    "2": "#/components/schemas/ObservationViewV2"
+                  },
+                  "propertyName": "protocol_revision"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ObservationViewV1"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ObservationViewV2"
+                  }
+                ]
+              },
+              {
+                "$ref": "#/components/schemas/ReportView"
+              }
+            ],
+            "title": "Report"
+          },
+          "response": {
+            "$ref": "#/components/schemas/ResponseState"
+          }
+        },
+        "required": [
+          "report",
+          "response",
+          "events"
+        ],
+        "title": "OperationsDetail",
+        "type": "object"
+      },
+      "OperationsReport": {
+        "additionalProperties": false,
+        "properties": {
+          "report": {
+            "anyOf": [
+              {
+                "discriminator": {
+                  "mapping": {
+                    "1": "#/components/schemas/ObservationViewV1",
+                    "2": "#/components/schemas/ObservationViewV2"
+                  },
+                  "propertyName": "protocol_revision"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ObservationViewV1"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ObservationViewV2"
+                  }
+                ]
+              },
+              {
+                "$ref": "#/components/schemas/ReportView"
+              }
+            ],
+            "title": "Report"
+          },
+          "response": {
+            "$ref": "#/components/schemas/ResponseState"
+          }
+        },
+        "required": [
+          "report",
+          "response"
+        ],
+        "title": "OperationsReport",
+        "type": "object"
+      },
       "Page_AdminAccountView_": {
         "properties": {
           "items": {
@@ -2195,6 +2396,37 @@
           "limit"
         ],
         "title": "Page[CommunityView]",
+        "type": "object"
+      },
+      "Page_OperationsReport_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OperationsReport"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "Page[OperationsReport]",
         "type": "object"
       },
       "Page_PublicObservation_": {
@@ -3083,6 +3315,25 @@
         "title": "Rainfall",
         "type": "object"
       },
+      "RegistryItem": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ],
+        "title": "RegistryItem",
+        "type": "object"
+      },
       "ReportInput": {
         "additionalProperties": false,
         "properties": {
@@ -3365,6 +3616,141 @@
         "title": "ReportView",
         "type": "object"
       },
+      "Responder": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ],
+        "title": "Responder",
+        "type": "object"
+      },
+      "ResponseEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "actor_id": {
+            "title": "Actor Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "details": {
+            "additionalProperties": true,
+            "title": "Details",
+            "type": "object"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "revision",
+          "actor_id",
+          "action",
+          "reason",
+          "details",
+          "created_at"
+        ],
+        "title": "ResponseEvent",
+        "type": "object"
+      },
+      "ResponseState": {
+        "additionalProperties": false,
+        "properties": {
+          "assignee_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assignee Id"
+          },
+          "plant_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plant Id"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "state": {
+            "enum": [
+              "unassigned",
+              "assigned",
+              "investigating",
+              "closed"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "station_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Station Code"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "required": [
+          "revision",
+          "state"
+        ],
+        "title": "ResponseState",
+        "type": "object"
+      },
       "RoleChange": {
         "additionalProperties": false,
         "properties": {
@@ -3372,6 +3758,7 @@
             "items": {
               "enum": [
                 "report:own",
+                "report:respond",
                 "report:review",
                 "monitor:read",
                 "scenario:operate"
@@ -6261,6 +6648,451 @@
         "summary": "Years",
         "tags": [
           "monitoring"
+        ]
+      }
+    },
+    "/api/v1/operations/plants": {
+      "get": {
+        "operationId": "plants_api_v1_operations_plants_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RegistryItem"
+                  },
+                  "title": "Response Plants Api V1 Operations Plants Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Plants",
+        "tags": [
+          "operator response"
+        ]
+      }
+    },
+    "/api/v1/operations/reports": {
+      "get": {
+        "operationId": "reports_api_v1_operations_reports_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "unassigned",
+                    "assigned",
+                    "investigating",
+                    "closed"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "State"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_OperationsReport_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Reports",
+        "tags": [
+          "operator response"
+        ]
+      }
+    },
+    "/api/v1/operations/reports/{rid}": {
+      "get": {
+        "operationId": "detail_api_v1_operations_reports__rid__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rid",
+            "required": true,
+            "schema": {
+              "title": "Rid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationsDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Detail",
+        "tags": [
+          "operator response"
+        ]
+      }
+    },
+    "/api/v1/operations/reports/{rid}/events": {
+      "post": {
+        "operationId": "event_api_v1_operations_reports__rid__events_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rid",
+            "required": true,
+            "schema": {
+              "title": "Rid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationsDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Event",
+        "tags": [
+          "operator response"
+        ]
+      }
+    },
+    "/api/v1/operations/responders": {
+      "get": {
+        "operationId": "responders_api_v1_operations_responders_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Responder"
+                  },
+                  "title": "Response Responders Api V1 Operations Responders Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Responders",
+        "tags": [
+          "operator response"
+        ]
+      }
+    },
+    "/api/v1/operations/stations": {
+      "get": {
+        "operationId": "stations_api_v1_operations_stations_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RegistryItem"
+                  },
+                  "title": "Response Stations Api V1 Operations Stations Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Stations",
+        "tags": [
+          "operator response"
         ]
       }
     },

@@ -171,3 +171,5 @@ require_scenario = capability("scenario:operate")
 
 # Grants are restricted to the trusted server CLI.
 require_admin = capability("platform:admin")
+
+require_responder = capability("report:respond")
