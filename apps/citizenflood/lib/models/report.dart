@@ -75,6 +75,14 @@ extension ModerationStatusX on ModerationStatus {
 
 class Report {
   final CitizenObservation? observation;
+  final int? protocolRevision;
+  final String? photoSource, previousObservationId, levelChange;
+  List<String> get observationContext => [
+    ...?observation?.context,
+    if (photoSource != null) 'Photo source: $photoSource',
+    if (previousObservationId != null) 'Update to: $previousObservationId',
+    if (levelChange != null) 'Change: $levelChange',
+  ];
   String get label => observation?.label ?? category.label;
   IconData get icon => category.icon;
   final bool isOwner;
@@ -104,6 +112,10 @@ class Report {
   Report({
     this.id,
     this.observation,
+    this.protocolRevision,
+    this.photoSource,
+    this.previousObservationId,
+    this.levelChange,
     this.isOwner = true,
     this.reviewReason,
     required this.category,
@@ -151,6 +163,10 @@ class Report {
 
   factory Report.fromRow(Map<String, dynamic> row) => Report(
     id: row['id'] as String?,
+    protocolRevision: row['protocol_revision'] as int?,
+    photoSource: row['photo_source'] as String?,
+    previousObservationId: row['previous_observation_id'] as String?,
+    levelChange: row['level_change'] as String?,
     isOwner: row['is_owner'] == true,
     reviewReason: row['review_reason'] as String?,
     observation: row['observation'] is Map

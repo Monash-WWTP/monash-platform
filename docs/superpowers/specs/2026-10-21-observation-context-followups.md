@@ -1,6 +1,6 @@
 # Practical observation context and follow-ups
 
-Status: approved21October2026. Integrated with the existing platform; implementation awaits written-plan review.
+Status: approved and implemented in source/local staging21October2026. Samsung revision2 workflow acceptance and field validation remain pending.
 
 ## Purpose and constraints
 

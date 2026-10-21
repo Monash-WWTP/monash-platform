@@ -3,6 +3,9 @@ import 'package:intl/intl.dart';
 import '../services/account_session.dart';
 import '../services/report_repository.dart';
 import '../widgets/report_detail_sheet.dart';
+import '../models/report.dart';
+import '../maps/map_selection.dart';
+import 'observation_form_screen.dart';
 
 class MyReportsScreen extends StatefulWidget {
   const MyReportsScreen({
@@ -30,6 +33,59 @@ class _MyReportsScreenState extends State<MyReportsScreen> {
     _generation = _session.generation;
     _session.addListener(_changed);
     _load();
+  }
+
+  Future<void> _showDetail(Report report) async {
+    final generation = _session.generation;
+    final update = await showModalBottomSheet<bool>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (c) {
+        _detail = ModalRoute.of(c);
+        return generation == _session.generation
+            ? ReportDetailSheet(
+                report: report,
+                ownerView: true,
+                repository: _repo,
+                onUpdate: () => Navigator.pop(c, true),
+              )
+            : const SizedBox.shrink();
+      },
+    );
+    _detail = null;
+    if (!mounted || generation != _session.generation || update != true) return;
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ObservationFormScreen(
+          kind: 'flooding',
+          previous: report,
+          location: SelectedLocation(
+            latitude: report.latitude,
+            longitude: report.longitude,
+            source: LocationSource.selected,
+          ),
+          reports: _repo,
+          session: _session,
+          onShowReports: () {
+            if (mounted) {
+              setState(() {
+                _offset = 0;
+                _load();
+              });
+            }
+          },
+        ),
+      ),
+    );
+    if (mounted && generation == _session.generation) {
+      setState(() {
+        _offset = 0;
+        _load();
+      });
+    }
   }
 
   void _load() {
@@ -172,22 +228,7 @@ class _MyReportsScreenState extends State<MyReportsScreen> {
                           report.moderationStatus.name.substring(1),
                     ),
                   ),
-                  onTap: () => showModalBottomSheet(
-                    context: context,
-                    showDragHandle: true,
-                    isScrollControlled: true,
-                    useSafeArea: true,
-                    builder: (c) {
-                      _detail = ModalRoute.of(c);
-                      return generation == _session.generation
-                          ? ReportDetailSheet(
-                              report: report,
-                              ownerView: true,
-                              repository: _repo,
-                            )
-                          : const SizedBox.shrink();
-                    },
-                  ),
+                  onTap: () => _showDetail(report),
                 ),
                 const Divider(height: 1),
               ],

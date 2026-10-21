@@ -38,6 +38,7 @@ class CitizenObservation {
     final d = data;
     return [
       if (d['method'] != null) 'Method: ${d['method']}',
+      if (d['movement'] != null) 'Movement: ${d['movement']}',
       if (d['subject'] != null) 'Subject: ${d['subject']}',
       if ((d['features'] as List?)?.isNotEmpty ?? false)
         'Features: ${(d['features'] as List).join(', ')}',
@@ -73,7 +74,14 @@ class ObservationDraft implements ReviewDraft {
   @override
   String get reading => observation.summary;
   @override
-  List<String> get context => observation.context;
+  List<String> get context => [
+    ...observation.context,
+    if (payload['photo_source'] != null)
+      'Photo source: ${payload['photo_source']}',
+    if (payload['previous_observation_id'] != null)
+      'Update to: ${payload['previous_observation_id']}',
+    if (payload['level_change'] != null) 'Change: ${payload['level_change']}',
+  ];
   @override
   DateTime get observedAt => DateTime.parse(payload["observed_at"]);
   @override

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import '../maps/map_selection.dart';
 import '../models/observation.dart';
+import '../models/report.dart';
 import '../services/account_session.dart';
 import '../services/observation_repository.dart';
 import '../services/report_repository.dart';
@@ -17,11 +18,15 @@ class ObservationFormScreen extends StatefulWidget {
     super.key,
     required this.kind,
     required this.location,
+    this.picker,
+    this.previous,
     this.repository,
     this.reports,
     this.session,
     this.onShowReports,
   });
+  final ImagePicker? picker;
+  final Report? previous;
   final String kind;
   final SelectedLocation location;
   final ObservationRepository? repository;
@@ -41,6 +46,9 @@ class _ObservationFormScreenState extends State<ObservationFormScreen> {
   final _note = TextEditingController();
   late SelectedLocation _location = widget.location;
   Future<bool>? _capability;
+  int _revision = 1;
+  late Report? _previous = widget.previous;
+  String? _movement, _change, _photoSource;
   List<Map<String, dynamic>> _references = [];
   String? _response, _photo, _media, _mediaPhoto, _error;
   final _features = <String>{};
@@ -59,6 +67,13 @@ class _ObservationFormScreenState extends State<ObservationFormScreen> {
   @override
   void initState() {
     super.initState();
+    if (_previous != null) {
+      _location = SelectedLocation(
+        latitude: _previous!.latitude,
+        longitude: _previous!.longitude,
+        source: LocationSource.selected,
+      );
+    }
     _draftGeneration = _session.generation;
     _session.addListener(_accountChanged);
     _capability = _load();
@@ -74,6 +89,10 @@ class _ObservationFormScreenState extends State<ObservationFormScreen> {
     _media = null;
     _mediaPhoto = null;
     _photo = null;
+    _photoSource = null;
+    _previous = null;
+    _movement = null;
+    _change = null;
     _key = null;
     _pendingDraft = null;
     _note.clear();
@@ -87,6 +106,8 @@ class _ObservationFormScreenState extends State<ObservationFormScreen> {
 
   Future<bool> _load() async {
     final supported = await _repo.supported();
+    if (supported) _revision = await _repo.supportsRevision(2) ? 2 : 1;
+    if (widget.previous != null && _revision != 2) return false;
     if (supported && widget.kind == 'water_reading' && _session.signedIn) {
       _references = await _repo.references();
     }
@@ -134,15 +155,20 @@ class _ObservationFormScreenState extends State<ObservationFormScreen> {
   }
 
   Future<void> _choosePhoto(ImageSource source) async {
+    final generation = _session.generation;
     try {
-      final photo = await ImagePicker().pickImage(
+      final photo = await (widget.picker ?? ImagePicker()).pickImage(
         source: source,
         maxWidth: 1920,
         imageQuality: 85,
       );
-      if (photo != null && mounted) {
+      if (photo != null &&
+          mounted &&
+          !_invalidated &&
+          generation == _session.generation) {
         setState(() {
           _photo = photo.path;
+          _photoSource = source == ImageSource.camera ? 'camera' : 'gallery';
           _media = null;
           _changed();
         });
@@ -207,6 +233,7 @@ class _ObservationFormScreenState extends State<ObservationFormScreen> {
         'kind': widget.kind,
         'method': 'visual',
         'response': _response,
+        if (_revision == 2 && _movement != null) 'movement': _movement,
         if (widget.kind != 'rain_occurrence') field: _features.toList(),
       };
     }
@@ -225,7 +252,10 @@ class _ObservationFormScreenState extends State<ObservationFormScreen> {
     }
     final draft = _pendingDraft ??= ObservationDraft({
       'protocol_id': 'citizen-observation',
-      'protocol_revision': 1,
+      'protocol_revision': _revision,
+      if (_revision == 2 && _photo != null) 'photo_source': _photoSource,
+      if (_previous != null) 'previous_observation_id': _previous!.id,
+      if (_previous != null && _change != null) 'level_change': _change,
       'observation': observation,
       'latitude': _location.latitude,
       'longitude': _location.longitude,
@@ -392,6 +422,8 @@ class _ObservationFormScreenState extends State<ObservationFormScreen> {
                         onChanged: (v) => setState(() {
                           _response = v;
                           _features.clear();
+                          _movement = null;
+                          _change = null;
                           _error = null;
                           _changed();
                         }),
@@ -457,6 +489,68 @@ class _ObservationFormScreenState extends State<ObservationFormScreen> {
                           ],
                         ),
                     ],
+                    if (_revision == 2 &&
+                        widget.kind == 'flooding' &&
+                        _response == 'present')
+                      ExpansionTile(
+                        title: const Text('More context (optional)'),
+                        initiallyExpanded: _previous != null,
+                        tilePadding: EdgeInsets.zero,
+                        children: [
+                          const Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text('Water movement'),
+                          ),
+                          Wrap(
+                            spacing: 8,
+                            children: [
+                              for (final option in const [
+                                ('still', 'Still'),
+                                ('flowing', 'Flowing'),
+                                ('unknown', 'Unsure'),
+                              ])
+                                ChoiceChip(
+                                  label: Text(option.$2),
+                                  selected: _movement == option.$1,
+                                  onSelected: (v) => setState(() {
+                                    _movement = v ? option.$1 : null;
+                                    _changed();
+                                  }),
+                                ),
+                            ],
+                          ),
+                          if (_previous != null) ...[
+                            const SizedBox(height: 12),
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('Compared with your earlier report'),
+                            ),
+                            Wrap(
+                              spacing: 8,
+                              children: [
+                                for (final option in const [
+                                  ('higher', 'Higher'),
+                                  ('same', 'Same'),
+                                  ('lower', 'Lower'),
+                                  ('unknown', 'Unsure'),
+                                ])
+                                  ChoiceChip(
+                                    label: Text(option.$2),
+                                    selected: _change == option.$1,
+                                    onSelected: (v) => setState(() {
+                                      _change = v ? option.$1 : null;
+                                      _changed();
+                                    }),
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ],
+                      ),
+                    if (_previous != null)
+                      Text(
+                        'Update to your report · ${DateFormat('d MMM · HH:mm').format((_previous!.observedAt ?? _previous!.createdAt!).toLocal())}',
+                      ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: const Icon(Icons.schedule),
@@ -490,7 +584,19 @@ class _ObservationFormScreenState extends State<ObservationFormScreen> {
                         );
                         if (p != null && mounted) {
                           setState(() {
-                            _location = p;
+                            if (_previous != null &&
+                                (p.latitude != _previous!.latitude ||
+                                    p.longitude != _previous!.longitude)) {
+                              _previous = null;
+                              _change = null;
+                            }
+                            _location = _previous == null
+                                ? p
+                                : SelectedLocation(
+                                    latitude: p.latitude,
+                                    longitude: p.longitude,
+                                    source: LocationSource.selected,
+                                  );
                             _changed();
                           });
                         }
@@ -530,6 +636,7 @@ class _ObservationFormScreenState extends State<ObservationFormScreen> {
                           TextButton(
                             onPressed: () => setState(() {
                               _photo = null;
+                              _photoSource = null;
                               _media = null;
                               _mediaPhoto = null;
                               _changed();

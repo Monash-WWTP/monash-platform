@@ -10,7 +10,9 @@ class ReportDetailSheet extends StatelessWidget {
     required this.report,
     required this.ownerView,
     this.repository,
+    this.onUpdate,
   });
+  final VoidCallback? onUpdate;
   final Report report;
   final bool ownerView;
   final ReportRepository? repository;
@@ -36,7 +38,7 @@ class ReportDetailSheet extends StatelessWidget {
             const SizedBox(height: 16),
             Text(report.readingLabel, style: theme.textTheme.headlineMedium),
             if (report.observation != null)
-              for (final line in report.observation!.context)
+              for (final line in report.observationContext)
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(line),
@@ -63,6 +65,19 @@ class ReportDetailSheet extends StatelessWidget {
             Text(
               '${report.latitude.toStringAsFixed(ownerView ? 5 : 2)}, ${report.longitude.toStringAsFixed(ownerView ? 5 : 2)}',
             ),
+            if (ownerView &&
+                report.isOwner &&
+                report.id != null &&
+                report.observation?.kind == 'flooding' &&
+                onUpdate != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: OutlinedButton.icon(
+                  onPressed: onUpdate,
+                  icon: const Icon(Icons.update),
+                  label: const Text('Report an update'),
+                ),
+              ),
             if (ownerView && report.reviewReason != null) ...[
               const SizedBox(height: 16),
               Text('Review reason', style: theme.textTheme.titleSmall),

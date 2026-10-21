@@ -5,6 +5,9 @@ class ObservationRepository {
   ObservationRepository([PlatformApi? api]) : _api = api ?? PlatformApi();
   final PlatformApi _api;
   Future<bool>? _supported;
+  Set<int> _revisions = {1};
+  Future<bool> supportsRevision(int revision) async =>
+      await supported() && _revisions.contains(revision);
   Future<bool> supported() {
     if (_supported != null) return _supported!;
     final future = _discover();
@@ -23,6 +26,10 @@ class ObservationRepository {
   Future<bool> _discover() async {
     try {
       final c = await _api.request('/api/v2/observation-protocols');
+      _revisions = {
+        1,
+        ...((c['supported_revisions'] as List?) ?? []).whereType<int>(),
+      };
       return c['protocol_id'] == 'citizen-observation' &&
           c['protocol_revision'] == 1 &&
           (c['types'] is List) &&
@@ -42,7 +49,7 @@ class ObservationRepository {
   }
 
   Future<void> submit(ObservationDraft draft, String key) async {
-    if (!await supported()) {
+    if (!await supportsRevision(draft.payload['protocol_revision'] as int)) {
       throw StateError(
         'This service does not support the new reporting protocol yet.',
       );

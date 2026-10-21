@@ -40,3 +40,9 @@ The device run found that the map requested200 mixed history records while the i
 Final software verification:50 Flutter tests passed; analyzer clean; staging debug APK built and installed;199 Python tests passed with1skipped against the disposable5433 test database;45 dashboard tests and production build passed; repository policy437files and pinned inventory207files passed before final documentation edits. One fresh review found retry identity, account fencing and capability retry issues; all three were reproduced and fixed with regression tests.
 
 The earlier photo/enrollment checks remain historical evidence, not a new-protocol photo test. Full physical TalkBack, new-protocol permission/offline/background/account-switch journeys, field comprehension/reference validation and production services remain open. The public signed APK is unchanged.
+
+## Revision2 context/update verification — 21 October 2026
+
+Source adds optional flooding movement, private camera/gallery provenance and linked updates from existing owned flooding detail. Local API was rebuilt and advertises supported revisions1/2; staging debug APK was rebuilt and installed. Automated checks:201 Python tests passed with1skipped;53 Flutter tests passed;46 dashboard tests passed; analyzer clean; dashboard/debug APK builds passed. An initial stale OpenAPI snapshot failure was resolved by regeneration before the final green suite. Repository policy440files and pinned inventory207files passed before final documentation additions.
+
+One fresh review of this extension reported no concrete Critical/Important/Minor findings. Device inspection found the Samsung locked; the new revision2 original/update submission has not yet been physically verified. Earlier revision1 Samsung evidence remains historical and is not counted as revision2 acceptance. Full physical accessibility, failure-path, field-validation and production gates remain open. Synthetic records must remain unpublished.

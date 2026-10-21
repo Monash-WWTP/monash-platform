@@ -208,7 +208,7 @@ class _MapScreenState extends State<MapScreen> {
         source: LocationSource.selected,
       );
     });
-    await showModalBottomSheet(
+    final update = await showModalBottomSheet<bool>(
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
@@ -220,12 +220,36 @@ class _MapScreenState extends State<MapScreen> {
                 report: report,
                 ownerView: report.isOwner,
                 repository: _repo,
+                onUpdate: () => Navigator.pop(c, true),
               )
             : const SizedBox.shrink();
       },
     );
     _detailRoute = null;
     if (mounted) setState(() => _selectedId = null);
+    if (mounted &&
+        generation == _session.generation &&
+        update == true &&
+        report.isOwner) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ObservationFormScreen(
+            kind: 'flooding',
+            previous: report,
+            location: SelectedLocation(
+              latitude: report.latitude,
+              longitude: report.longitude,
+              source: LocationSource.selected,
+            ),
+            reports: _repo,
+            session: _session,
+            onShowReports: widget.onShowReports,
+          ),
+        ),
+      );
+      _refresh();
+    }
   }
 
   Future<void> _showObservations(List<Report> reports) async {

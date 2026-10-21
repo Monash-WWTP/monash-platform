@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAccount } from "../api/accounts";
-import { observationSummary } from "../api/observations";
+import { observationSummary, observationPrivateContext } from "../api/observations";
 import { ApiRequestError, fetchApi, type Page } from "../api/transport";
 import OperatorAccess from "../components/auth/OperatorAccess";
 import OperatorHeader from "../components/OperatorHeader";
 import { Button } from "../components/ui";
 interface Report {
   protocol_id?: string;
+  protocol_revision?: number;
+  photo_source?: string | null;
+  previous_observation_id?: string | null;
+  level_change?: string | null;
   observation?: Record<string,unknown>;
   id: string;
   category: string;
@@ -90,6 +94,7 @@ export default function ModerationPage() {
             {report.observation ? observationSummary(report.observation) : report.condition ??
               `${report.reading_value} ${report.reading_unit}`}
           </p>
+          {report.observation && <p className="text-sm">{observationPrivateContext(report)}</p>}
           <p>
             Private location: {report.latitude}, {report.longitude}
           </p>

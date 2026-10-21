@@ -40,6 +40,7 @@ void main() {
     );
     await expectLater(repo.supported(), throwsStateError);
     expect(await repo.supported(), isTrue);
+    expect(await repo.supportsRevision(2), isFalse);
     expect(calls, 2);
   });
 }
