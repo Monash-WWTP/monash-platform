@@ -30,7 +30,14 @@ class SettingsTests(unittest.TestCase):
         from authentik.core.sessions import SessionStore
 
         self.http.session = SessionStore()
-        self.plan = SimpleNamespace(context={})
+        self.plan = SimpleNamespace(
+            context={
+                "monash_reauthenticated": {
+                    "user": str(self.user.uuid),
+                    "at": __import__("time").time(),
+                }
+            }
+        )
         self.http.session[settings.SESSION_KEY_PLAN] = self.plan
         self.request = SimpleNamespace(
             user=self.user, http_request=self.http, context={"prompt_data": {}}
@@ -73,6 +80,89 @@ class SettingsTests(unittest.TestCase):
         )(http)
         self.assertEqual(response.status_code, 302)
         self.assertNotIn("evil.test", response["Location"])
+
+    def test_stale_auth_cannot_be_made_recent_by_delayed_confirmation(self):
+        self.plan.context["monash_reauthenticated"] = {
+            "user": str(self.user.uuid),
+            "at": 0,
+        }
+        self.request.context["prompt_data"] = {"confirm": True}
+        self.assertFalse(settings.confirm_security(self.request))
+        self.assertFalse(settings.sign_out_all(self.request))
+
+    def test_invalid_native_setup_preserves_session_and_does_not_revoke(self):
+        self.assertTrue(settings.mark_recent(self.request))
+        self.http.path = "/api/v3/flows/executor/default-authenticator-totp-setup/"
+        self.http.session["pending-qa"] = "retained"
+        guard = settings.AccountSettingsGuard(
+            lambda r: SimpleNamespace(status_code=200)
+        )
+        with (
+            patch.object(settings, "native_setup", return_value=True),
+            patch.object(settings, "send_event", return_value=True) as send,
+        ):
+            self.assertEqual(guard(self.http).status_code, 200)
+            send.assert_not_called()
+            self.assertEqual(self.http.session["pending-qa"], "retained")
+
+    def test_native_mutation_rolls_back_when_revocation_delivery_fails(self):
+        from authentik.stages.authenticator_totp.models import TOTPDevice
+
+        self.assertTrue(settings.mark_recent(self.request))
+        self.http.path = "/api/v3/authenticators/totp/"
+        self.http.session["pending-qa"] = "retained"
+
+        def create_device(http):
+            TOTPDevice.objects.create(
+                user=self.user, name="QA new authenticator", confirmed=True
+            )
+            http.session.pop("pending-qa", None)
+            return SimpleNamespace(status_code=200)
+
+        guard = settings.AccountSettingsGuard(create_device)
+        with patch.object(settings, "send_event", return_value=False):
+            self.assertEqual(guard(self.http).status_code, 503)
+        self.assertFalse(TOTPDevice.objects.filter(user=self.user).exists())
+        self.assertEqual(self.http.session["pending-qa"], "retained")
+        self.assertTrue(self.http.user.is_authenticated)
+        with patch.object(settings, "send_event", return_value=True):
+            self.assertEqual(guard(self.http).status_code, 200)
+        self.assertEqual(TOTPDevice.objects.filter(user=self.user).count(), 1)
+        self.assertFalse(self.http.user.is_authenticated)
+
+    def test_reauthentication_does_not_accept_api_tokens_and_marks_completion(self):
+        from authentik.stages.password.models import PasswordStage
+        from authentik.flows.models import FlowStageBinding
+
+        self.assertNotIn(
+            "authentik.core.auth.TokenBackend",
+            PasswordStage.objects.get(name="monash-account-reauthenticate").backends,
+        )
+        bindings = list(
+            FlowStageBinding.objects.filter(
+                target__slug="monash-account-security"
+            ).order_by("order")
+        )
+        self.assertEqual(
+            bindings[2].stage.name, "monash-account-authentication-complete"
+        )
+        self.assertFalse(bindings[2].evaluate_on_plan)
+        self.assertTrue(bindings[2].re_evaluate_policies)
+
+    def test_authentication_checkpoint_is_automatic_and_does_not_renew_on_form(self):
+        from authentik.flows.models import Flow
+        from authentik.flows.planner import FlowPlanner
+
+        planner = FlowPlanner(Flow.objects.get(slug="monash-account-profile"))
+        planner.use_cache = False
+        planned = planner.plan(self.http)
+        planned.bindings = planned.bindings[2:]
+        planned.markers = planned.markers[2:]
+        stage = planned.next(self.http)
+        self.assertEqual(stage.stage.name, "monash-account-profile")
+        proof = dict(planned.context["monash_reauthenticated"])
+        planned.next(self.http)
+        self.assertEqual(planned.context["monash_reauthenticated"], proof)
 
     def test_profile_allowlist(self):
         self.request.context["prompt_data"] = {"name": "  Research volunteer  "}
@@ -163,6 +253,7 @@ class SettingsTests(unittest.TestCase):
         self.assertTrue(self.user.check_password("QA-new-password-long"))
         self.assertEqual(self.user.uuid, uid)
         self.http.user = self.user
+        self.http.session[settings.SESSION_KEY_PLAN] = self.plan
         self.request.context["prompt_data"] = {"confirm": True}
         with patch.object(settings, "send_event", return_value=True) as send:
             self.assertTrue(settings.sign_out_all(self.request))

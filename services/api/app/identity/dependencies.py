@@ -37,7 +37,7 @@ def account_from_claims(db: Session, claims: dict) -> Account:
         resource = hashlib.sha256(
             (claims["iss"] + "\0" + claims["sub"]).encode()
         ).hexdigest()
-        event = (
+        events = (
             db.query(AuditEvent)
             .filter(
                 AuditEvent.resource_id == resource,
@@ -51,11 +51,11 @@ def account_from_claims(db: Session, claims: dict) -> Account:
                     ]
                 ),
             )
-            .order_by(AuditEvent.created_at.desc())
-            .first()
+            .all()
         )
-        boundary = (
-            datetime.fromisoformat(event.details["occurred_at"]) if event else None
+        boundary = max(
+            (datetime.fromisoformat(event.details["occurred_at"]) for event in events),
+            default=None,
         )
         if boundary and claims.get("iat", 0) <= boundary.timestamp():
             raise ApiError(

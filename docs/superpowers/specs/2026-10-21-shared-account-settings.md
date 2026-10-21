@@ -1,6 +1,6 @@
 # Shared account settings for registered users
 
-Status: design and inline implementation approved. Implementation and local acceptance are in progress; see the shared-account-settings operations guide for verified scope.
+Status: design and inline implementation approved. Implementation and local acceptance completed; see the shared-account-settings operations guide for verified scope and remaining production gates.
 
 ## Purpose and platform fit
 

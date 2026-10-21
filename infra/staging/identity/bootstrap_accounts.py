@@ -10,6 +10,7 @@ from authentik.policies.models import PolicyBinding
 from authentik.stages.authenticator_validate.models import AuthenticatorValidateStage
 from authentik.stages.email.models import EmailStage
 from authentik.stages.password.models import PasswordStage
+from authentik.stages.dummy.models import DummyStage
 from authentik.stages.prompt.models import Prompt, PromptStage
 from authentik.stages.redirect.models import RedirectStage
 from django.db import transaction
@@ -72,10 +73,24 @@ def provision():
             },
         )[0]
         FlowStageBinding.objects.filter(target=f).delete()
+        marker = DummyStage.objects.get_or_create(
+            name="monash-account-authentication-complete"
+        )[0]
+        stages = [*stages[:2], marker, *stages[2:]]
         for i, stage in enumerate(stages):
             binding = FlowStageBinding.objects.create(
                 target=f, stage=stage, order=i * 10, evaluate_on_plan=(i == 0)
             )
+            if stage == marker:
+                binding.re_evaluate_policies = True
+                binding.save()
+                completed = ExpressionPolicy.objects.update_or_create(
+                    name="monash-account-authentication-complete",
+                    defaults={
+                        "expression": "import time\nrequest.context['flow_plan'].context['monash_reauthenticated'] = {'user': str(request.user.uuid), 'at': time.time()}\nreturn False"
+                    },
+                )[0]
+                PolicyBinding.objects.create(target=binding, policy=completed, order=0)
             if i == 0:
                 initialize = ExpressionPolicy.objects.update_or_create(
                     name="monash-account-bind-current-user",
@@ -92,7 +107,11 @@ def provision():
         password = PasswordStage.objects.update_or_create(
             name="monash-account-reauthenticate",
             defaults={
-                "backends": base.backends,
+                "backends": [
+                    backend
+                    for backend in base.backends
+                    if backend != "authentik.core.auth.TokenBackend"
+                ],
                 "failed_attempts_before_cancel": 5,
                 "allow_show_password": False,
             },

@@ -1,5 +1,6 @@
 """Provider-owned account changes. No credential value is sent to the platform."""
 
+import copy
 import hashlib
 import hmac
 import json
@@ -54,13 +55,24 @@ def data(request, allowed):
     return values
 
 
+def authenticated_recently(request):
+    user = actor(request)
+    current_plan = plan(request)
+    proof = (
+        current_plan.context.get("monash_reauthenticated", {}) if current_plan else {}
+    )
+    if (
+        proof.get("user") != str(user.uuid)
+        or not 0 <= time.time() - proof.get("at", 0) <= 300
+    ):
+        raise ChangeRejected()
+    return proof
+
+
 def mark_recent(request):
     try:
-        user = actor(request)
-        request.http_request.session[RECENT] = {
-            "user": str(user.uuid),
-            "at": time.time(),
-        }
+        proof = authenticated_recently(request)
+        request.http_request.session[RECENT] = dict(proof)
         return True
     except ChangeRejected:
         return False
@@ -85,6 +97,7 @@ def recent(http):
 
 def save_profile(request):
     try:
+        authenticated_recently(request)
         user = actor(request)
         values = data(request, {"name"})
         name = values.get("name", "")
@@ -109,6 +122,7 @@ def lock_email(candidate):
 
 def prepare_email_change(request):
     try:
+        authenticated_recently(request)
         user = actor(request)
         values = data(request, {"candidate_email"})
         candidate = values.get("candidate_email", "").strip().lower()
@@ -241,6 +255,7 @@ def complete_email_change(request):
 
 def change_password(request):
     try:
+        authenticated_recently(request)
         user = actor(request)
         values = data(request, {"new_password", "repeat_password"})
         password = values.get("new_password", "")
@@ -263,6 +278,7 @@ def change_password(request):
 
 def sign_out_all(request):
     try:
+        authenticated_recently(request)
         user = actor(request)
         if data(request, {"confirm"}).get("confirm") is not True:
             raise ChangeRejected()
@@ -297,8 +313,38 @@ def native_setup(http):
     )
 
 
+def credential_state(user):
+    from authentik.stages.authenticator import devices_for_user
+    from django.forms.models import model_to_dict
+
+    state = []
+    for device in devices_for_user(user, confirmed=None):
+        values = model_to_dict(device)
+        values = {
+            key: value
+            for key, value in values.items()
+            if not any(
+                part in key
+                for part in ("last_", "throttl", "failure", "drift", "sign_count")
+            )
+        }
+        tokens = getattr(device, "token_set", None)
+        if tokens is not None:
+            values["tokens"] = list(
+                tokens.order_by("pk").values_list("token", flat=True)
+            )
+        state.append(
+            (
+                device._meta.label_lower,
+                str(device.pk),
+                hashlib.sha256(repr(sorted(values.items())).encode()).hexdigest(),
+            )
+        )
+    return sorted(state)
+
+
 class AccountSettingsGuard:
-    """Protect native user edits and authenticator APIs as well as branded flows."""
+    """Protect native edits; validation failures retain their pending challenge."""
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -326,6 +372,7 @@ class AccountSettingsGuard:
                 + urlencode({"next": http.path})
             )
         setup = native_setup(http)
+        write = http.method not in {"GET", "HEAD", "OPTIONS"}
         guarded = setup or http.path.startswith(
             (
                 "/api/v3/core/users/",
@@ -335,51 +382,45 @@ class AccountSettingsGuard:
             )
         )
         if (
-            guarded
-            and http.method not in {"GET", "HEAD", "OPTIONS"}
-            and not (user and user.is_authenticated and user.is_superuser)
+            not guarded
+            or not (write or setup)
+            or (user and user.is_authenticated and user.is_superuser)
         ):
-            if not user or not user.is_authenticated:
-                return JsonResponse(
-                    {"detail": "Use an authenticated account settings flow."},
-                    status=403,
-                )
-            path = http.path
-            if path.startswith(("/api/v3/core/users/", "/api/v3/core/tokens/")):
-                return JsonResponse(
-                    {"detail": "Use the verified Monash Water account flow."},
-                    status=403,
-                )
-            sensitive = setup or path.startswith(
-                ("/api/v3/authenticators/", "/api/v3/core/authenticated_sessions/")
+            return self.get_response(http)
+        if not user or not user.is_authenticated:
+            return JsonResponse(
+                {"detail": "Use an authenticated account settings flow."}, status=403
             )
-            if sensitive and not recent(http):
-                return JsonResponse(
-                    {"detail": "Open Security and verify your account again."},
-                    status=403,
-                )
-            if setup or path.startswith("/api/v3/authenticators/"):
-                try:
-                    with transaction.atomic():
-                        current = User.objects.select_for_update().get(pk=user.pk)
-                        revoke(current, "credentials.changed", uuid4())
-                except ChangeRejected:
-                    return JsonResponse(
-                        {
-                            "detail": "Session revocation unavailable. No security change was made."
-                        },
-                        status=503,
-                    )
-        response = self.get_response(http)
-        if (
-            guarded
-            and http.method not in {"GET", "HEAD", "OPTIONS"}
-            and user
-            and user.is_authenticated
-            and not user.is_superuser
-            and (setup or http.path.startswith("/api/v3/authenticators/"))
-            and recent(http)
-        ):
-            # Clear the deleted current Django session before SessionMiddleware saves it.
-            logout(http)
-        return response
+        if http.path.startswith(("/api/v3/core/users/", "/api/v3/core/tokens/")):
+            return JsonResponse(
+                {"detail": "Use the verified Monash Water account flow."}, status=403
+            )
+        if not recent(http):
+            return JsonResponse(
+                {"detail": "Open Security and verify your account again."}, status=403
+            )
+        if not (setup or http.path.startswith("/api/v3/authenticators/")):
+            return self.get_response(http)
+        saved_session = copy.deepcopy(dict(http.session))
+        try:
+            with transaction.atomic():
+                current = User.objects.select_for_update().get(pk=user.pk)
+                before = credential_state(current)
+                response = self.get_response(http)
+                changed = credential_state(current) != before
+                if changed:
+                    if response.status_code >= 400:
+                        raise ChangeRejected()
+                    revoke(current, "credentials.changed", uuid4())
+            if changed:
+                logout(http)
+            return response
+        except ChangeRejected:
+            http.session.clear()
+            http.session.update(saved_session)
+            return JsonResponse(
+                {
+                    "detail": "Session revocation unavailable. No security change was made. Retry or verify your account again."
+                },
+                status=503,
+            )
