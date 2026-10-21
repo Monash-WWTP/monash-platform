@@ -89,20 +89,45 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
         SafeArea(
           top: false,
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  _selected.label,
-                  style: Theme.of(context).textTheme.titleMedium,
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _selected.source == LocationSource.current
+                                ? 'Current location'
+                                : 'Selected point',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          Text(
+                            '${_selected.label}${_selected.accuracyM == null ? '' : ' · ±${_selected.accuracyM!.round()} m'}',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: _locating
+                          ? 'Finding location…'
+                          : 'Use current location',
+                      onPressed: _locating ? null : _locate,
+                      icon: _locating
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.my_location),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  _selected.source == LocationSource.current
-                      ? 'Current location · ±${_selected.accuracyM?.round()} m'
-                      : 'Selected point',
-                ),
+                const SizedBox(height: 8),
                 if (_error != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
@@ -113,19 +138,6 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                       ),
                     ),
                   ),
-                TextButton.icon(
-                  onPressed: _locating ? null : _locate,
-                  icon: _locating
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.my_location),
-                  label: Text(
-                    _locating ? 'Finding location…' : 'Use current location',
-                  ),
-                ),
                 FilledButton(
                   onPressed: _locating
                       ? null

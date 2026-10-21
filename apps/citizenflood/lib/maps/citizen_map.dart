@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:maplibre_gl/maplibre_gl.dart' hide LocationSource;
@@ -36,6 +37,8 @@ class _CitizenMapState extends State<CitizenMap> {
   Timer? _timer;
   int _revision = 0;
   int _attempt = 0;
+  static Future<Map<String, Uint8List>>? _cachedImages;
+  Future<void>? _styleAssets;
   @override
   void initState() {
     super.initState();
@@ -55,7 +58,11 @@ class _CitizenMapState extends State<CitizenMap> {
   void didUpdateWidget(CitizenMap old) {
     super.didUpdateWidget(old);
     if (_ready) {
-      _draw();
+      if (!listEquals(old.reports, widget.reports) ||
+          old.selectedId != widget.selectedId ||
+          old.deviceLocation != widget.deviceLocation) {
+        _draw();
+      }
       if (old.center != widget.center) {
         _controller?.animateCamera(
           CameraUpdate.newLatLng(
@@ -66,14 +73,8 @@ class _CitizenMapState extends State<CitizenMap> {
     }
   }
 
-  Future<void> _draw() async {
-    final controller = _controller;
-    if (controller == null || !_ready) return;
-    final revision = ++_revision;
-    await controller.setSymbolIconAllowOverlap(true);
-    await controller.clearSymbols();
-    await controller.clearCircles();
-    if (!mounted || revision != _revision) return;
+  static Future<Map<String, Uint8List>> _generateImages() async {
+    final images = <String, Uint8List>{};
     for (final category in ReportCategory.values) {
       for (final owner in [true, false]) {
         final recorder = ui.PictureRecorder();
@@ -113,13 +114,32 @@ class _CitizenMapState extends State<CitizenMap> {
         final data = await image.toByteData(format: ui.ImageByteFormat.png);
         image.dispose();
         picture.dispose();
-        if (!mounted || revision != _revision) return;
-        await controller.addImage(
-          CitizenMap.markerImageKey(category, owner),
-          data!.buffer.asUint8List(),
-        );
+        images[CitizenMap.markerImageKey(category, owner)] = data!.buffer
+            .asUint8List();
       }
     }
+    return images;
+  }
+
+  Future<void> _loadStyleAssets(MapLibreMapController controller) async {
+    final images = await (_cachedImages ??= _generateImages());
+    if (!mounted || controller != _controller) return;
+    for (final entry in images.entries) {
+      if (!mounted || controller != _controller) return;
+      await controller.addImage(entry.key, entry.value);
+    }
+  }
+
+  Future<void> _draw() async {
+    final controller = _controller;
+    if (controller == null || !_ready) return;
+    final revision = ++_revision;
+    await (_styleAssets ??= _loadStyleAssets(controller));
+    if (!mounted || revision != _revision || controller != _controller) return;
+    await controller.setSymbolIconAllowOverlap(true);
+    await controller.clearSymbols();
+    await controller.clearCircles();
+    if (!mounted || revision != _revision) return;
     for (final report in widget.reports) {
       if (!mounted || revision != _revision) return;
       final point = LatLng(report.latitude, report.longitude);
@@ -195,6 +215,7 @@ class _CitizenMapState extends State<CitizenMap> {
           tiltGesturesEnabled: false,
           onMapCreated: (controller) {
             _controller = controller;
+            _styleAssets = null;
             controller.onSymbolTapped.add((symbol) {
               final id = symbol.data?['reportId'];
               final report = widget.reports

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../maps/citizen_map.dart';
 import '../maps/map_selection.dart';
 import '../models/report.dart';
@@ -195,6 +196,62 @@ class _MapScreenState extends State<MapScreen> {
     if (mounted) setState(() => _selectedId = null);
   }
 
+  Future<void> _showObservations(List<Report> reports) async {
+    final generation = _generation;
+    final chosen = await showModalBottomSheet<Report>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (c) {
+        _detailRoute = ModalRoute.of(c);
+        return SafeArea(
+          child: SizedBox(
+            height: MediaQuery.sizeOf(c).height * .65,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    'Observations',
+                    style: Theme.of(c).textTheme.titleLarge,
+                  ),
+                ),
+                Expanded(
+                  child: reports.isEmpty
+                      ? const Center(child: Text('No observations yet.'))
+                      : ListView.builder(
+                          itemCount: reports.length,
+                          itemBuilder: (_, i) {
+                            final report = reports[i];
+                            final observed =
+                                report.observedAt ?? report.createdAt;
+                            final time = observed == null
+                                ? ''
+                                : '\n${DateFormat('d MMM · HH:mm').format(observed.toLocal())}';
+                            return ListTile(
+                              leading: Icon(report.category.icon),
+                              title: Text(report.category.label),
+                              subtitle: Text(
+                                '${report.readingLabel} · ${report.isOwner ? 'Your observation' : 'Community · approximate location'}$time',
+                              ),
+                              trailing: const Icon(Icons.chevron_right),
+                              onTap: () => Navigator.pop(c, report),
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    _detailRoute = null;
+    if (!mounted || generation != _generation || chosen == null) return;
+    _showDetail(chosen, [chosen]);
+  }
+
   @override
   Widget build(BuildContext context) => FutureBuilder<List<Report>>(
     key: ValueKey(_generation),
@@ -220,42 +277,34 @@ class _MapScreenState extends State<MapScreen> {
           Positioned(
             top: 12,
             left: 16,
-            right: 76,
             child: Material(
               elevation: 1,
-              borderRadius: BorderRadius.circular(12),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 10,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.circle,
-                      size: 10,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        snapshot.hasError
-                            ? 'Observations unavailable'
-                            : snapshot.connectionState ==
-                                  ConnectionState.waiting
-                            ? 'Loading observations…'
-                            : '${reports.length} ${reports.length == 1 ? 'observation' : 'observations'}',
-                        style: Theme.of(context).textTheme.bodySmall,
+              borderRadius: BorderRadius.circular(16),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Tooltip(
+                    message: 'List observations',
+                    child: TextButton.icon(
+                      onPressed: () => _showObservations(reports),
+                      icon: const Icon(Icons.list_alt),
+                      label: Text(
+                        snapshot.connectionState == ConnectionState.waiting
+                            ? '…'
+                            : '${reports.length}',
                       ),
                     ),
-                    IconButton(
-                      tooltip: 'Refresh observations',
-                      onPressed: _refresh,
-                      icon: const Icon(Icons.refresh),
-                      visualDensity: VisualDensity.compact,
+                  ),
+                  IconButton(
+                    tooltip: snapshot.hasError
+                        ? 'Observations unavailable. Retry'
+                        : 'Refresh observations',
+                    onPressed: _refresh,
+                    icon: Icon(
+                      snapshot.hasError ? Icons.sync_problem : Icons.refresh,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

@@ -42,27 +42,101 @@ Report privateReport(String owner, {String? photoPath}) => Report(
   note: '$owner private note',
   photoPath: photoPath,
 );
-class DelayedLocation extends LocationService {
- final result=Completer<CapturedLocation>();
- @override Future<CapturedLocation> current()=>result.future;
-}
-void main() {
- testWidgets('late GPS cannot restore precise camera after identity change',(tester)async{
-  final s=Session(),r=Repository();final location=DelayedLocation();
-  await tester.pumpWidget(MaterialApp(home:Scaffold(body:MapScreen(session:s,repository:r,location:location))));r.reads.single.complete([]);await tester.pump();
-  await tester.tap(find.byTooltip('Use current location'));await tester.pump();s.change();await tester.pump();r.reads.last.complete([]);await tester.pump();
-  location.result.complete(const CapturedLocation(coordinates:LatLng(3.123456,101.123456),accuracyM:3));await tester.pumpAndSettle();
-  expect(tester.widget<CitizenMap>(find.byType(CitizenMap)).deviceLocation,isNull);expect(tester.widget<CitizenMap>(find.byType(CitizenMap)).center.latitude,3.1390);
- });
 
-  testWidgets('logout dismisses overlapping private observation chooser', (tester) async {
-    final session=Session();final repo=Repository();
-    await tester.pumpWidget(MaterialApp(home:Scaffold(body:MapScreen(session:session,repository:repo))));
-    repo.reads.single.complete([privateReport('A'),privateReport('B')]);await tester.pump();
-    await tester.tap(find.byTooltip('Rainfall').last);await tester.pumpAndSettle();
-    expect(find.text('Observations at this location'),findsOneWidget);
-    session.change();await tester.pumpAndSettle();
-    expect(find.text('Observations at this location'),findsNothing);
+class DelayedLocation extends LocationService {
+  final result = Completer<CapturedLocation>();
+  @override
+  Future<CapturedLocation> current() => result.future;
+}
+
+void main() {
+  testWidgets(
+    'accessible observation list opens details and clears on identity change',
+    (t) async {
+      final s = Session();
+      final r = Repository();
+      await t.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MapScreen(session: s, repository: r),
+          ),
+        ),
+      );
+      r.reads.single.complete([privateReport('A')]);
+      await t.pump();
+      await t.tap(find.byTooltip('List observations'));
+      await t.pumpAndSettle();
+      expect(find.textContaining('Your observation'), findsOneWidget);
+      await t.tap(find.text('Rainfall').last);
+      await t.pumpAndSettle();
+      expect(find.text('A private note'), findsOneWidget);
+      Navigator.of(t.element(find.text('A private note'))).pop();
+      await t.pumpAndSettle();
+      await t.tap(find.byTooltip('List observations'));
+      await t.pumpAndSettle();
+      s.change();
+      await t.pumpAndSettle();
+      expect(find.textContaining('Your observation'), findsNothing);
+    },
+  );
+
+  testWidgets('late GPS cannot restore precise camera after identity change', (
+    tester,
+  ) async {
+    final s = Session(), r = Repository();
+    final location = DelayedLocation();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapScreen(session: s, repository: r, location: location),
+        ),
+      ),
+    );
+    r.reads.single.complete([]);
+    await tester.pump();
+    await tester.tap(find.byTooltip('Use current location'));
+    await tester.pump();
+    s.change();
+    await tester.pump();
+    r.reads.last.complete([]);
+    await tester.pump();
+    location.result.complete(
+      const CapturedLocation(
+        coordinates: LatLng(3.123456, 101.123456),
+        accuracyM: 3,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<CitizenMap>(find.byType(CitizenMap)).deviceLocation,
+      isNull,
+    );
+    expect(
+      tester.widget<CitizenMap>(find.byType(CitizenMap)).center.latitude,
+      3.1390,
+    );
+  });
+
+  testWidgets('logout dismisses overlapping private observation chooser', (
+    tester,
+  ) async {
+    final session = Session();
+    final repo = Repository();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapScreen(session: session, repository: repo),
+        ),
+      ),
+    );
+    repo.reads.single.complete([privateReport('A'), privateReport('B')]);
+    await tester.pump();
+    await tester.tap(find.byTooltip('Rainfall').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Observations at this location'), findsOneWidget);
+    session.change();
+    await tester.pumpAndSettle();
+    expect(find.text('Observations at this location'), findsNothing);
   });
 
   testWidgets(
@@ -113,7 +187,10 @@ void main() {
     await tester.pump();
     repo.reads[1].complete([]);
     await tester.pump();
-    expect(tester.widget<CitizenMap>(find.byType(CitizenMap)).reports.single.id, 'B');
+    expect(
+      tester.widget<CitizenMap>(find.byType(CitizenMap)).reports.single.id,
+      'B',
+    );
     await tester.tap(find.byTooltip('Rainfall'));
     await tester.pumpAndSettle();
     expect(find.text('B private note'), findsOneWidget);
