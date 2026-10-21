@@ -44,7 +44,7 @@ void main() {
         baseUrl: 'https://example.test',
         token: () async => 'proof',
         client: MockClient((r) async {
-          if (r.url.path.endsWith('account-settings'))
+          if (r.url.path.endsWith('account-settings')) {
             return http.Response(
               jsonEncode({
                 'available': true,
@@ -58,6 +58,7 @@ void main() {
               }),
               200,
             );
+          }
           reads++;
           return http.Response(
             jsonEncode({
