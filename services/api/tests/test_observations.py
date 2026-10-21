@@ -311,3 +311,144 @@ def test_browser_callback_session_reaches_both_api_versions(monkeypatch):
     assert r.status_code == 303
     assert browser_client.get("/api/v1/auth/me").status_code == 200
     assert browser_client.get("/api/v2/observation-history").status_code == 200
+
+
+def test_revision_two_context_and_followup_privacy():
+    a = account(["report:own"])
+    other = account(["report:own"])
+    app.dependency_overrides[require_account] = lambda: a
+
+    def post(p):
+        return client.post(
+            "/api/v2/observations", json=p, headers={"Idempotency-Key": str(uuid4())}
+        )
+
+    try:
+        assert client.get("/api/v2/observation-protocols").json().get(
+            "supported_revisions"
+        ) == [1, 2]
+        original = {
+            **body(
+                {
+                    "kind": "flooding",
+                    "method": "visual",
+                    "response": "present",
+                    "surfaces": ["road"],
+                    "movement": "flowing",
+                }
+            ),
+            "protocol_revision": 2,
+        }
+        r = post(original)
+        assert r.status_code == 201, r.text
+        rid = r.json()["id"]
+        update = {
+            **original,
+            "observed_at": "2026-10-01T13:00:00Z",
+            "previous_observation_id": rid,
+            "level_change": "higher",
+        }
+        r = post(update)
+        assert r.status_code == 201, r.text
+        assert r.json()["previous_observation_id"] == rid
+        assert (
+            post({**update, "observed_at": original["observed_at"]}).status_code == 422
+        )
+        assert post({**update, "latitude": 3.0}).status_code == 422
+        assert post({**update, "location_accuracy_m": 5}).status_code == 422
+        assert post({**original, "protocol_revision": 1}).status_code == 422
+        assert post({**original, "level_change": "higher"}).status_code == 422
+        assert post({**original, "photo_source": "camera"}).status_code == 422
+        absent = {
+            **update,
+            "observation": {
+                "kind": "flooding",
+                "method": "visual",
+                "response": "unknown",
+                "surfaces": [],
+            },
+        }
+        assert post(absent).status_code == 422
+        assert (
+            post({k: v for k, v in absent.items() if k != "level_change"}).status_code
+            == 201
+        )
+        app.dependency_overrides[require_account] = lambda: other
+        assert post(update).status_code == 404
+        app.dependency_overrides[require_account] = lambda: account(["report:review"])
+        assert (
+            client.post(
+                "/api/v2/observations/" + r.json()["id"] + "/moderation",
+                json={"status": "approved", "reason": "QA"},
+            ).status_code
+            == 200
+        )
+        public = next(
+            x
+            for x in client.get("/api/v2/community/observations").json()["items"]
+            if x["id"] == r.json()["id"]
+        )
+        assert public["protocol_revision"] == 2
+        assert public["observation"]["movement"] == "flowing"
+        assert (
+            "previous_observation_id" not in public
+            and "photo_source" not in public
+            and "level_change" not in public
+        )
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_revision_two_photo_source_and_foreign_media():
+    from app.db.platform import Media
+    from app.db.session import SessionLocal
+
+    a = account(["report:own"])
+    other = account(["report:own"])
+    mid = str(uuid4())
+    with SessionLocal() as db:
+        db.add(
+            Media(
+                id=mid,
+                owner_id=a.id,
+                object_key=str(uuid4()),
+                sha256="0" * 64,
+                byte_size=10,
+                mime="image/png",
+            )
+        )
+        db.commit()
+    app.dependency_overrides[require_account] = lambda: a
+    try:
+        payload = {
+            **body(),
+            "protocol_revision": 2,
+            "media_id": mid,
+            "photo_source": "gallery",
+        }
+        r = client.post(
+            "/api/v2/observations",
+            json=payload,
+            headers={"Idempotency-Key": str(uuid4())},
+        )
+        assert r.status_code == 201, r.text
+        assert r.json()["photo_source"] == "gallery"
+        assert (
+            client.post(
+                "/api/v2/observations",
+                json={**payload, "photo_source": None},
+                headers={"Idempotency-Key": str(uuid4())},
+            ).status_code
+            == 422
+        )
+        app.dependency_overrides[require_account] = lambda: other
+        assert (
+            client.post(
+                "/api/v2/observations",
+                json=payload,
+                headers={"Idempotency-Key": str(uuid4())},
+            ).status_code
+            == 404
+        )
+    finally:
+        app.dependency_overrides.clear()

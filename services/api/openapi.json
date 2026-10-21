@@ -1324,7 +1324,7 @@
         "title": "ModerationInput",
         "type": "object"
       },
-      "ObservationInput": {
+      "ObservationInputV1": {
         "additionalProperties": false,
         "properties": {
           "latitude": {
@@ -1438,10 +1438,172 @@
           "location_source",
           "observed_at"
         ],
-        "title": "ObservationInput",
+        "title": "ObservationInputV1",
         "type": "object"
       },
-      "ObservationView": {
+      "ObservationInputV2": {
+        "additionalProperties": false,
+        "properties": {
+          "latitude": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude",
+            "type": "number"
+          },
+          "level_change": {
+            "anyOf": [
+              {
+                "enum": [
+                  "higher",
+                  "same",
+                  "lower",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level Change"
+          },
+          "location_accuracy_m": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Accuracy M"
+          },
+          "location_source": {
+            "enum": [
+              "current",
+              "selected"
+            ],
+            "title": "Location Source",
+            "type": "string"
+          },
+          "longitude": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude",
+            "type": "number"
+          },
+          "media_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Media Id"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "observation": {
+            "discriminator": {
+              "mapping": {
+                "flooding": "#/components/schemas/PresenceV2",
+                "rain_occurrence": "#/components/schemas/PresenceV2",
+                "rainfall_accumulation": "#/components/schemas/Rainfall",
+                "temperature": "#/components/schemas/Temperature",
+                "water_appearance": "#/components/schemas/Appearance",
+                "water_reading": "#/components/schemas/WaterReading"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PresenceV2"
+              },
+              {
+                "$ref": "#/components/schemas/Appearance"
+              },
+              {
+                "$ref": "#/components/schemas/Rainfall"
+              },
+              {
+                "$ref": "#/components/schemas/WaterReading"
+              },
+              {
+                "$ref": "#/components/schemas/Temperature"
+              }
+            ],
+            "title": "Observation"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "photo_source": {
+            "anyOf": [
+              {
+                "enum": [
+                  "camera",
+                  "gallery"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Photo Source"
+          },
+          "previous_observation_id": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Observation Id"
+          },
+          "protocol_id": {
+            "const": "citizen-observation",
+            "title": "Protocol Id",
+            "type": "string"
+          },
+          "protocol_revision": {
+            "const": 2,
+            "title": "Protocol Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "protocol_id",
+          "protocol_revision",
+          "observation",
+          "latitude",
+          "longitude",
+          "location_source",
+          "observed_at"
+        ],
+        "title": "ObservationInputV2",
+        "type": "object"
+      },
+      "ObservationViewV1": {
         "additionalProperties": false,
         "properties": {
           "created_at": {
@@ -1587,7 +1749,201 @@
           "moderation_status",
           "created_at"
         ],
-        "title": "ObservationView",
+        "title": "ObservationViewV1",
+        "type": "object"
+      },
+      "ObservationViewV2": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "latitude": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude",
+            "type": "number"
+          },
+          "level_change": {
+            "anyOf": [
+              {
+                "enum": [
+                  "higher",
+                  "same",
+                  "lower",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level Change"
+          },
+          "location_accuracy_m": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Accuracy M"
+          },
+          "location_source": {
+            "enum": [
+              "current",
+              "selected"
+            ],
+            "title": "Location Source",
+            "type": "string"
+          },
+          "longitude": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude",
+            "type": "number"
+          },
+          "media_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Media Id"
+          },
+          "moderation_status": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ],
+            "title": "Moderation Status",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "observation": {
+            "discriminator": {
+              "mapping": {
+                "flooding": "#/components/schemas/PresenceV2",
+                "rain_occurrence": "#/components/schemas/PresenceV2",
+                "rainfall_accumulation": "#/components/schemas/Rainfall",
+                "temperature": "#/components/schemas/Temperature",
+                "water_appearance": "#/components/schemas/Appearance",
+                "water_reading": "#/components/schemas/WaterReading"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PresenceV2"
+              },
+              {
+                "$ref": "#/components/schemas/Appearance"
+              },
+              {
+                "$ref": "#/components/schemas/Rainfall"
+              },
+              {
+                "$ref": "#/components/schemas/WaterReading"
+              },
+              {
+                "$ref": "#/components/schemas/Temperature"
+              }
+            ],
+            "title": "Observation"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "photo_source": {
+            "anyOf": [
+              {
+                "enum": [
+                  "camera",
+                  "gallery"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Photo Source"
+          },
+          "previous_observation_id": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Observation Id"
+          },
+          "protocol_id": {
+            "const": "citizen-observation",
+            "title": "Protocol Id",
+            "type": "string"
+          },
+          "protocol_revision": {
+            "const": 2,
+            "title": "Protocol Revision",
+            "type": "integer"
+          },
+          "review_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Reason"
+          }
+        },
+        "required": [
+          "protocol_id",
+          "protocol_revision",
+          "observation",
+          "latitude",
+          "longitude",
+          "location_source",
+          "observed_at",
+          "id",
+          "moderation_status",
+          "created_at"
+        ],
+        "title": "ObservationViewV2",
         "type": "object"
       },
       "OperatingParametersIn": {
@@ -1765,6 +2121,51 @@
         "title": "Page[AdminStationView]",
         "type": "object"
       },
+      "Page_Annotated_Union_ObservationViewV1__ObservationViewV2___FieldInfo_annotation_NoneType__required_True__discriminator__protocol_revision____": {
+        "properties": {
+          "items": {
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "1": "#/components/schemas/ObservationViewV1",
+                  "2": "#/components/schemas/ObservationViewV2"
+                },
+                "propertyName": "protocol_revision"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ObservationViewV1"
+                },
+                {
+                  "$ref": "#/components/schemas/ObservationViewV2"
+                }
+              ]
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "Page[Annotated[Union[ObservationViewV1, ObservationViewV2], FieldInfo(annotation=NoneType, required=True, discriminator='protocol_revision')]]",
+        "type": "object"
+      },
       "Page_CommunityView_": {
         "properties": {
           "items": {
@@ -1794,37 +2195,6 @@
           "limit"
         ],
         "title": "Page[CommunityView]",
-        "type": "object"
-      },
-      "Page_ObservationView_": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/ObservationView"
-            },
-            "title": "Items",
-            "type": "array"
-          },
-          "limit": {
-            "title": "Limit",
-            "type": "integer"
-          },
-          "offset": {
-            "title": "Offset",
-            "type": "integer"
-          },
-          "total": {
-            "title": "Total",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "items",
-          "total",
-          "offset",
-          "limit"
-        ],
-        "title": "Page[ObservationView]",
         "type": "object"
       },
       "Page_PublicObservation_": {
@@ -1951,13 +2321,27 @@
         "title": "Page[StationView]",
         "type": "object"
       },
-      "Page_Union_ObservationView__LegacyObservationView__": {
+      "Page_Union_Annotated_Union_ObservationViewV1__ObservationViewV2___FieldInfo_annotation_NoneType__required_True__discriminator__protocol_revision_____LegacyObservationView__": {
         "properties": {
           "items": {
             "items": {
               "anyOf": [
                 {
-                  "$ref": "#/components/schemas/ObservationView"
+                  "discriminator": {
+                    "mapping": {
+                      "1": "#/components/schemas/ObservationViewV1",
+                      "2": "#/components/schemas/ObservationViewV2"
+                    },
+                    "propertyName": "protocol_revision"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ObservationViewV1"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ObservationViewV2"
+                    }
+                  ]
                 },
                 {
                   "$ref": "#/components/schemas/LegacyObservationView"
@@ -1986,7 +2370,7 @@
           "offset",
           "limit"
         ],
-        "title": "Page[Union[ObservationView, LegacyObservationView]]",
+        "title": "Page[Union[Annotated[Union[ObservationViewV1, ObservationViewV2], FieldInfo(annotation=NoneType, required=True, discriminator='protocol_revision')], LegacyObservationView]]",
         "type": "object"
       },
       "PlantDetailOut": {
@@ -2280,6 +2664,70 @@
         "title": "Presence",
         "type": "object"
       },
+      "PresenceV2": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "flooding",
+              "rain_occurrence"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "method": {
+            "const": "visual",
+            "title": "Method",
+            "type": "string"
+          },
+          "movement": {
+            "anyOf": [
+              {
+                "enum": [
+                  "still",
+                  "flowing",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Movement"
+          },
+          "response": {
+            "enum": [
+              "present",
+              "not_observed",
+              "unknown"
+            ],
+            "title": "Response",
+            "type": "string"
+          },
+          "surfaces": {
+            "items": {
+              "enum": [
+                "road",
+                "path",
+                "property",
+                "other"
+              ],
+              "type": "string"
+            },
+            "maxItems": 4,
+            "title": "Surfaces",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "method",
+          "response"
+        ],
+        "title": "PresenceV2",
+        "type": "object"
+      },
       "PublicObservation": {
         "additionalProperties": false,
         "properties": {
@@ -2319,7 +2767,10 @@
             "type": "string"
           },
           "protocol_revision": {
-            "const": 1,
+            "enum": [
+              1,
+              2
+            ],
             "title": "Protocol Revision",
             "type": "integer"
           }
@@ -2438,6 +2889,22 @@
             ],
             "title": "Method",
             "type": "string"
+          },
+          "movement": {
+            "anyOf": [
+              {
+                "enum": [
+                  "still",
+                  "flowing",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Movement"
           },
           "reference_kind": {
             "anyOf": [
@@ -7037,7 +7504,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Page_ObservationView_"
+                  "$ref": "#/components/schemas/Page_Annotated_Union_ObservationViewV1__ObservationViewV2___FieldInfo_annotation_NoneType__required_True__discriminator__protocol_revision____"
                 }
               }
             },
@@ -7121,7 +7588,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Page_Union_ObservationView__LegacyObservationView__"
+                  "$ref": "#/components/schemas/Page_Union_Annotated_Union_ObservationViewV1__ObservationViewV2___FieldInfo_annotation_NoneType__required_True__discriminator__protocol_revision_____LegacyObservationView__"
                 }
               }
             },
@@ -7311,7 +7778,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Page_ObservationView_"
+                  "$ref": "#/components/schemas/Page_Annotated_Union_ObservationViewV1__ObservationViewV2___FieldInfo_annotation_NoneType__required_True__discriminator__protocol_revision____"
                 }
               }
             },
@@ -7380,7 +7847,22 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ObservationInput"
+                "discriminator": {
+                  "mapping": {
+                    "1": "#/components/schemas/ObservationInputV1",
+                    "2": "#/components/schemas/ObservationInputV2"
+                  },
+                  "propertyName": "protocol_revision"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ObservationInputV1"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ObservationInputV2"
+                  }
+                ],
+                "title": "Body"
               }
             }
           },
@@ -7391,7 +7873,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObservationView"
+                  "discriminator": {
+                    "mapping": {
+                      "1": "#/components/schemas/ObservationViewV1",
+                      "2": "#/components/schemas/ObservationViewV2"
+                    },
+                    "propertyName": "protocol_revision"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ObservationViewV1"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ObservationViewV2"
+                    }
+                  ],
+                  "title": "Response Create Api V2 Observations Post"
                 }
               }
             },
@@ -7461,7 +7958,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObservationView"
+                  "discriminator": {
+                    "mapping": {
+                      "1": "#/components/schemas/ObservationViewV1",
+                      "2": "#/components/schemas/ObservationViewV2"
+                    },
+                    "propertyName": "protocol_revision"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ObservationViewV1"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ObservationViewV2"
+                    }
+                  ],
+                  "title": "Response Detail Api V2 Observations  Rid  Get"
                 }
               }
             },
@@ -7541,7 +8053,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObservationView"
+                  "discriminator": {
+                    "mapping": {
+                      "1": "#/components/schemas/ObservationViewV1",
+                      "2": "#/components/schemas/ObservationViewV2"
+                    },
+                    "propertyName": "protocol_revision"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ObservationViewV1"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ObservationViewV2"
+                    }
+                  ],
+                  "title": "Response Moderate Api V2 Observations  Rid  Moderation Post"
                 }
               }
             },

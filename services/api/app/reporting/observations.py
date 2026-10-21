@@ -134,7 +134,7 @@ Observation = Annotated[
 ]
 
 
-class ObservationInput(Strict):
+class ObservationInputV1(Strict):
     protocol_id: Literal["citizen-observation"]
     protocol_revision: Literal[1]
     observation: Observation
@@ -162,14 +162,69 @@ class ObservationInput(Strict):
         return self
 
 
-class ObservationView(ObservationInput):
+class PresenceV2(Presence):
+    movement: Literal["still", "flowing", "unknown"] | None = None
+
+    @model_validator(mode="after")
+    def movement_context(self):
+        if self.movement is not None and (
+            self.kind != "flooding" or self.response != "present"
+        ):
+            raise ValueError("Movement requires observed flooding")
+        return self
+
+
+class ObservationInputV2(ObservationInputV1):
+    protocol_revision: Literal[2]
+    observation: Annotated[
+        PresenceV2 | Appearance | Rainfall | WaterReading | Temperature,
+        Field(discriminator="kind"),
+    ]
+    photo_source: Literal["camera", "gallery"] | None = None
+    previous_observation_id: str | None = Field(
+        default=None, min_length=1, max_length=80
+    )
+    level_change: Literal["higher", "same", "lower", "unknown"] | None = None
+
+    @model_validator(mode="after")
+    def context(self):
+        if bool(self.media_id) != bool(self.photo_source):
+            raise ValueError("Photo and picker source must be supplied together")
+        if self.previous_observation_id and self.observation.kind != "flooding":
+            raise ValueError("Only flooding supports linked updates")
+        if self.level_change is not None and (
+            not self.previous_observation_id or self.observation.response != "present"
+        ):
+            raise ValueError("Change requires linked observed flooding")
+        return self
+
+
+ObservationInput = Annotated[
+    ObservationInputV1 | ObservationInputV2, Field(discriminator="protocol_revision")
+]
+
+
+class ObservationViewV1(ObservationInputV1):
     id: str
     moderation_status: Literal["pending", "approved", "rejected"]
     review_reason: str | None = None
     created_at: datetime
 
 
+class ObservationViewV2(ObservationInputV2):
+    id: str
+    moderation_status: Literal["pending", "approved", "rejected"]
+    review_reason: str | None = None
+    created_at: datetime
+
+
+ObservationView = Annotated[
+    ObservationViewV1 | ObservationViewV2, Field(discriminator="protocol_revision")
+]
+
+
 class PublicValue(Strict):
+    movement: Literal["still", "flowing", "unknown"] | None = None
     kind: Literal[
         "flooding",
         "rain_occurrence",
@@ -200,7 +255,7 @@ class PublicValue(Strict):
 class PublicObservation(Strict):
     id: str
     protocol_id: Literal["citizen-observation"]
-    protocol_revision: Literal[1]
+    protocol_revision: Literal[1, 2]
     observation: PublicValue
     latitude: float
     longitude: float

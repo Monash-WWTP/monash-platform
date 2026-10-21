@@ -61,6 +61,7 @@ def protocols():
     return {
         "protocol_id": PROTOCOL_ID,
         "protocol_revision": REVISION,
+        "supported_revisions": [1, 2],
         "types": [
             "flooding",
             "rain_occurrence",
@@ -94,6 +95,38 @@ def references(account=Depends(require_citizen), db: Session = Depends(get_db)):
     return {"items": result}
 
 
+def validate_followup(db, account_id, body):
+    previous_id = getattr(body, "previous_observation_id", None)
+    if not previous_id:
+        return
+    previous = query_v2(db).filter_by(id=previous_id, owner_id=account_id).first()
+    if (
+        not previous
+        or previous.payload.get("observation", {}).get("kind") != "flooding"
+    ):
+        raise ApiError(404, "report_not_found", "Observation not found")
+    from datetime import datetime
+
+    previous_time = datetime.fromisoformat(
+        previous.payload["observed_at"].replace("Z", "+00:00")
+    )
+    if body.observed_at <= previous_time:
+        raise ApiError(
+            422, "invalid_followup", "Update must be observed after the earlier report"
+        )
+    if (
+        body.latitude != previous.latitude
+        or body.longitude != previous.longitude
+        or body.location_source != "selected"
+        or body.location_accuracy_m is not None
+    ):
+        raise ApiError(
+            422,
+            "invalid_followup",
+            "Update must reuse the selected point without GPS accuracy",
+        )
+
+
 @router.post("/observations", status_code=201, response_model=ObservationView)
 def create(
     body: ObservationInput,
@@ -118,6 +151,7 @@ def create(
                 "Retry key already used for different content",
             )
         return project(db, previous)
+    validate_followup(db, account.id, body)
     if (
         isinstance(body.observation, WaterReading)
         and body.observation.reference_kind == "stage"
@@ -255,6 +289,7 @@ def community(
     # Public context is explicit. Free text, instrument/site identities and reference IDs stay private.
     fields = {
         "kind",
+        "movement",
         "method",
         "response",
         "surfaces",
@@ -273,7 +308,7 @@ def community(
             {
                 "id": r.id,
                 "protocol_id": PROTOCOL_ID,
-                "protocol_revision": REVISION,
+                "protocol_revision": r.payload["protocol_revision"],
                 "observation": {
                     k: v for k, v in r.payload["observation"].items() if k in fields
                 },
