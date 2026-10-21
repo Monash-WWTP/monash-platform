@@ -19,7 +19,7 @@ def test_branded_confirmation_and_recovery_templates_have_distinct_actions():
     assert 'Confirm account' in confirm and 'Reset password' not in confirm
     assert 'Reset password' in recovery and 'Confirm account' not in recovery
     for template in (confirm, recovery):
-        assert '{{ url }}' in template and 'CitizenFlood' in template
+        assert '{% extends "email/monash_base.html" %}' in template and 'CitizenFlood' in template
         assert 'Monash Water' in template
 
 
@@ -27,3 +27,16 @@ def test_local_brand_matches_actual_identity_host_including_port():
     source = Path('infra/staging/identity/bootstrap.py').read_text()
     assert "domain='localhost:9100'" in source
     assert "'base': 'light'" in source
+
+
+def test_all_account_emails_share_one_layout_and_action_style():
+    root = Path('infra/staging/identity/templates/email')
+    children = [p for p in root.glob('monash_*.html') if p.name != 'monash_base.html']
+    assert len(children) == 4
+    for child in children:
+        source = child.read_text()
+        assert '{% extends "email/monash_base.html" %}' in source
+        assert '<table' not in source and 'style=' not in source
+    base = (root / 'monash_base.html').read_text()
+    assert '{{ url }}' in base and 'CitizenFlood logo' in base
+    assert base.count('background:#146346') == 1

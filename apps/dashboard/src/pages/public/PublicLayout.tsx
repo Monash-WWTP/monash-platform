@@ -17,7 +17,7 @@ export default function PublicLayout() {
           <Link to="/dashboard">Dashboard</Link>
           <a href={documentationUrl}>{documentationLabel}</a>
           <Link className="account-link" to="/register">
-            Account availability
+            Account
           </Link>
         </nav>
       </header>

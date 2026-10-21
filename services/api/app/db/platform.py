@@ -3,6 +3,7 @@
 from datetime import datetime, timezone
 from uuid import uuid4
 from sqlalchemy import (
+    BigInteger,
     Boolean,
     String,
     DateTime,
@@ -32,6 +33,8 @@ class Account(Base):
     issuer: Mapped[str] = mapped_column(String, nullable=False)
     subject: Mapped[str] = mapped_column(String, nullable=False)
     email: Mapped[str] = mapped_column(String, nullable=False)
+    display_name: Mapped[str | None] = mapped_column(String(120))
+    profile_claim_iat: Mapped[int | None] = mapped_column(BigInteger)
     capabilities: Mapped[list] = mapped_column(JSON, default=lambda: ["report:own"])
     revoked_before: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)

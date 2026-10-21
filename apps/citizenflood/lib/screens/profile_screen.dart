@@ -2,27 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/account_session.dart';
 import '../services/platform_api.dart';
+import '../services/account_settings_repository.dart';
+import '../services/account_settings_launcher.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key, this.session, this.api});
+  const ProfileScreen({
+    super.key,
+    this.session,
+    this.api,
+    this.settingsLauncher,
+  });
   final AccountSession? session;
   final PlatformApi? api;
+  final AccountSettingsLauncher? settingsLauncher;
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen>
+    with WidgetsBindingObserver {
   late final _session = widget.session ?? AccountSession.instance;
   late final _api = widget.api ?? PlatformApi();
   Future<dynamic>? _account;
   late int _generation;
   bool _busy = false;
+  int? _settingsGeneration;
   String? _error;
   @override
   void initState() {
     super.initState();
     _generation = _session.generation;
     _load();
+    WidgetsBinding.instance.addObserver(this);
     _session.addListener(_changed);
   }
 
@@ -38,8 +49,90 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _session.removeListener(_changed);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed || _settingsGeneration == null) {
+      return;
+    }
+    final generation = _settingsGeneration!;
+    _settingsGeneration = null;
+    _refreshSettings(generation);
+  }
+
+  Future<void> _refreshSettings(int generation) async {
+    if (generation != _session.generation || !_session.signedIn) return;
+    try {
+      await _session.refreshAccountProof();
+      if (mounted && generation == _session.generation) setState(_load);
+    } catch (_) {
+      if (mounted && generation == _session.generation) {
+        setState(
+          () => _error = 'Could not refresh account details. Try again.',
+        );
+      }
+    }
+  }
+
+  Future<void> _settings(String action) async {
+    if (_busy) return;
+    final generation = _session.generation;
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      final settings = await AccountSettingsRepository(_api).load();
+      if (!mounted || generation != _session.generation) return;
+      if (settings == null || !settings.actions.containsKey(action)) {
+        throw StateError('Settings unavailable');
+      }
+      _settingsGeneration = generation;
+      final opened =
+          await (widget.settingsLauncher ?? AccountSettingsLauncher()).open(
+            settings,
+            action,
+          );
+      if (!opened) {
+        _settingsGeneration = null;
+        throw StateError('Could not open settings');
+      }
+    } catch (_) {
+      _settingsGeneration = null;
+      if (mounted && generation == _session.generation) {
+        setState(
+          () => _error = 'Account settings unavailable. Please try again.',
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  void _choices(List<(String, String, IconData)> actions) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            for (final action in actions)
+              ListTile(
+                leading: Icon(action.$3),
+                title: Text(action.$1),
+                onTap: () {
+                  Navigator.pop(context);
+                  _settings(action.$2);
+                },
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _authenticate() async {
@@ -135,6 +228,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (account['display_name'] is String &&
+                    (account['display_name'] as String).isNotEmpty)
+                  Text(
+                    account['display_name'],
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                 Text(
                   account['email'] ?? 'Signed in',
                   style: Theme.of(context).textTheme.titleMedium,
@@ -144,7 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Icon(Icons.verified_user_outlined, size: 18),
                     SizedBox(width: 8),
-                    Text('Verified account'),
+                    Expanded(child: Text('Verified account')),
                   ],
                 ),
               ],
@@ -152,6 +251,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         ),
         const SizedBox(height: 24),
+        Text(
+          'Opens secure account settings',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        ListTile(
+          leading: const Icon(Icons.person_outline),
+          title: const Text('Profile'),
+          onTap: _busy ? null : () => _settings('profile'),
+        ),
+        ListTile(
+          leading: const Icon(Icons.mail_outline),
+          title: const Text('Email & password'),
+          onTap: _busy
+              ? null
+              : () => _choices([
+                  ('Change email', 'email', Icons.mail_outline),
+                  ('Change password', 'password', Icons.lock_outline),
+                ]),
+        ),
+        ListTile(
+          leading: const Icon(Icons.shield_outlined),
+          title: const Text('Security'),
+          onTap: _busy
+              ? null
+              : () => _choices([
+                  ('MFA & account sessions', 'security', Icons.shield_outlined),
+                  ('Sign out all devices', 'signout_all', Icons.logout),
+                ]),
+        ),
         OutlinedButton(
           onPressed: _busy
               ? null

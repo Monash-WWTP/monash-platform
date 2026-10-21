@@ -21,5 +21,5 @@ def test_disposable_database_is_at_current_revision():
     with engine.connect() as connection:
         assert (
             MigrationContext.configure(connection).get_current_revision()
-            == "a61c84b0e921"
+            == "b72a05e3c114"
         )

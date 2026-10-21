@@ -13,7 +13,8 @@ export default function OperatorAccess() {
   }
   return <section className="rounded-lg border border-border bg-card p-3 text-sm [overflow-wrap:anywhere]" aria-label="Account access">
     {account ? <>
-      <p>Signed in as {account.email}</p>
+      <p>Signed in as {account.display_name || account.email}</p>
+      <a className="mr-3 underline" href="/account">Account settings</a>
       {!account.capabilities.includes('scenario:operate') && <p>Scenario access requires an operator invitation.</p>}
       {account.capabilities.includes('platform:admin') && <a className="mr-3 underline" href="/dashboard/admin">Administration</a>}
       {account.capabilities.includes('report:respond') && <a className="mr-3 underline" href="/dashboard/operations">Operations reports</a>}

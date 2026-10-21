@@ -1,6 +1,39 @@
 {
   "components": {
     "schemas": {
+      "AccountSettingsView": {
+        "additionalProperties": false,
+        "properties": {
+          "actions": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "default": {},
+            "title": "Actions",
+            "type": "object"
+          },
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin"
+          }
+        },
+        "required": [
+          "available"
+        ],
+        "title": "AccountSettingsView",
+        "type": "object"
+      },
       "AccountView": {
         "properties": {
           "capabilities": {
@@ -9,6 +42,17 @@
             },
             "title": "Capabilities",
             "type": "array"
+          },
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
           },
           "email": {
             "title": "Email",
@@ -5485,6 +5529,65 @@
         ]
       }
     },
+    "/api/v1/auth/account-settings": {
+      "get": {
+        "operationId": "account_settings_api_v1_auth_account_settings_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountSettingsView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Account Settings",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
     "/api/v1/auth/callback": {
       "get": {
         "operationId": "callback_api_v1_auth_callback_get",
@@ -5567,6 +5670,16 @@
             "schema": {
               "default": false,
               "title": "Operator",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "account_settings",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Account Settings",
               "type": "boolean"
             }
           }

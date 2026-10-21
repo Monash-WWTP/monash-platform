@@ -279,7 +279,7 @@ except Exception:
             defaults={
                 "client_id": client,
                 "client_type": kind,
-                "client_secret": os.environ.get("MONASH_WEB_SECRET", "")
+                "client_secret": os.environ["MONASH_WEB_SECRET"]
                 if kind == "confidential"
                 else "",
                 "authentication_flow": operator_flow
@@ -311,3 +311,8 @@ except Exception:
 print(
     "Monash OIDC providers and verified registration configured; no operational reports created."
 )
+
+import sys
+sys.path.insert(0, '/monash-brand')
+from bootstrap_accounts import provision
+provision()

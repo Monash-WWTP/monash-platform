@@ -69,6 +69,34 @@ void main() {
     () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, null),
   );
+  test('invalid grant clears the local identity on settings return', () async {
+    final pending = session.refreshAccountProof();
+    await Future<void>.delayed(Duration.zero);
+    refresh.completeError(
+      PlatformException(
+        code: 'token_failed',
+        details: {
+          'error': 'invalid_grant',
+          'legacy_error_details': 'native error',
+        },
+      ),
+    );
+    await expectLater(pending, throwsStateError);
+    expect(session.signedIn, isFalse);
+    expect(await storage.read(key: 'refresh_token'), isNull);
+  });
+  test('provider outage retains identity on settings return', () async {
+    final pending = session.refreshAccountProof();
+    await Future<void>.delayed(Duration.zero);
+    refresh.completeError(
+      PlatformException(
+        code: 'token_failed',
+        details: {'error': 'temporarily_unavailable'},
+      ),
+    );
+    await expectLater(pending, throwsStateError);
+    expect(session.signedIn, isTrue);
+  });
   test('refresh finishing after logout cannot restore credentials', () async {
     final pending = session.token();
     await Future<void>.delayed(Duration.zero);

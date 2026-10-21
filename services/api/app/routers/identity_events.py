@@ -22,7 +22,13 @@ class IdentityEvent(BaseModel):
     issuer: str
     subject: str
     occurred_at: datetime
-    action: Literal["credentials.reset", "account.disabled"]
+    action: Literal[
+        "credentials.reset",
+        "account.disabled",
+        "account.email_changed",
+        "credentials.changed",
+        "sessions.revoked",
+    ]
 
 
 @router.post("/events", status_code=204)

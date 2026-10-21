@@ -28,6 +28,7 @@ const router = createBrowserRouter([
       { path: "/research", element: <ResearchPage /> },
       { path: "/research/references", element: <ResearchReferencesPage /> },
       { path: "/research/:slug", element: <ResearchArticlePage /> },
+      { path: "/account", element: <AccountPage /> },
       { path: "/login", element: <AccountPage /> },
       { path: "/register", element: <AccountPage /> },
       { path: "*", element: <NotFoundPage /> },

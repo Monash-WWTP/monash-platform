@@ -1,10 +1,6 @@
 {% extends "email/monash_base.html" %}
-{% block content %}
-<tr><td style="padding:24px;color:#202724;font-family:Arial,sans-serif;">
-<h1 style="font-size:24px;">Confirm your Monash Water account</h1>
-<p>Confirm your email address to finish creating your CitizenFlood account.</p>
-<p style="padding:16px 0;"><a id="confirm" href="{{ url }}" rel="noopener noreferrer" style="background:#146346;color:#ffffff;padding:14px 22px;text-decoration:none;border-radius:8px;display:inline-block;">Confirm account</a></p>
-<p>If you did not create this account, you can ignore this email.</p>
-</td></tr>
-{% endblock %}
-{% block sub_content %}<tr><td style="padding:24px;font-size:12px;color:#58635d;">CitizenFlood · Monash Water<br>This confirmation link expires in 30 minutes.</td></tr>{% endblock %}
+{% block title %}Confirm your Monash Water account{% endblock %}
+{% block message %}<p>Confirm your email address to finish creating your CitizenFlood account.</p>{% endblock %}
+{% block action_label %}Confirm account{% endblock %}
+{% block help %}<p>If you did not create this account, you can ignore this email.</p>{% endblock %}
+{% block expiry %}<br>This confirmation link expires in 30 minutes.{% endblock %}

@@ -1,6 +1,6 @@
 # Shared account settings for registered users
 
-Status: written design approved. Implementation plan prepared for review; no product implementation has started.
+Status: design and inline implementation approved. Implementation and local acceptance are in progress; see the shared-account-settings operations guide for verified scope.
 
 ## Purpose and platform fit
 
