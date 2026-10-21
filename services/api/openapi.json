@@ -396,6 +396,53 @@
         "title": "AdminStatus",
         "type": "object"
       },
+      "Appearance": {
+        "additionalProperties": false,
+        "properties": {
+          "features": {
+            "items": {
+              "enum": [
+                "discoloration",
+                "foam",
+                "debris",
+                "sheen",
+                "overflow",
+                "other"
+              ],
+              "type": "string"
+            },
+            "maxItems": 6,
+            "title": "Features",
+            "type": "array"
+          },
+          "kind": {
+            "const": "water_appearance",
+            "title": "Kind",
+            "type": "string"
+          },
+          "method": {
+            "const": "visual",
+            "title": "Method",
+            "type": "string"
+          },
+          "response": {
+            "enum": [
+              "features_observed",
+              "not_observed",
+              "unknown"
+            ],
+            "title": "Response",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "method",
+          "response"
+        ],
+        "title": "Appearance",
+        "type": "object"
+      },
       "Body_upload_api_v1_media_post": {
         "properties": {
           "file": {
@@ -1108,6 +1155,272 @@
         "title": "ModerationInput",
         "type": "object"
       },
+      "ObservationInput": {
+        "additionalProperties": false,
+        "properties": {
+          "latitude": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude",
+            "type": "number"
+          },
+          "location_accuracy_m": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Accuracy M"
+          },
+          "location_source": {
+            "enum": [
+              "current",
+              "selected"
+            ],
+            "title": "Location Source",
+            "type": "string"
+          },
+          "longitude": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude",
+            "type": "number"
+          },
+          "media_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Media Id"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "observation": {
+            "discriminator": {
+              "mapping": {
+                "flooding": "#/components/schemas/Presence",
+                "rain_occurrence": "#/components/schemas/Presence",
+                "rainfall_accumulation": "#/components/schemas/Rainfall",
+                "temperature": "#/components/schemas/Temperature",
+                "water_appearance": "#/components/schemas/Appearance",
+                "water_reading": "#/components/schemas/WaterReading"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Presence"
+              },
+              {
+                "$ref": "#/components/schemas/Appearance"
+              },
+              {
+                "$ref": "#/components/schemas/Rainfall"
+              },
+              {
+                "$ref": "#/components/schemas/WaterReading"
+              },
+              {
+                "$ref": "#/components/schemas/Temperature"
+              }
+            ],
+            "title": "Observation"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "protocol_id": {
+            "const": "citizen-observation",
+            "title": "Protocol Id",
+            "type": "string"
+          },
+          "protocol_revision": {
+            "const": 1,
+            "title": "Protocol Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "protocol_id",
+          "protocol_revision",
+          "observation",
+          "latitude",
+          "longitude",
+          "location_source",
+          "observed_at"
+        ],
+        "title": "ObservationInput",
+        "type": "object"
+      },
+      "ObservationView": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "latitude": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude",
+            "type": "number"
+          },
+          "location_accuracy_m": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Accuracy M"
+          },
+          "location_source": {
+            "enum": [
+              "current",
+              "selected"
+            ],
+            "title": "Location Source",
+            "type": "string"
+          },
+          "longitude": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude",
+            "type": "number"
+          },
+          "media_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Media Id"
+          },
+          "moderation_status": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ],
+            "title": "Moderation Status",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "observation": {
+            "discriminator": {
+              "mapping": {
+                "flooding": "#/components/schemas/Presence",
+                "rain_occurrence": "#/components/schemas/Presence",
+                "rainfall_accumulation": "#/components/schemas/Rainfall",
+                "temperature": "#/components/schemas/Temperature",
+                "water_appearance": "#/components/schemas/Appearance",
+                "water_reading": "#/components/schemas/WaterReading"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Presence"
+              },
+              {
+                "$ref": "#/components/schemas/Appearance"
+              },
+              {
+                "$ref": "#/components/schemas/Rainfall"
+              },
+              {
+                "$ref": "#/components/schemas/WaterReading"
+              },
+              {
+                "$ref": "#/components/schemas/Temperature"
+              }
+            ],
+            "title": "Observation"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "protocol_id": {
+            "const": "citizen-observation",
+            "title": "Protocol Id",
+            "type": "string"
+          },
+          "protocol_revision": {
+            "const": 1,
+            "title": "Protocol Revision",
+            "type": "integer"
+          },
+          "review_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Reason"
+          }
+        },
+        "required": [
+          "protocol_id",
+          "protocol_revision",
+          "observation",
+          "latitude",
+          "longitude",
+          "location_source",
+          "observed_at",
+          "id",
+          "moderation_status",
+          "created_at"
+        ],
+        "title": "ObservationView",
+        "type": "object"
+      },
       "OperatingParametersIn": {
         "properties": {
           "aeration_availability": {
@@ -1312,6 +1625,68 @@
           "limit"
         ],
         "title": "Page[CommunityView]",
+        "type": "object"
+      },
+      "Page_ObservationView_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ObservationView"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "Page[ObservationView]",
+        "type": "object"
+      },
+      "Page_PublicObservation_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PublicObservation"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "Page[PublicObservation]",
         "type": "object"
       },
       "Page_ReportView_": {
@@ -1648,6 +2023,189 @@
           "reason"
         ],
         "title": "PlantWrite",
+        "type": "object"
+      },
+      "Presence": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "flooding",
+              "rain_occurrence"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "method": {
+            "const": "visual",
+            "title": "Method",
+            "type": "string"
+          },
+          "response": {
+            "enum": [
+              "present",
+              "not_observed",
+              "unknown"
+            ],
+            "title": "Response",
+            "type": "string"
+          },
+          "surfaces": {
+            "items": {
+              "enum": [
+                "road",
+                "path",
+                "property",
+                "other"
+              ],
+              "type": "string"
+            },
+            "maxItems": 4,
+            "title": "Surfaces",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "method",
+          "response"
+        ],
+        "title": "Presence",
+        "type": "object"
+      },
+      "PublicObservation": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "latitude": {
+            "title": "Latitude",
+            "type": "number"
+          },
+          "location_precision": {
+            "const": "rounded_0.001_degree",
+            "title": "Location Precision",
+            "type": "string"
+          },
+          "longitude": {
+            "title": "Longitude",
+            "type": "number"
+          },
+          "observation": {
+            "additionalProperties": true,
+            "title": "Observation",
+            "type": "object"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "protocol_id": {
+            "const": "citizen-observation",
+            "title": "Protocol Id",
+            "type": "string"
+          },
+          "protocol_revision": {
+            "const": 1,
+            "title": "Protocol Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "protocol_id",
+          "protocol_revision",
+          "observation",
+          "latitude",
+          "longitude",
+          "location_precision",
+          "observed_at",
+          "created_at"
+        ],
+        "title": "PublicObservation",
+        "type": "object"
+      },
+      "Rainfall": {
+        "additionalProperties": false,
+        "properties": {
+          "amount_state": {
+            "enum": [
+              "value",
+              "trace",
+              "missing"
+            ],
+            "title": "Amount State",
+            "type": "string"
+          },
+          "gauge_id": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Gauge Id",
+            "type": "string"
+          },
+          "gauge_type": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Gauge Type",
+            "type": "string"
+          },
+          "interval_end": {
+            "format": "date-time",
+            "title": "Interval End",
+            "type": "string"
+          },
+          "interval_start": {
+            "format": "date-time",
+            "title": "Interval Start",
+            "type": "string"
+          },
+          "kind": {
+            "const": "rainfall_accumulation",
+            "title": "Kind",
+            "type": "string"
+          },
+          "method": {
+            "const": "instrument",
+            "title": "Method",
+            "type": "string"
+          },
+          "unit": {
+            "const": "mm",
+            "title": "Unit",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "kind",
+          "method",
+          "amount_state",
+          "unit",
+          "interval_start",
+          "interval_end",
+          "gauge_type",
+          "gauge_id"
+        ],
+        "title": "Rainfall",
         "type": "object"
       },
       "ReportInput": {
@@ -2580,6 +3138,84 @@
         "title": "StationWrite",
         "type": "object"
       },
+      "Temperature": {
+        "additionalProperties": false,
+        "properties": {
+          "calibration_note": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calibration Note"
+          },
+          "calibration_status": {
+            "enum": [
+              "known",
+              "unknown"
+            ],
+            "title": "Calibration Status",
+            "type": "string"
+          },
+          "instrument": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Instrument",
+            "type": "string"
+          },
+          "kind": {
+            "const": "temperature",
+            "title": "Kind",
+            "type": "string"
+          },
+          "method": {
+            "const": "instrument",
+            "title": "Method",
+            "type": "string"
+          },
+          "sample_context": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Sample Context",
+            "type": "string"
+          },
+          "subject": {
+            "enum": [
+              "air",
+              "water"
+            ],
+            "title": "Subject",
+            "type": "string"
+          },
+          "unit": {
+            "const": "\u00b0C",
+            "title": "Unit",
+            "type": "string"
+          },
+          "value": {
+            "minimum": -273.15,
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "kind",
+          "method",
+          "value",
+          "unit",
+          "subject",
+          "instrument",
+          "sample_context",
+          "calibration_status"
+        ],
+        "title": "Temperature",
+        "type": "object"
+      },
       "Threshold": {
         "additionalProperties": false,
         "properties": {
@@ -2691,6 +3327,101 @@
           "compliance_limits"
         ],
         "title": "TimeseriesOut",
+        "type": "object"
+      },
+      "WaterReading": {
+        "additionalProperties": false,
+        "properties": {
+          "instrument": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instrument"
+          },
+          "kind": {
+            "const": "water_reading",
+            "title": "Kind",
+            "type": "string"
+          },
+          "method": {
+            "enum": [
+              "instrument",
+              "estimate"
+            ],
+            "title": "Method",
+            "type": "string"
+          },
+          "reference_description": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Description"
+          },
+          "reference_id": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Id"
+          },
+          "reference_kind": {
+            "enum": [
+              "depth",
+              "stage"
+            ],
+            "title": "Reference Kind",
+            "type": "string"
+          },
+          "reference_revision": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Revision"
+          },
+          "unit": {
+            "const": "m",
+            "title": "Unit",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "kind",
+          "method",
+          "value",
+          "unit",
+          "reference_kind"
+        ],
+        "title": "WaterReading",
         "type": "object"
       }
     },
@@ -5786,6 +6517,668 @@
         "summary": "Run Scenario",
         "tags": [
           "simulations"
+        ]
+      }
+    },
+    "/api/v2/community/observations": {
+      "get": {
+        "operationId": "community_api_v2_community_observations_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_PublicObservation_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Community",
+        "tags": [
+          "versioned citizen observations"
+        ]
+      }
+    },
+    "/api/v2/moderation/observations": {
+      "get": {
+        "operationId": "queue_api_v2_moderation_observations_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_ObservationView_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Queue",
+        "tags": [
+          "versioned citizen observations"
+        ]
+      }
+    },
+    "/api/v2/observation-history": {
+      "get": {
+        "operationId": "mixed_history_api_v2_observation_history_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Mixed History",
+        "tags": [
+          "versioned citizen observations"
+        ]
+      }
+    },
+    "/api/v2/observation-protocols": {
+      "get": {
+        "operationId": "protocols_api_v2_observation_protocols_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Protocols",
+        "tags": [
+          "versioned citizen observations"
+        ]
+      }
+    },
+    "/api/v2/observation-references": {
+      "get": {
+        "operationId": "references_api_v2_observation_references_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "References",
+        "tags": [
+          "versioned citizen observations"
+        ]
+      }
+    },
+    "/api/v2/observations": {
+      "get": {
+        "operationId": "history_api_v2_observations_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_ObservationView_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "History",
+        "tags": [
+          "versioned citizen observations"
+        ]
+      },
+      "post": {
+        "operationId": "create_api_v2_observations_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObservationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObservationView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Create",
+        "tags": [
+          "versioned citizen observations"
+        ]
+      }
+    },
+    "/api/v2/observations/{rid}": {
+      "get": {
+        "operationId": "detail_api_v2_observations__rid__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rid",
+            "required": true,
+            "schema": {
+              "title": "Rid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObservationView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Detail",
+        "tags": [
+          "versioned citizen observations"
+        ]
+      }
+    },
+    "/api/v2/observations/{rid}/moderation": {
+      "post": {
+        "operationId": "moderate_api_v2_observations__rid__moderation_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rid",
+            "required": true,
+            "schema": {
+              "title": "Rid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModerationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObservationView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "summary": "Moderate",
+        "tags": [
+          "versioned citizen observations"
         ]
       }
     }

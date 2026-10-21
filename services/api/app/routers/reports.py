@@ -100,7 +100,7 @@ def history(
     account: Account = Depends(require_citizen),
     db: Session = Depends(get_db),
 ):
-    query = db.query(CitizenReport).filter_by(owner_id=account.id)
+    query = db.query(CitizenReport).filter(~CitizenReport.category.startswith("v2:")).filter_by(owner_id=account.id)
     rows = query.order_by(CitizenReport.created_at.desc()).offset(offset).limit(limit).all()
     reasons = {}
     if rows:
@@ -118,7 +118,7 @@ def report_detail(
     db: Session = Depends(get_db),
 ):
     report = db.get(CitizenReport, report_id)
-    if not report or (
+    if not report or report.category.startswith("v2:") or (
         report.owner_id != account.id and "report:review" not in account.capabilities
     ):
         raise ApiError(404, "report_not_found", "Report not found")
@@ -135,7 +135,7 @@ def moderation_queue(
     account: Account = Depends(require_reviewer),
     db: Session = Depends(get_db),
 ):
-    query = db.query(CitizenReport).filter_by(status="pending")
+    query = db.query(CitizenReport).filter(~CitizenReport.category.startswith("v2:")).filter_by(status="pending")
     return {
         "items": [
             own_projection(r)
@@ -157,7 +157,7 @@ def moderate(
     db: Session = Depends(get_db),
 ):
     report = db.query(CitizenReport).filter_by(id=report_id).with_for_update().first()
-    if not report:
+    if not report or report.category.startswith("v2:"):
         raise ApiError(404, "report_not_found", "Report not found")
     if report.status != "pending":
         raise ApiError(409, "already_reviewed", "This report has already been reviewed")
@@ -182,7 +182,7 @@ def community(
     limit: int = Query(100, ge=1, le=500),
     db: Session = Depends(get_db),
 ):
-    query = db.query(CitizenReport).filter_by(status="approved")
+    query = db.query(CitizenReport).filter(~CitizenReport.category.startswith("v2:")).filter_by(status="approved")
     if category:
         query = query.filter_by(category=category)
     # Explicit allowlist; never expose private free text, identities, original coordinates or media.
