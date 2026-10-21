@@ -19,7 +19,7 @@ Updated21October2026. Scope: local staging debug app and source; production prov
 
 ## Needs definition or service selection
 
-- [ ] Confirm the water-level reference, rainfall interval and citizen criteria for Normal/Warning/Critical. A clarification was requested; no response is recorded. Current fields and scientific semantics are unchanged. Add concise context after definitions are agreed.
+- [ ] Confirm the water-level reference, rainfall interval and citizen criteria for Normal/Warning/Critical. The evidence review now recommends a versioned observation protocol rather than defining unsupported thresholds. See [metrics review](../science/CITIZEN_OBSERVATION_METRICS_REVIEW.md) and [proposed design](../superpowers/specs/2026-10-21-citizen-observation-protocol.md). Existing semantics remain unchanged pending design review and coordinated API/client implementation.
 - [ ] Place-name recognition/search: no approved geocoder is configured. Current map labels, center pin, current location and coordinates remain available. This needs provider/coverage/privacy selection before implementation.
 - [ ] Validate first-use discovery of the approved icon-only + button with a new user. Keep the current tooltip and labeled menu; add a Report label only if observation shows hesitation.
 
