@@ -1,6 +1,6 @@
 # Practical observation context and follow-ups
 
-Status: written design for review. User approved the proposed feature scope; implementation has not started.
+Status: approved21October2026. Integrated with the existing platform; implementation awaits written-plan review.
 
 ## Purpose and constraints
 
