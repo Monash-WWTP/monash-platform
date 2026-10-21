@@ -1,6 +1,6 @@
 # Shared account settings for registered users
 
-Status: written design for review. The user approved Profile, Email & password and Security in the CitizenFlood Account tab. No product implementation has started.
+Status: written design approved. Implementation plan prepared for review; no product implementation has started.
 
 ## Purpose and platform fit
 
