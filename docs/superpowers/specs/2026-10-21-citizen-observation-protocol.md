@@ -1,6 +1,6 @@
-# Proposed scientifically explicit citizen-observation protocol
+# Scientifically explicit citizen-observation protocol
 
-Status: proposed for review, not implemented. This replaces ambiguous new-report semantics; historical reports keep their original meaning. Scope is CitizenFlood observations, not the illustrative effluent simulation or laboratory monitoring.
+Status: approved and implemented in source/local staging on21October2026; field validation and production deployment remain pending. This replaces ambiguous new-report semantics; historical reports keep their original meaning. Scope is CitizenFlood observations, not the illustrative effluent simulation or laboratory monitoring.
 
 ## Purpose
 

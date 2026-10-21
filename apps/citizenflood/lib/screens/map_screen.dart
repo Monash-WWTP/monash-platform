@@ -8,7 +8,7 @@ import '../services/account_session.dart';
 import '../services/location_service.dart';
 import '../widgets/report_detail_sheet.dart';
 import 'location_picker_screen.dart';
-import 'report_form_screen.dart';
+import 'observation_form_screen.dart';
 import '../widgets/report_menu.dart';
 
 class MapScreen extends StatefulWidget {
@@ -110,6 +110,38 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Future<void> _report(ReportCategory category) async {
+    String? kind = switch (category) {
+      ReportCategory.waterLevel => 'flooding',
+      ReportCategory.rainfall => 'rain_occurrence',
+      ReportCategory.wastewater => 'water_appearance',
+      _ => null,
+    };
+    if (kind == null) {
+      kind = await showModalBottomSheet<String>(
+        context: context,
+        showDragHandle: true,
+        builder: (c) => SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final option in const [
+                ('rainfall_accumulation', 'Gauge rainfall'),
+                ('water_reading', 'Water reading'),
+                ('temperature', 'Temperature'),
+              ])
+                ListTile(
+                  title: Text(option.$2),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => Navigator.pop(c, option.$1),
+                ),
+            ],
+          ),
+        ),
+      );
+      if (!mounted || kind == null) return;
+    }
+    final selectedKind = kind;
+
     final selected = await Navigator.push<SelectedLocation>(
       context,
       MaterialPageRoute(
@@ -122,9 +154,9 @@ class _MapScreenState extends State<MapScreen> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => ReportFormScreen(
-          category: category,
-          selectedLocation: selected,
+        builder: (_) => ObservationFormScreen(
+          kind: selectedKind,
+          location: selected,
           onShowReports: widget.onShowReports,
         ),
       ),
@@ -154,8 +186,8 @@ class _MapScreenState extends State<MapScreen> {
                 const ListTile(title: Text('Observations at this location')),
                 for (final r in nearby)
                   ListTile(
-                    leading: Icon(r.category.icon),
-                    title: Text(r.category.label),
+                    leading: Icon(r.icon),
+                    title: Text(r.label),
                     subtitle: Text(r.readingLabel),
                     onTap: () => Navigator.pop(c, r),
                   ),
@@ -230,8 +262,8 @@ class _MapScreenState extends State<MapScreen> {
                                 ? ''
                                 : '\n${DateFormat('d MMM · HH:mm').format(observed.toLocal())}';
                             return ListTile(
-                              leading: Icon(report.category.icon),
-                              title: Text(report.category.label),
+                              leading: Icon(report.icon),
+                              title: Text(report.label),
                               subtitle: Text(
                                 '${report.readingLabel} · ${report.isOwner ? 'Your observation' : 'Community · approximate location'}$time',
                               ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../services/account_session.dart';
-import '../models/report.dart';
 import '../services/report_repository.dart';
 import '../widgets/report_detail_sheet.dart';
 
@@ -159,10 +158,10 @@ class _MyReportsScreenState extends State<MyReportsScreen> {
                     horizontal: 8,
                   ),
                   leading: Icon(
-                    report.category.icon,
+                    report.icon,
                     color: Theme.of(context).colorScheme.primary,
                   ),
-                  title: Text(report.category.label),
+                  title: Text(report.label),
                   subtitle: Text(
                     '${report.readingLabel}\n${DateFormat('d MMM · h:mm a').format((report.observedAt ?? report.createdAt ?? DateTime.now()).toLocal())}',
                   ),

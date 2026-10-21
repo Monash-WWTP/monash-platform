@@ -26,23 +26,22 @@ class ReportMenu extends StatelessWidget {
       ),
       onSelected: onSelected,
       itemBuilder: (_) => [
-        for (final category in ReportCategory.values)
+        for (final item in <(ReportCategory, String, IconData)>[
+          (ReportCategory.waterLevel, 'Flooding', Icons.flood_outlined),
+          (ReportCategory.rainfall, 'Rain', Icons.umbrella_outlined),
+          (ReportCategory.wastewater, 'Water appearance', Icons.water_outlined),
+          (ReportCategory.temperature, 'Add measurement', Icons.straighten),
+        ])
           PopupMenuItem(
-            value: category,
+            value: item.$1,
             height: 56,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Row(
                 children: [
-                  Icon(category.icon, color: colors.primary),
+                  Icon(item.$3, color: colors.primary),
                   const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      category == ReportCategory.wastewater
-                          ? 'Plant condition'
-                          : category.label,
-                    ),
-                  ),
+                  Expanded(child: Text(item.$2)),
                 ],
               ),
             ),

@@ -10,6 +10,9 @@ void main() {
       baseUrl: 'https://example.test',
       token: () async => 'proof',
       client: MockClient((r) async {
+        if (r.url.path == '/api/v2/observation-protocols') {
+          return http.Response('{"error":{"message":"Not found"}}', 404);
+        }
         expect(r.url.path, '/api/v1/reports');
         expect(r.url.queryParameters, {'limit': '25', 'offset': '25'});
         return http.Response(

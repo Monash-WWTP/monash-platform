@@ -189,10 +189,10 @@ class _CitizenMapState extends State<CitizenMap> {
               Align(
                 alignment: Alignment.center,
                 child: Tooltip(
-                  message: report.category.label,
+                  message: report.label,
                   child: IconButton(
                     onPressed: () => widget.onObservation?.call(report),
-                    icon: Icon(report.category.icon),
+                    icon: Icon(report.icon),
                   ),
                 ),
               ),

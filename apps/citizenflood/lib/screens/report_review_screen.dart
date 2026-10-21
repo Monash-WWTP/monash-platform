@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/report_draft.dart';
-import '../models/report.dart';
 import '../maps/map_selection.dart';
 import 'my_reports_screen.dart';
 
@@ -12,9 +11,11 @@ class ReportReviewScreen extends StatefulWidget {
     required this.draft,
     required this.submit,
     this.onShowReports,
+    this.submissionError,
   });
+  final String? Function()? submissionError;
   final VoidCallback? onShowReports;
-  final ReportDraft draft;
+  final ReviewDraft draft;
   final Future<bool> Function() submit;
   @override
   State<ReportReviewScreen> createState() => _ReportReviewScreenState();
@@ -82,15 +83,17 @@ class _ReportReviewScreenState extends State<ReportReviewScreen> {
                 child: const Text('Back to map'),
               ),
             ] else ...[
-              Text(
-                draft.category.label,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
+              Text(draft.label, style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 12),
               Text(
                 draft.reading,
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
+              for (final line in draft.context)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(line),
+                ),
               const SizedBox(height: 24),
               const Divider(),
               ListTile(
@@ -156,6 +159,7 @@ class _ReportReviewScreenState extends State<ReportReviewScreen> {
                             _sent = sent;
                             if (!sent) {
                               _error =
+                                  widget.submissionError?.call() ??
                                   'Report not confirmed. Retry with the same details, or go back to edit.';
                             }
                           });

@@ -12,7 +12,7 @@ flutter build apk --debug --dart-define-from-file=staging-config.example.json
 test -s build/app/outputs/flutter-apk/app-debug.apk
 ```
 
-The app opens on Map. The green + menu offers Rainfall, Water level, Temperature and Plant condition. Confirm a map point or use current location, complete the form, then review before submitting. My reports shows owner-only history and review status; public map locations remain approximate. Native MapLibre uses the dashboard’s OpenFreeMap Liberty style.
+The app opens on Map. The green + menu offers Flooding, Rain, Water appearance and Add measurement. Confirm a map point or use current location, complete the form, then review before submitting. Visual reports include an explicit Unsure answer. Optional measurements require their interval, reference or instrument context. New forms require the service to advertise citizen-observation revision1; they do not silently submit ambiguous legacy fields. My reports shows owner-only history and review status; public map locations remain approximate. Native MapLibre uses the dashboard’s OpenFreeMap Liberty style.
 
 For USB testing with the checked-in local staging config, run `adb reverse tcp:8181 tcp:8181` and `adb reverse tcp:9100 tcp:9100` with the local API and identity services running. See [Samsung acceptance evidence](../../docs/operations/samsung-mobile-acceptance-2026-10-20.md).
 

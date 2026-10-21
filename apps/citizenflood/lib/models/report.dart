@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'observation.dart';
 
 /// The kinds of site data a citizen can record.
 enum ReportCategory { rainfall, waterLevel, temperature, wastewater }
@@ -73,6 +74,9 @@ extension ModerationStatusX on ModerationStatus {
 }
 
 class Report {
+  final CitizenObservation? observation;
+  String get label => observation?.label ?? category.label;
+  IconData get icon => category.icon;
   final bool isOwner;
   final String? reviewReason;
   final String? id;
@@ -99,6 +103,7 @@ class Report {
 
   Report({
     this.id,
+    this.observation,
     this.isOwner = true,
     this.reviewReason,
     required this.category,
@@ -117,9 +122,12 @@ class Report {
   });
 
   /// Human-readable reading, e.g. "12.5 mm" or "Critical".
-  String get readingLabel => category.isNumeric
-      ? '${_trimNumber(readingValue)} ${readingUnit ?? category.unit}'.trim()
-      : (condition?.label ?? '—');
+  String get readingLabel =>
+      observation?.summary ??
+      (category.isNumeric
+          ? '${_trimNumber(readingValue)} ${readingUnit ?? category.unit}'
+                .trim()
+          : (condition?.label ?? '—'));
 
   static String _trimNumber(double? v) {
     if (v == null) return '';
@@ -145,7 +153,18 @@ class Report {
     id: row['id'] as String?,
     isOwner: row['is_owner'] == true,
     reviewReason: row['review_reason'] as String?,
-    category: ReportCategoryX.fromWire(row['category'] as String),
+    observation: row['observation'] is Map
+        ? CitizenObservation(Map<String, dynamic>.from(row['observation']))
+        : null,
+    category: row['observation'] is Map
+        ? switch (row['observation']['kind']) {
+            'rain_occurrence' ||
+            'rainfall_accumulation' => ReportCategory.rainfall,
+            'water_appearance' => ReportCategory.wastewater,
+            'temperature' => ReportCategory.temperature,
+            _ => ReportCategory.waterLevel,
+          }
+        : ReportCategoryX.fromWire(row['category'] as String),
     readingValue: (row['reading_value'] as num?)?.toDouble(),
     readingUnit: row['reading_unit'] as String?,
     condition: row['condition'] == null

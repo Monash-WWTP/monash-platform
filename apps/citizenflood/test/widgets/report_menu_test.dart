@@ -18,30 +18,30 @@ void main() {
           ),
         ),
       );
-      expect(find.text('Rainfall'), findsNothing);
+      expect(find.text('Rain'), findsNothing);
       await t.tap(find.byTooltip('New report'));
       await t.pumpAndSettle();
-      for (final c in ReportCategory.values) {
-        expect(
-          find.text(
-            c == ReportCategory.wastewater ? 'Plant condition' : c.label,
-          ),
-          findsOneWidget,
-        );
+      for (final label in [
+        'Flooding',
+        'Rain',
+        'Water appearance',
+        'Add measurement',
+      ]) {
+        expect(find.text(label), findsOneWidget);
       }
-      await t.tap(find.text('Rainfall'));
+      await t.tap(find.text('Rain'));
       await t.pumpAndSettle();
       expect(selected, ReportCategory.rainfall);
       await t.tap(find.byTooltip('New report'));
       await t.pumpAndSettle();
       await t.binding.handlePopRoute();
       await t.pumpAndSettle();
-      expect(find.text('Rainfall'), findsNothing);
+      expect(find.text('Rain'), findsNothing);
       await t.tap(find.byTooltip('New report'));
       await t.pumpAndSettle();
       await t.tapAt(const Offset(10, 10));
       await t.pumpAndSettle();
-      expect(find.text('Rainfall'), findsNothing);
+      expect(find.text('Rain'), findsNothing);
     },
   );
   testWidgets('menu supports large text and reduced motion', (t) async {
@@ -68,6 +68,6 @@ void main() {
     await t.tap(find.byTooltip('New report'));
     await t.pumpAndSettle();
     expect(t.takeException(), isNull);
-    expect(find.text('Water level'), findsOneWidget);
+    expect(find.text('Flooding'), findsOneWidget);
   });
 }

@@ -6,6 +6,7 @@ import '../models/report.dart';
 import '../config/env.dart';
 import 'account_session.dart';
 import 'platform_api.dart';
+import 'observation_repository.dart';
 
 class ReportPage {
   const ReportPage({
@@ -21,6 +22,7 @@ class ReportPage {
 class ReportRepository {
   ReportRepository([PlatformApi? api]) : _api = api ?? PlatformApi();
   final PlatformApi _api;
+  late final observations = ObservationRepository(_api);
   Future<String> uploadPhoto(Uint8List bytes, String fileExtension) async {
     final token = await AccountSession.instance.token();
     if (token == null) {
@@ -73,7 +75,9 @@ class ReportRepository {
 
   Future<ReportPage> own({int limit = 25, int offset = 0}) async {
     final page = await _api.request(
-      '/api/v1/reports?limit=$limit&offset=$offset',
+      await observations.supported()
+          ? '/api/v2/observation-history?limit=$limit&offset=$offset'
+          : '/api/v1/reports?limit=$limit&offset=$offset',
     );
     return ReportPage(
       items: [
@@ -99,13 +103,18 @@ class ReportRepository {
       final report = Report.fromRow(Map<String, dynamic>.from(row));
       rows[report.id!] = report;
     }
+    if (await observations.supported()) {
+      final page = await _api.request(
+        '/api/v2/community/observations?limit=$limit',
+      );
+      for (final row in page['items']) {
+        final report = Report.fromRow(Map<String, dynamic>.from(row));
+        rows[report.id!] = report;
+      }
+    }
     if (AccountSession.instance.signedIn) {
-      final own = await _api.request('/api/v1/reports?limit=$limit');
-      for (final raw in own['items']) {
-        final row = Map<String, dynamic>.from(raw);
-        row['photo_path'] = row.remove('media_id');
-        row['is_owner'] = true;
-        final report = Report.fromRow(row);
+      final page = await own(limit: limit);
+      for (final report in page.items) {
         rows[report.id!] = report;
       }
     }

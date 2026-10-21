@@ -30,3 +30,13 @@ Source: [Flutter AppAuth troubleshooting](https://pub.dev/packages/flutter_appau
 ## Verification commands
 
 Final source checks: Flutter41tests passed; analyzer reported no issues; staging debug APK built. `uv run --locked pytest tests services/api/tests -q` passed194tests with1skipped against the guarded disposable database on5433. The imported source inventory verified207pinned files. Repository policy passed419files before this document’s final edits. API OpenAPI is regenerated for the additive owner review-reason field. These results are software verification, not the remaining acceptance gates above.
+
+## Scientific observation protocol — 21 October 2026
+
+The rebuilt local API advertises citizen-observation revision1. The latest debug APK was rebuilt and installed on the same Samsung. The map loaded the existing legacy record; the new menu displayed Flooding, Rain, Water appearance and Add measurement. A selected-point Rain report with Unsure was reviewed as Unknown with visual method, time and location, then submitted successfully. My reports displayed the new Pending Rain/Unknown record alongside the unchanged legacy Wastewater plant/Warning record. This synthetic record belongs to the development QA account and must remain unpublished. The temperature form was visually inspected: subject, value/unit, instrument, sampling context and explicit unknown calibration were visible; no temperature reading was submitted.
+
+The device run found that the map requested200 mixed history records while the initial v2 endpoint allowed100. The bound now matches the existing500 maximum; a failing regression was corrected and the rebuilt API restored map loading.
+
+Final software verification:50 Flutter tests passed; analyzer clean; staging debug APK built and installed;199 Python tests passed with1skipped against the disposable5433 test database;45 dashboard tests and production build passed; repository policy437files and pinned inventory207files passed before final documentation edits. One fresh review found retry identity, account fencing and capability retry issues; all three were reproduced and fixed with regression tests.
+
+The earlier photo/enrollment checks remain historical evidence, not a new-protocol photo test. Full physical TalkBack, new-protocol permission/offline/background/account-switch journeys, field comprehension/reference validation and production services remain open. The public signed APK is unchanged.
