@@ -164,6 +164,7 @@ def callback(
     db.commit()
     result = RedirectResponse(settings.web_origin + "/dashboard", status_code=303)
     result.delete_cookie("monash_login", path="/api/v1/auth")
+    result.delete_cookie("monash_session", path="/api/v1")
     result.set_cookie(
         "monash_session",
         token,
@@ -171,7 +172,7 @@ def callback(
         secure=settings.session_secure,
         samesite="lax",
         max_age=1800,
-        path="/api/v1",
+        path="/api",
     )
     # CSRF is intentionally browser-readable; identity/session tokens are not.
     result.set_cookie(
@@ -204,6 +205,7 @@ def logout(
         db.commit()
     result = JSONResponse(content=None, status_code=204)
     result.delete_cookie("monash_session", path="/api/v1")
+    result.delete_cookie("monash_session", path="/api")
     result.delete_cookie("monash_csrf", path="/")
     result.headers["Cache-Control"] = "no-store"
     return result

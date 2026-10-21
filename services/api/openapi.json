@@ -1036,6 +1036,175 @@
         "type": "object"
       },
       "JsonValue": {},
+      "LegacyObservationView": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "enum": [
+              "rainfall",
+              "water_level",
+              "temperature",
+              "wastewater"
+            ],
+            "title": "Category",
+            "type": "string"
+          },
+          "condition": {
+            "anyOf": [
+              {
+                "enum": [
+                  "normal",
+                  "warning",
+                  "critical"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Condition"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "latitude": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude",
+            "type": "number"
+          },
+          "location_accuracy_m": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Accuracy M"
+          },
+          "longitude": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude",
+            "type": "number"
+          },
+          "media_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Media Id"
+          },
+          "moderation_status": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ],
+            "title": "Moderation Status",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "protocol_id": {
+            "const": "legacy-unspecified",
+            "title": "Protocol Id",
+            "type": "string"
+          },
+          "protocol_revision": {
+            "const": 0,
+            "title": "Protocol Revision",
+            "type": "integer"
+          },
+          "reading_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reading Unit"
+          },
+          "reading_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reading Value"
+          },
+          "review_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Reason"
+          },
+          "station_code": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Station Code"
+          }
+        },
+        "required": [
+          "category",
+          "latitude",
+          "longitude",
+          "observed_at",
+          "id",
+          "moderation_status",
+          "created_at",
+          "protocol_id",
+          "protocol_revision"
+        ],
+        "title": "LegacyObservationView",
+        "type": "object"
+      },
       "MaintenanceEventIn": {
         "properties": {
           "availability_pct": {
@@ -1782,6 +1951,44 @@
         "title": "Page[StationView]",
         "type": "object"
       },
+      "Page_Union_ObservationView__LegacyObservationView__": {
+        "properties": {
+          "items": {
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ObservationView"
+                },
+                {
+                  "$ref": "#/components/schemas/LegacyObservationView"
+                }
+              ]
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "Page[Union[ObservationView, LegacyObservationView]]",
+        "type": "object"
+      },
       "PlantDetailOut": {
         "properties": {
           "capacity_mld": {
@@ -2099,9 +2306,7 @@
             "type": "number"
           },
           "observation": {
-            "additionalProperties": true,
-            "title": "Observation",
-            "type": "object"
+            "$ref": "#/components/schemas/PublicValue"
           },
           "observed_at": {
             "format": "date-time",
@@ -2131,6 +2336,209 @@
           "created_at"
         ],
         "title": "PublicObservation",
+        "type": "object"
+      },
+      "PublicValue": {
+        "additionalProperties": false,
+        "properties": {
+          "amount_state": {
+            "anyOf": [
+              {
+                "enum": [
+                  "value",
+                  "trace",
+                  "missing"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount State"
+          },
+          "calibration_status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "known",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calibration Status"
+          },
+          "features": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "discoloration",
+                    "foam",
+                    "debris",
+                    "sheen",
+                    "overflow",
+                    "other"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Features"
+          },
+          "interval_end": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interval End"
+          },
+          "interval_start": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interval Start"
+          },
+          "kind": {
+            "enum": [
+              "flooding",
+              "rain_occurrence",
+              "water_appearance",
+              "rainfall_accumulation",
+              "water_reading",
+              "temperature"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "method": {
+            "enum": [
+              "visual",
+              "instrument",
+              "estimate"
+            ],
+            "title": "Method",
+            "type": "string"
+          },
+          "reference_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "depth",
+                  "stage"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Kind"
+          },
+          "response": {
+            "anyOf": [
+              {
+                "enum": [
+                  "present",
+                  "not_observed",
+                  "unknown",
+                  "features_observed"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Response"
+          },
+          "subject": {
+            "anyOf": [
+              {
+                "enum": [
+                  "air",
+                  "water"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subject"
+          },
+          "surfaces": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "road",
+                    "path",
+                    "property",
+                    "other"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Surfaces"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "enum": [
+                  "mm",
+                  "m",
+                  "\u00b0C"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "kind",
+          "method"
+        ],
+        "title": "PublicValue",
         "type": "object"
       },
       "Rainfall": {
@@ -6701,7 +7109,7 @@
             "required": false,
             "schema": {
               "default": 25,
-              "maximum": 100,
+              "maximum": 500,
               "minimum": 1,
               "title": "Limit",
               "type": "integer"
@@ -6712,7 +7120,9 @@
           "200": {
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Page_Union_ObservationView__LegacyObservationView__"
+                }
               }
             },
             "description": "Successful Response"

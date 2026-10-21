@@ -100,15 +100,35 @@ def history(
     account: Account = Depends(require_citizen),
     db: Session = Depends(get_db),
 ):
-    query = db.query(CitizenReport).filter(~CitizenReport.category.startswith("v2:")).filter_by(owner_id=account.id)
-    rows = query.order_by(CitizenReport.created_at.desc()).offset(offset).limit(limit).all()
+    query = (
+        db.query(CitizenReport)
+        .filter(~CitizenReport.category.startswith("v2:"))
+        .filter_by(owner_id=account.id)
+    )
+    rows = (
+        query.order_by(CitizenReport.created_at.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
     reasons = {}
     if rows:
-        events = db.query(AuditEvent).filter(AuditEvent.action == 'report.moderate',
-            AuditEvent.resource_id.in_([r.id for r in rows])).order_by(AuditEvent.created_at).all()
-        reasons = {event.resource_id: event.details.get('reason') for event in events}
-    return {"items": [own_projection(r, reasons.get(r.id)) for r in rows],
-        "total": query.count(), "offset": offset, "limit": limit}
+        events = (
+            db.query(AuditEvent)
+            .filter(
+                AuditEvent.action == "report.moderate",
+                AuditEvent.resource_id.in_([r.id for r in rows]),
+            )
+            .order_by(AuditEvent.created_at)
+            .all()
+        )
+        reasons = {event.resource_id: event.details.get("reason") for event in events}
+    return {
+        "items": [own_projection(r, reasons.get(r.id)) for r in rows],
+        "total": query.count(),
+        "offset": offset,
+        "limit": limit,
+    }
 
 
 @router.get("/reports/{report_id}", response_model=ReportView)
@@ -118,14 +138,24 @@ def report_detail(
     db: Session = Depends(get_db),
 ):
     report = db.get(CitizenReport, report_id)
-    if not report or report.category.startswith("v2:") or (
-        report.owner_id != account.id and "report:review" not in account.capabilities
+    if (
+        not report
+        or report.category.startswith("v2:")
+        or (
+            report.owner_id != account.id
+            and "report:review" not in account.capabilities
+        )
     ):
         raise ApiError(404, "report_not_found", "Report not found")
     if report.owner_id != account.id:
         require_mfa(account)
-    event = db.query(AuditEvent).filter_by(action='report.moderate', resource_id=report.id).order_by(AuditEvent.created_at.desc()).first()
-    return own_projection(report, event.details.get('reason') if event else None)
+    event = (
+        db.query(AuditEvent)
+        .filter_by(action="report.moderate", resource_id=report.id)
+        .order_by(AuditEvent.created_at.desc())
+        .first()
+    )
+    return own_projection(report, event.details.get("reason") if event else None)
 
 
 @router.get("/moderation/reports", response_model=Page[ReportView])
@@ -135,7 +165,11 @@ def moderation_queue(
     account: Account = Depends(require_reviewer),
     db: Session = Depends(get_db),
 ):
-    query = db.query(CitizenReport).filter(~CitizenReport.category.startswith("v2:")).filter_by(status="pending")
+    query = (
+        db.query(CitizenReport)
+        .filter(~CitizenReport.category.startswith("v2:"))
+        .filter_by(status="pending")
+    )
     return {
         "items": [
             own_projection(r)
@@ -182,7 +216,11 @@ def community(
     limit: int = Query(100, ge=1, le=500),
     db: Session = Depends(get_db),
 ):
-    query = db.query(CitizenReport).filter(~CitizenReport.category.startswith("v2:")).filter_by(status="approved")
+    query = (
+        db.query(CitizenReport)
+        .filter(~CitizenReport.category.startswith("v2:"))
+        .filter_by(status="approved")
+    )
     if category:
         query = query.filter_by(category=category)
     # Explicit allowlist; never expose private free text, identities, original coordinates or media.

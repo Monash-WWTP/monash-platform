@@ -18,7 +18,8 @@ def stations(
     query = db.query(Station)
     return {
         "items": [
-            r.payload for r in query.order_by(Station.code).offset(offset).limit(limit)
+            {k: v for k, v in r.payload.items() if k in StationView.model_fields}
+            for r in query.order_by(Station.code).offset(offset).limit(limit)
         ],
         "total": query.count(),
         "offset": offset,

@@ -1,10 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import type { CommunityWastewaterObservation, EffluentSample, Station } from './monitoring-types'
-import { allPages, fetchApi } from './transport'
+import { ApiRequestError, allPages, fetchApi } from './transport'
 
 export function useCommunityWastewaterObservations() {
   return useQuery({ queryKey: ['community-wastewater-observations'],
-    queryFn: () => allPages<CommunityWastewaterObservation>('/api/v1/community/observations?category=wastewater'),
+    queryFn: async () => {
+      const legacy=await allPages<CommunityWastewaterObservation>('/api/v1/community/observations?category=wastewater');
+      try { return [...legacy,...await allPages<CommunityWastewaterObservation>('/api/v2/community/observations')]; }
+      catch(e) { if(e instanceof ApiRequestError && e.status===404) return legacy; throw e; }
+    },
     staleTime: 30_000, refetchInterval: 60_000 })
 }
 export function useStations() {
