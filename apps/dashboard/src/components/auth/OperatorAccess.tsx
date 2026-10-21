@@ -16,6 +16,7 @@ export default function OperatorAccess() {
       <p>Signed in as {account.email}</p>
       {!account.capabilities.includes('scenario:operate') && <p>Scenario access requires an operator invitation.</p>}
       {account.capabilities.includes('platform:admin') && <a className="mr-3 underline" href="/dashboard/admin">Administration</a>}
+      {account.capabilities.includes('report:respond') && <a className="mr-3 underline" href="/dashboard/operations">Operations reports</a>}
       {account.capabilities.includes('report:review') && <a className="mr-3 underline" href="/dashboard/moderation">Review reports</a>}
       <a className="mr-3 underline" href="/api/v1/auth/login?operator=true">Verify MFA</a>
       <button className="mt-2 text-primary underline" onClick={signOut}>Sign out</button>
