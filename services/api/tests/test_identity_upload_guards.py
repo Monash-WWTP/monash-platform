@@ -27,6 +27,7 @@ def production_settings(**overrides):
             'oidc_client_secret': 'synthetic-client-secret',
             'oidc_callback_url': 'https://water.example/api/v1/auth/callback',
             'web_origin': 'https://water.example',
+            'cors_origins': 'https://water.example',
             'storage_endpoint': 'https://storage.example',
             'storage_access_key': 'synthetic',
             'storage_secret_key': 'synthetic',

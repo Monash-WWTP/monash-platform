@@ -23,7 +23,6 @@ from .routers import (
 )
 
 app = FastAPI(title="Monash WWTP Platform API", version="1.0.0")
-app.middleware("http")(assign_request_id)
 app.add_middleware(RequestLimits)
 
 app.add_middleware(
@@ -32,6 +31,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# Correlate responses rejected before routing, including body-limit failures.
+app.middleware("http")(assign_request_id)
 
 standard_errors = {
     401: {"model": ErrorEnvelope},

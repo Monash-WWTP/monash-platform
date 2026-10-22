@@ -1,5 +1,5 @@
 {$API_DOMAIN} {
-    @versioned path /api/v1 /api/v1/*
+    @versioned path /api/v1 /api/v1/* /api/v2 /api/v2/*
     handle @versioned {
         header Cache-Control "no-store"
         reverse_proxy api:8000

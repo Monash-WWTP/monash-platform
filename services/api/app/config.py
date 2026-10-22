@@ -74,12 +74,35 @@ class Settings(BaseSettings):
                     )
             if "*" in self.cors_origins_list:
                 raise ValueError("Production origins must be explicit")
+            for origin in [self.web_origin, *self.cors_origins_list]:
+                parsed = urlparse(origin)
+                if (parsed.scheme != "https" or not parsed.hostname
+                        or parsed.username or parsed.password
+                        or parsed.path or parsed.params or parsed.query or parsed.fragment):
+                    raise ValueError("Production web and CORS origins must be HTTPS origins without paths")
+            callback = urlparse(self.oidc_callback_url)
+            web = urlparse(self.web_origin)
+            if ((callback.scheme, callback.netloc) != (web.scheme, web.netloc)
+                    or callback.path != "/api/v1/auth/callback"
+                    or callback.query or callback.fragment):
+                raise ValueError("Production callback must use the web origin and /api/v1/auth/callback")
+            if self.oidc_backchannel_origin:
+                backchannel = urlparse(self.oidc_backchannel_origin)
+                if (backchannel.scheme != "https" or not backchannel.hostname
+                        or backchannel.username or backchannel.password
+                        or backchannel.path or backchannel.params
+                        or backchannel.query or backchannel.fragment):
+                    raise ValueError("Production identity backchannel must be an HTTPS origin")
             if (
                 not self.storage_endpoint
                 or not self.storage_access_key
                 or not self.storage_secret_key
             ):
                 raise ValueError("Production private storage must be configured")
+            storage = urlparse(self.storage_endpoint)
+            if (storage.scheme != "https" or not storage.hostname
+                    or storage.username or storage.password):
+                raise ValueError("Production private storage requires HTTPS without URL credentials")
         return self
 
     @property

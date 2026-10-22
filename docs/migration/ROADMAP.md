@@ -12,4 +12,4 @@ The source clients use the shared versioned API and API-owned application Postgr
 
 Do not claim old anonymous reports by email alone. Lab measurements and citizen observations stay separate. Approved community output must remove private identity, notes, precise coordinates and media paths. Every cutover needs reconciliation of data and authorization, a rollback checkpoint and an acceptance window. Legacy repositories are preserved; archival is a later owner decision.
 
-Current verification and unresolved production gates: [2026-10-18 acceptance record](../operations/staging-acceptance-2026-10-18.md). Source implementation does not establish production readiness.
+Current verification and unresolved production gates: [2026-10-22 preparation review](../operations/production-readiness-2026-10-22.md). The [2026-10-18 acceptance record](../operations/staging-acceptance-2026-10-18.md) is historical. Source implementation does not establish production readiness.
