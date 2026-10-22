@@ -138,7 +138,7 @@ STORAGE_ACCESS_KEY=REPLACE_WITH_BUCKET_ACCESS_KEY
 STORAGE_SECRET_KEY=REPLACE_WITH_BUCKET_SECRET
 ```
 
-`OIDC_BACKCHANNEL_ORIGIN` is optional for a reviewed internal identity connection; leave unset when using the public HTTPS endpoints. If used, ensure it cannot change the expected issuer, and verify discovery/token/JWKS behavior. Do not disable secure sessions to get around a proxy problem.
+`OIDC_BACKCHANNEL_ORIGIN` is optional for a reviewed HTTPS internal identity origin without a path; leave unset when using the public HTTPS endpoints. If used, ensure it cannot change the expected issuer, and verify discovery/token/JWKS behavior. Production rejects HTTP backchannels. Do not disable secure sessions to get around a proxy problem.
 
 From `/srv/monash`, start the database and explicitly migrate before starting the API:
 
@@ -158,7 +158,7 @@ After DNS resolves correctly, use this host Caddyfile with the loopback bindings
 
 ```caddyfile
 api.example.com {
-    @versioned path /api/v1 /api/v1/*
+    @versioned path /api/v1 /api/v1/* /api/v2 /api/v2/*
     handle @versioned {
         header Cache-Control "no-store"
         reverse_proxy 127.0.0.1:8181
@@ -172,7 +172,7 @@ accounts.example.com {
 }
 ```
 
-Validate with `sudo caddy validate --config /etc/caddy/Caddyfile` before reloading the Caddy service. Keep port 80 available for certificate issuance/renewal as required by your ACME configuration. This configuration preserves the `/api/v1` prefix; do not strip it. The server's `/docs` and `/openapi.json` stay private unless deliberately exposed. See [Caddy proxy behavior](https://caddyserver.com/docs/caddyfile/directives/reverse_proxy).
+Validate with `sudo caddy validate --config /etc/caddy/Caddyfile` before reloading the Caddy service. Keep port 80 available for certificate issuance/renewal as required by your ACME configuration. This configuration preserves both `/api/v1` and `/api/v2` prefixes; do not strip it. The server's `/docs` and `/openapi.json` stay private unless deliberately exposed. See [Caddy proxy behavior](https://caddyserver.com/docs/caddyfile/directives/reverse_proxy).
 
 Verify from a different network: valid TLS, correct DNS including IPv6 if published, no database/internal storage ports reachable, and public health/readiness endpoints returning JSON. Hostname access must work from API containers too, unless a reviewed backchannel is configured.
 

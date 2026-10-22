@@ -1,6 +1,7 @@
 """Encrypted local backup and isolated restore rehearsal; never restores over staging."""
 
 import argparse, base64, hashlib, json, os, re, secrets, subprocess, time
+from contextlib import closing
 from pathlib import Path
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import boto3
@@ -8,6 +9,7 @@ from botocore.config import Config
 
 ROOT = Path(__file__).resolve().parents[1]
 MAGIC = b"MONASHBACKUP1"
+MAX_BACKUP_OBJECT_BYTES = 256 * 1024 * 1024
 
 
 def seal(data, key):
@@ -159,11 +161,12 @@ def backup(destination, key):
         Bucket="citizen-photos"
     ):
         for item in page.get("Contents", []):
-            data = client.get_object(Bucket="citizen-photos", Key=item["Key"])[
-                "Body"
-            ].read()
+            with closing(client.get_object(
+                Bucket="citizen-photos", Key=item["Key"]
+            )["Body"]) as body:
+                data = body.read(MAX_BACKUP_OBJECT_BYTES - total + 1)
             total += len(data)
-            if total > 256 * 1024 * 1024:
+            if total > MAX_BACKUP_OBJECT_BYTES:
                 raise ValueError(
                     "Local rehearsal backup exceeds 256 MB; use streaming production backup"
                 )
@@ -258,6 +261,10 @@ def rehearse(source, key):
                         "exec",
                         name,
                         "pg_isready",
+                        # The image's init server accepts Unix sockets before it
+                        # shuts down. TCP becomes ready only on the final server.
+                        "-h",
+                        "127.0.0.1",
                         "-U",
                         "postgres",
                         "-d",
@@ -313,7 +320,8 @@ def rehearse(source, key):
             value = base64.b64decode(item["content"])
             client.put_object(Bucket=bucket, Key=item["key"], Body=value)
             keys.append(item["key"])
-            actual = client.get_object(Bucket=bucket, Key=item["key"])["Body"].read()
+            with closing(client.get_object(Bucket=bucket, Key=item["key"])["Body"]) as body:
+                actual = body.read(len(value) + 1)
             if hashlib.sha256(actual).hexdigest() != item["sha256"]:
                 raise ValueError("Restored media reconciliation failed")
     finally:

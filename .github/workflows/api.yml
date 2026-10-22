@@ -28,6 +28,8 @@ jobs:
           python-version: '3.12'
           enable-cache: true
       - run: uv sync --locked
+      - run: uv export --locked --no-dev --no-emit-workspace --format requirements-txt --output-file /tmp/runtime-requirements.txt
+      - run: uvx pip-audit==2.10.1 --requirement /tmp/runtime-requirements.txt --no-deps --disable-pip
       - run: uv run --locked alembic -c services/api/alembic.ini upgrade head
       - run: uv run --locked alembic -c services/api/alembic.ini check
       - run: uv run --locked pytest -q services/api/tests packages/simulation/wwtp_sim/tests

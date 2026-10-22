@@ -19,7 +19,13 @@ def validate_comparison(runs: list[SimulationRun]) -> None:
     if len(identities) != 1 or any(not re.fullmatch(r'sha256:[0-9a-f]{64}', run.artifact_digest or '') for run in runs):
         reject('Runs must belong to the same plant and use the same model version and artifact.')
 
-    reference = runs[0].timeseries or {}
+    for run in runs:
+        result = run.timeseries
+        if (not isinstance(result, dict)
+                or not isinstance(result.get('dates'), list)
+                or not isinstance(result.get('series'), dict)):
+            reject('Runs need dated result objects with named metric series.')
+    reference = runs[0].timeseries
     dates = reference.get('dates', [])
     metrics = set(reference.get('series', {}))
     if not dates or not metrics:

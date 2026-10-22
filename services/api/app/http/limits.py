@@ -36,6 +36,7 @@ class RequestLimits:
                         "code": "request_too_large",
                         "message": "Request exceeds the upload limit",
                         "details": [],
+                        "request_id": scope.get("state", {}).get("request_id", ""),
                     }
                 }
             ).encode()

@@ -78,3 +78,14 @@ def test_production_render_rejects_missing_required_inputs(name):
     result = render(**{name: ''})
     assert result.returncode != 0
     assert name in result.stderr
+
+
+def test_production_proxy_covers_every_versioned_openapi_path():
+    import fnmatch
+    import re
+    config = (PRODUCTION / 'Caddyfile').read_text()
+    patterns = re.search(r'@versioned path (.+)', config).group(1).split()
+    paths = json.loads((ROOT / 'services/api/openapi.json').read_text())['paths']
+    assert all(any(fnmatch.fnmatchcase(path, pattern) for pattern in patterns) for path in paths)
+    assert not any(fnmatch.fnmatchcase('/openapi.json', pattern) for pattern in patterns)
+    assert not any(fnmatch.fnmatchcase('/api/v3/unreviewed', pattern) for pattern in patterns)

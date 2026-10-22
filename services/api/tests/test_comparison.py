@@ -97,3 +97,16 @@ def test_comparison_preserves_requested_run_pairing_and_input_differences(compar
 def test_missing_runs_still_return_404(comparison):
     client, _, first, _ = comparison
     assert client.post('/api/v1/compare', json={'run_ids': [first.id, 99999999]}).status_code == 404
+
+
+@pytest.mark.parametrize('broken', [[], 'invalid', 3, {'dates': ['2025-01-01'], 'series': []},
+                                  {'dates': ['2025-01-01'], 'series': ['bod']},
+                                  {'dates': None, 'series': {'bod': [1]}},
+                                  {'dates': ['2025-01-01'], 'series': None}])
+def test_corrupt_persisted_results_return_incompatibility(comparison, broken):
+    client, db, first, second = comparison
+    second.timeseries = broken
+    db.commit()
+    response = client.post('/api/v1/compare', json={'run_ids': [first.id, second.id]})
+    assert response.status_code == 422, response.text
+    assert response.json()['error']['code'] == 'incompatible_runs'

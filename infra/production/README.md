@@ -22,6 +22,8 @@ Set `OIDC_ISSUER`, `OIDC_DISCOVERY_URL` and `OIDC_JWKS_URL` to the exact reviewe
 
 Provision authentik through a reviewed administrative procedure after initial installation; create and secure the initial administrator using authentik's supported setup flow. This template deliberately supplies no default administrator password/token and mounts no Docker socket. Review enrollment, verified-email mapping, email recovery, issuer/UUID subject mapping and exact redirect URIs against [the server guide](../../docs/operations/production-server-setup.md).
 
+Keep `ACCOUNT_SETTINGS_ENABLED=false` until the shared profile, email, password and session-security flows from the identity reference have been provisioned and tested, including security-event revocation. Set it true only after that acceptance.
+
 Configure `monash-web` and `monash-operator` as confidential clients using the configured shared `OIDC_CLIENT_SECRET`, and `citizen-mobile` as public PKCE with the exact Android callback. Require MFA for the operator authentication flow. Review the existing [staging identity bootstrap](../staging/identity/bootstrap.py) as implementation reference only: it contains localhost URLs and is **not** a production provisioning script.
 
 Install and test the reviewed recovery/disable event integration. Both identity processes receive the same `IDENTITY_EVENT_SECRET`, exact `MONASH_EVENT_ISSUER` and internal API event endpoint. Supplying these environment variables does not install policies or establish delivery. Password reset must invalidate existing browser sessions and bearer proofs; account disable must remove capabilities. Test failure behavior and delivery/reconciliation for identity administration events before acceptance.
@@ -47,7 +49,7 @@ Compose healthchecks probe readiness and all services use bounded local log rota
 
 ## Acceptance and rollback evidence still required
 
-- From another network, verify public DNS/TLS and that only intended ports are reachable. Verify Caddy restricts API routing to `/api/v1` and the API container can reach public identity metadata.
+- From another network, verify public DNS/TLS and that only intended ports are reachable. Verify Caddy restricts API routing to `/api/v1` and `/api/v2` and the API container can reach public identity metadata.
 - Verify registration, verified email, mail delivery/recovery, invited operator MFA, least-privilege capability assignment and reset/disable revocation through the real clients.
 - Verify report retry/ownership, photo upload/download and denied anonymous storage access, moderation and public privacy projection; reconcile any authorized imports against source records.
 - Verify Vercel same-origin proxy sessions/CSRF and the qualified mobile release independently. Retain legacy client endpoints until their authorized cutover.

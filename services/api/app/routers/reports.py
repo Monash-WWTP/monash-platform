@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+from contextlib import closing
 from io import BytesIO
 from uuid import uuid4
 from fastapi import APIRouter, Depends, Header, Query, UploadFile
@@ -323,11 +324,10 @@ def download(
     if media.owner_id != account.id:
         require_mfa(account)
     try:
-        value = (
-            storage.client()
-            .get_object(Bucket=settings.storage_bucket, Key=media.object_key)["Body"]
-            .read(media.byte_size + 1)
-        )
+        with closing(storage.client().get_object(
+            Bucket=settings.storage_bucket, Key=media.object_key
+        )["Body"]) as body:
+            value = body.read(media.byte_size + 1)
         if (
             len(value) != media.byte_size
             or hashlib.sha256(value).hexdigest() != media.sha256

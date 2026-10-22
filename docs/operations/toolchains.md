@@ -33,3 +33,7 @@ uv run --with playwright==1.63.0 python scripts/smoke_dashboard_map.py --url htt
 Alternatively install Playwright's Chromium with `uv run --with playwright==1.63.0 playwright install chromium` and omit the executable flag. This focused check verifies canvas/worker initialization and attribution sanitization; live login, media upload and full user journeys remain release QA gates.
 
 Mobile build warnings remain for the inherited package_info_plus Kotlin Gradle plugin and mismatched local Android SDK XML tooling. They did not prevent the debug APK. Recheck plugin compatibility when advancing Flutter. CodeGraph was initialized locally; its generated index is ignored. Use `codegraph init --yes` only when indexing a fresh checkout is intended.
+
+## Linux ARM64 audit — 22 October 2026
+
+The new server uses Python 3.12.15, uv 0.13.4, Node 22.23.4, JDK 21 and Flutter 3.44.7 at the same framework revision above. Flutter analysis and 59 tests pass. Standard Android AAPT2 fails with `Exec format error` on this ARM64 host; use the x86-64 CI build or a supported build host. Earlier APK success above belongs to the former machine. No CodeGraph index is present on this checkout.

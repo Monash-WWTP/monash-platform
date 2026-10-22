@@ -2,6 +2,8 @@
 
 This checklist tracks readiness across the public website, operator dashboard, CitizenFlood Android app, API/identity, scientific methods and release operations. A source-level implementation is not production evidence. Keep an item open until its acceptance evidence is linked and an accountable owner records the result.
 
+Current audit and feature priorities: [22 October readiness review](../operations/production-readiness-2026-10-22.md). The tables below retain separate deployment acceptance gates.
+
 ## Completed in repository source
 
 - [x] Use the public landing page's canonical palette and Manrope across the public and operator browser surfaces.
@@ -10,7 +12,7 @@ This checklist tracks readiness across the public website, operator dashboard, C
 - [x] Replace report-category emoji with Material icons in category selection, form headings, map markers, map details and report lists; expose category names once to screen readers.
 - [x] Keep the supplied urban-water carbon-accounting guideline PDF byte-identical in the public web build, link it directly from the landing page, and list citation, DOI, license caveat and relevance on the reference page.
 - [x] Label the scenario influent input BOD₅ while preserving the legacy API wire property and its description.
-- [x] Subtract CH₄/N₂O recovery terms directly as written in the referenced equations; retain illustrative/unvalidated status and prohibit decision use.
+- [x] Subtract CH₄/N₂O recovery in kg gas/m³ before GWP, documenting the printed equation/unit ambiguity; retain illustrative/unvalidated status and prohibit decision use.
 - [x] Add browser token parity and Android icon/theme widget coverage.
 
 ## Website functionality
@@ -38,11 +40,11 @@ This checklist tracks readiness across the public website, operator dashboard, C
 
 | Screen or flow | Current behavior/source state | Acceptance still required | Status |
 | --- | --- | --- | --- |
-| Report category selection | Four categories use distinct Material icons with labels. | Check on supported physical Android device, large text and TalkBack. | [ ] |
-| Numeric readings and plant condition | Rainfall, water level and temperature collect numeric values; wastewater collects Normal/Warning/Critical. | Verify invalid values, range/unit expectations with domain owners, validation copy and back-navigation persistence. | [ ] |
+| Report category selection | Map-first v2 observation types use labelled controls; v1 categories remain compatibility records. | Check on supported physical Android device, large text and TalkBack. | [ ] |
+| Numeric readings and plant condition | Visual flooding/rain/water appearance are separate from instrument readings with units, intervals and reference provenance. | Verify invalid values, range/unit expectations with domain owners, validation copy and back-navigation persistence. | [ ] |
 | Location and photo | Report flow captures location and can select camera/gallery photos. | Test denied/revoked permissions, unavailable GPS, low accuracy, large/unsupported images, upload interruption and privacy/retention behavior. | [ ] |
 | Sign-in, submit, retry | Source flow requests a verified session and uses an idempotency key for submission retries. | Verify deployed identity/session expiry, repeated taps, lost responses, photo retry and report visibility using staging without synthetic production submissions. | [ ] |
-| Map and profile | Native map lists recent reports, provides retry and profile/session actions. | Verify empty/error/offline states, category labels, map accessibility, account recovery/logout and approved-vs-pending visibility on device. | [ ] |
+| Map and profile | Map, paginated My reports and Account expose observation details, linked flooding updates and provisioned shared settings. | Verify empty/error/offline states, category labels, map accessibility, account recovery/logout and approved-vs-pending visibility on device. | [ ] |
 | Signed app distribution | CitizenFlood 1.0.0 is published against the existing legacy backend; current source contains shared API/OIDC work. | Build a new reviewed release only after endpoint cutover; install/update-test on physical devices; compare signature, version, artifact URL, byte size and checksum. | [ ] |
 
 ## API, identity, data and privacy gates

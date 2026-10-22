@@ -8,6 +8,7 @@ x-api-environment: &api-environment
   DATABASE_URL: postgresql+psycopg://monash:${APP_DB_PASSWORD:?set URL-safe application DB password}@database:5432/monash
   APP_ENV: production
   AUTH_MODE: oidc
+  ACCOUNT_SETTINGS_ENABLED: ${ACCOUNT_SETTINGS_ENABLED:-false}
   SESSION_SECURE: 'true'
   WEB_ORIGIN: ${WEB_ORIGIN:?set existing HTTPS dashboard origin}
   CORS_ORIGINS: ${WEB_ORIGIN:?set existing HTTPS dashboard origin}

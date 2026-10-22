@@ -14,7 +14,7 @@ Identity, reporting/monitoring and source clients are implemented; production id
 
 ## First-day setup
 
-Use Python 3.12+, uv, Docker with Compose, Node 22/npm, and Flutter 3.44.7 with an Android SDK and JDK 17. [Toolchain evidence](docs/operations/toolchains.md) records local versions. Commands start at the repo root.
+Use Python 3.12, uv, Docker with Compose, Node 22/npm, and Flutter 3.44.7 with an Android SDK and JDK 21. [Toolchain evidence](docs/operations/toolchains.md) records local versions. Commands start at the repo root.
 
 API and disposable database:
 
@@ -69,3 +69,5 @@ The [approved repository design](docs/superpowers/specs/2026-10-02-unified-platf
 See the [verification and review evidence](docs/migration/VERIFICATION.md) and [implementation decisions](docs/migration/IMPLEMENTATION_DECISIONS.md) for exact results and tradeoffs.
 
 Administration setup and operational boundaries: [platform administration](docs/operations/platform-administration.md). Production deployment artifacts: [server preparation](infra/production/README.md).
+
+Current preparation checklist and feature priorities: [22 October production review](docs/operations/production-readiness-2026-10-22.md).
