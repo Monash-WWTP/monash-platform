@@ -36,3 +36,26 @@ def test_real_image_validation_and_scoped_download(monkeypatch):
         app.dependency_overrides[require_account]=lambda:users[1]
         assert client.get('/api/v1/media/'+media_id).status_code==404
     finally:app.dependency_overrides.clear()
+
+
+def test_download_closes_storage_stream_on_read_failure(monkeypatch):
+    from types import SimpleNamespace
+    from app.db.session import get_db
+    from app.db.platform import Media
+
+    class BrokenBody(BytesIO):
+        def read(self, size=-1):
+            raise OSError('synthetic interrupted storage response')
+
+    body = BrokenBody(b'image')
+    media = SimpleNamespace(owner_id='owner', object_key='private/photo', byte_size=5)
+    monkeypatch.setattr(storage, 'client', lambda: SimpleNamespace(
+        get_object=lambda **kwargs: {'Body': body}))
+    app.dependency_overrides[require_account] = lambda: SimpleNamespace(id='owner', capabilities=[])
+    app.dependency_overrides[get_db] = lambda: SimpleNamespace(get=lambda model, key: media if model is Media else None)
+    try:
+        response = TestClient(app).get('/api/v1/media/synthetic')
+        assert response.status_code == 503
+        assert body.closed, 'Interrupted object response must release its connection'
+    finally:
+        app.dependency_overrides.clear()

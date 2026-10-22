@@ -77,3 +77,37 @@ def test_restore_waits_past_temporary_initialization_server(monkeypatch, tmp_pat
     monkeypatch.setattr(module, 'run', run)
     module.rehearse(tmp_path / 'backup.enc', bytes(32))
     assert tcp_probes == 2
+
+
+@pytest.mark.parametrize("limit", [8, 100])
+def test_backup_reads_objects_with_a_bound_and_closes_response(monkeypatch, tmp_path, limit):
+    from io import BytesIO
+    from types import SimpleNamespace
+
+    class BoundedBody(BytesIO):
+        def read(self, size=-1):
+            assert size >= 0, 'Backup must bound reads before allocating object bytes'
+            return super().read(size)
+
+    monkeypatch.setattr(module, 'MAX_BACKUP_OBJECT_BYTES', limit)
+    body = BoundedBody(b'synthetic photo')
+    store = SimpleNamespace(
+        get_paginator=lambda name: SimpleNamespace(paginate=lambda **kwargs: [
+            {'Contents': [{'Key': 'fixture/photo'}]}]),
+        get_object=lambda **kwargs: {'Body': body},
+    )
+    monkeypatch.setattr(module, 'storage', lambda values: store)
+    monkeypatch.setattr(module, 'private_file', lambda path: b'SYNTHETIC=value\n')
+    monkeypatch.setattr(module, 'run', lambda args: b'synthetic dump')
+    monkeypatch.setattr(module, 'database_manifest', lambda *args: [])
+    output = tmp_path / 'backup.enc'
+    if limit < len(b'synthetic photo'):
+        with pytest.raises(ValueError, match='exceeds'):
+            module.backup(output, bytes(32))
+        assert body.closed
+        assert not output.exists()
+        return
+    module.backup(output, bytes(32))
+    assert body.closed
+    saved = module.unseal(output.read_bytes(), bytes(32))
+    assert len(saved['objects']) == 1
