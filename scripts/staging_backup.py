@@ -258,6 +258,10 @@ def rehearse(source, key):
                         "exec",
                         name,
                         "pg_isready",
+                        # The image's init server accepts Unix sockets before it
+                        # shuts down. TCP becomes ready only on the final server.
+                        "-h",
+                        "127.0.0.1",
                         "-U",
                         "postgres",
                         "-d",

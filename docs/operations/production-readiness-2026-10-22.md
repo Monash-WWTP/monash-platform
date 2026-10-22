@@ -6,7 +6,7 @@ Production rollout is paused. This review starts from `eb4b399` on `main`, with 
 
 | Area | Result | Evidence and limit |
 | --- | --- | --- |
-| API, database, identity permissions, reporting, administration, operational response, simulations | Checked in disposable environment | 242 Python tests passed, one optional original-source-checkout test skipped; test PostgreSQL only on loopback 5433 |
+| API, database, identity permissions, reporting, administration, operational response, simulations | Checked in disposable environment | 243 Python tests passed, one optional original-source-checkout test skipped; test PostgreSQL only on loopback 5433 |
 | Migration | Checked | Upgrade and drift check; head `b72a05e3c114`; no schema changes in this review |
 | API contract | Checked | Generated OpenAPI unchanged; production proxy regression now covers every documented v1/v2 path |
 | Dashboard | Checked | 50 tests, lint and production build; large map/chart chunks remain a performance concern |
@@ -16,6 +16,7 @@ Production rollout is paused. This review starts from `eb4b399` on `main`, with 
 | Scientific reproducibility | Checked, not validated | Research notebook executes against 154 final-effluent samples, snapshot 1.1.0; no model equations or factor semantics changed |
 | Main documentation | Corrected | API/architecture descriptions, JDK requirement, production routing/settings and methane recovery caveat reconciled to source |
 | Public manual | Separate working branch | Refresh pinned source/OpenAPI, workflow pages, historical screenshot labels and evidence coverage in `monash-platform-docs`; its own checks are recorded there |
+| API image | Built, not deployed | ARM64 image `sha256:2602e4369d715a5b98e4aba535134ac5be7c2ad5caa618cc8559e4bf48fdba18`; running staging retains its prior image |
 | Local staging | Existing synthetic environment | API, identity, databases and storage are present; readiness is dependency health, not end-to-end acceptance |
 | Recovery | Local rehearsal only | See the recovery evidence below; no off-server production recovery claim |
 | Production launch | Blocked | External and operational gates below are still open |
@@ -30,11 +31,12 @@ The automated suites include unauthorized/ownership/MFA/CSRF cases, idempotency,
 - Production settings accepted HTTP storage, credential-bearing storage URLs, path-bearing browser origins, mismatched callback origins and HTTP CORS/backchannels. They now reject those configurations; a reviewed HTTPS backchannel remains supported.
 - The production template did not expose the existing account-settings feature flag. It now defaults false; enabling it requires provisioned and accepted identity flows.
 - Dependency audits found Vite, Pillow and Certifi advisories. Targeted updates are locked, and CI now audits dashboard development dependencies and Python runtime dependencies. [Pillow's release notes](https://pillow.readthedocs.io/en/stable/releasenotes/13.0.0.html) document the major-version security fixes.
+- The local restore helper now waits past PostgreSQL’s temporary initialization server; a startup-sequence regression prevents restoring against that transient server.
 - Current documentation described implemented identity/storage/reporting as future work and the manual described obsolete mobile navigation. Current behavior is separated from historical artifacts and unperformed acceptance.
 
 ## Recovery evidence
 
-An encrypted local backup was created after pausing staging API/identity writers, then those services were restarted. The archive contains 18 application and 230 identity tables and zero photo objects. A disposable restore reconciled both database table manifests and authenticated configuration. The first restore attempt failed at `pg_restore`; four subsequent attempts reconciled successfully. The initial subprocess stderr was not surfaced by the existing helper and the failure was not reproduced during diagnostic reruns. Its cause remains unresolved; retain this limitation and capture private diagnostics on a recurrence before treating the procedure as reliable. An empty photo bucket does not prove media restoration, and the local archive/key on the same host are not off-server disaster recovery.
+An encrypted local backup was created after pausing staging API/identity writers, then those services were restarted. The archive contains 18 application and 230 identity tables and zero photo objects. A disposable restore reconciled both database table manifests and authenticated configuration. The first restore attempt failed at `pg_restore`; four diagnostic reruns reconciled successfully. Inspection found that the Unix-socket readiness probe could accept PostgreSQL’s temporary initialization server before it shuts down. The helper now waits for final-server TCP readiness; a regression fails on the old helper and passes on the correction, and three subsequent real restores reconciled successfully. The initial stderr was not surfaced, so its precise cause cannot be proven; capture private diagnostics on any recurrence. An empty photo bucket does not prove media restoration, and the local archive/key on the same host are not off-server disaster recovery.
 
 ## Gates that must remain open
 
