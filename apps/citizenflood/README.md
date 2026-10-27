@@ -34,7 +34,9 @@ unstructured legacy reports are excluded. Saved reports show their observation
 time, or explicitly state that it is unavailable.
 
 On compatible Android phones, optional Google Play Services for AR setup and
-camera access occur only on entry. Scan a safe, visible horizontal reference,
+camera access occur only on entry. The pre-camera screen includes the
+[ARCore privacy disclosure](https://developers.google.com/ar/develop/privacy-requirements)
+and a Google Privacy Policy link. Scan a safe, visible horizontal reference,
 tap it, and confirm it matches the described surface. A bounded 3 m patch and
 10 cm ruler ticks illustrate the depth. Reset if the reference drifts. Do not
 enter floodwater; skip AR when the reference cannot be identified safely.

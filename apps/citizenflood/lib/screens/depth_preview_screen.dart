@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../services/depth_preview.dart';
 import '../services/account_session.dart';
 
@@ -116,6 +117,34 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
             const SizedBox(height: 16),
             const Text(
               'Choose a visible, safe surface matching this reference. The camera will help place the illustration above it. If the reference is submerged or inaccessible, skip the preview. Never enter floodwater.',
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'AR preview uses Google Play Services for AR (ARCore). Google provides this service and processes data under its Privacy Policy.',
+            ),
+            TextButton(
+              onPressed: () async {
+                try {
+                  final opened = await launchUrl(
+                    Uri.parse('https://policies.google.com/privacy'),
+                    mode: LaunchMode.externalApplication,
+                  );
+                  if (!opened && mounted) {
+                    setState(
+                      () => _error =
+                          'Could not open the Google Privacy Policy. Visit policies.google.com/privacy in your browser.',
+                    );
+                  }
+                } catch (_) {
+                  if (mounted) {
+                    setState(
+                      () => _error =
+                          'Could not open the Google Privacy Policy. Visit policies.google.com/privacy in your browser.',
+                    );
+                  }
+                }
+              },
+              child: const Text('Google Privacy Policy'),
             ),
             const SizedBox(height: 16),
             const Text(
