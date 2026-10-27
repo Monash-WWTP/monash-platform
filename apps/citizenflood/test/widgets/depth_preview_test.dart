@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:citizenflood/services/account_session.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:citizenflood/services/depth_preview.dart';
@@ -7,6 +8,16 @@ import 'package:citizenflood/widgets/measurement_fields.dart';
 import 'package:citizenflood/widgets/report_detail_sheet.dart';
 import 'package:citizenflood/models/report.dart';
 import 'package:citizenflood/models/observation.dart';
+
+class PreviewSession extends AccountSession {
+  int revision = 0;
+  @override
+  int get generation => revision;
+  void change() {
+    revision++;
+    notifyListeners();
+  }
+}
 
 void main() {
   final data = <String, dynamic>{
@@ -73,6 +84,36 @@ void main() {
         owner ? findsOneWidget : findsNothing,
       );
     }
+  });
+  testWidgets('account change clears context and closes native camera', (
+    tester,
+  ) async {
+    final session = PreviewSession();
+    final calls = <String>[];
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(DepthPreview.channel, (call) async {
+          calls.add(call.method);
+          return null;
+        });
+    addTearDown(
+      () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(DepthPreview.channel, null),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: DepthPreviewScreen(
+          preview: DepthPreview.fromObservation(data)!,
+          contextLabel: 'Private report',
+          session: session,
+        ),
+      ),
+    );
+    expect(find.text('Private report'), findsOneWidget);
+    session.change();
+    await tester.pumpAndSettle();
+    expect(find.text('Private report'), findsNothing);
+    expect(find.text('Reference: Road surface'), findsNothing);
+    expect(calls, contains('close'));
   });
   testWidgets('native failure leaves a usable return to report', (
     tester,

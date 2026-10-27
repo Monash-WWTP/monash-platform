@@ -46,7 +46,8 @@ occlusion is used when supported and a current depth image is available;
 otherwise the screen explicitly identifies a simplified preview. Unsupported
 phones and permission refusal retain normal reporting. Camera/depth frames
 are not uploaded by this feature, and synthetic views cannot be attached as
-report evidence. No new backend schema or cloud AR API is used.
+report evidence. Account changes clear the preview context and close any active
+native camera session. No new backend schema or cloud AR API is used.
 
 Before public release, record physical-device evidence for depth and non-depth
 ARCore phones, installation/permission refusal, no visible reference, tracking

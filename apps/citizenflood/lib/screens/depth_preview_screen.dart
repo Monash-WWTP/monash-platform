@@ -1,24 +1,53 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/depth_preview.dart';
+import '../services/account_session.dart';
 
 class DepthPreviewScreen extends StatefulWidget {
   const DepthPreviewScreen({
     super.key,
     required this.preview,
     required this.contextLabel,
+    this.session,
   });
   final DepthPreview preview;
   final String contextLabel;
+  final AccountSession? session;
   @override
   State<DepthPreviewScreen> createState() => _DepthPreviewScreenState();
 }
 
 class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
+  late final _session = widget.session ?? AccountSession.instance;
+  late final int _generation;
+  bool _invalidated = false;
+  @override
+  void initState() {
+    super.initState();
+    _generation = _session.generation;
+    _session.addListener(_accountChanged);
+  }
+
+  void _accountChanged() {
+    if (_session.generation == _generation || _invalidated) return;
+    setState(() => _invalidated = true);
+    unawaited(DepthPreview.close().catchError((Object _) {}));
+  }
+
+  @override
+  void dispose() {
+    _session.removeListener(_accountChanged);
+    // The parent reporting route can also be dismissed by account invalidation.
+    unawaited(DepthPreview.close().catchError((Object _) {}));
+    super.dispose();
+  }
+
   bool _opening = false;
   String? _error;
   Future<void> _open() async {
+    if (_invalidated) return;
     setState(() {
       _opening = true;
       _error = null;
@@ -47,6 +76,19 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_invalidated) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Preview closed')),
+        body: const SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Text(
+              'Your account changed. Return to your reports to start a new preview.',
+            ),
+          ),
+        ),
+      );
+    }
     final supported =
         !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
     final theme = Theme.of(context);
