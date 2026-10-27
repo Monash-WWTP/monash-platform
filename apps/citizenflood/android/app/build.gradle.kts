@@ -70,3 +70,9 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+// AR is optional; the rest of CitizenFlood has no ARCore requirement.
+dependencies {
+    implementation("com.google.ar:core:1.57.0")
+    testImplementation("junit:junit:4.13.2")
+}
