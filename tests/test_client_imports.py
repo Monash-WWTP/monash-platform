@@ -12,6 +12,7 @@ MOBILE_ADAPTATIONS = {
     "android/app/build.gradle.kts",
     "android/app/src/debug/AndroidManifest.xml",
     "android/app/src/main/AndroidManifest.xml",
+    "android/app/src/main/kotlin/au/edu/monash/citizenflood/MainActivity.kt",
     "lib/config/env.dart",
     "lib/main.dart",
     "lib/models/report.dart",
