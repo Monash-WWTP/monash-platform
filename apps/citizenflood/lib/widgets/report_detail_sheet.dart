@@ -2,6 +2,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/report.dart';
+import '../services/depth_preview.dart';
+import '../screens/depth_preview_screen.dart';
 import '../services/report_repository.dart';
 
 class ReportDetailSheet extends StatelessWidget {
@@ -19,6 +21,9 @@ class ReportDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final depthPreview = ownerView && report.isOwner
+        ? DepthPreview.fromObservation(report.observation?.data)
+        : null;
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(24, 0, 24, 28),
@@ -76,6 +81,25 @@ class ReportDetailSheet extends StatelessWidget {
                   onPressed: onUpdate,
                   icon: const Icon(Icons.update),
                   label: const Text('Report an update'),
+                ),
+              ),
+            if (depthPreview != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: OutlinedButton.icon(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (_) => DepthPreviewScreen(
+                        preview: depthPreview,
+                        contextLabel: report.observedAt == null
+                            ? 'Reported depth · observation time unavailable'
+                            : 'Reported depth · ${DateFormat('d MMM y · HH:mm').format(report.observedAt!.toLocal())}',
+                      ),
+                    ),
+                  ),
+                  icon: const Icon(Icons.view_in_ar),
+                  label: const Text('Visualise reported depth'),
                 ),
               ),
             if (ownerView && report.reviewReason != null) ...[
