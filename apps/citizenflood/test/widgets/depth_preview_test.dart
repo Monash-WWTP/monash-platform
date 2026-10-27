@@ -53,6 +53,7 @@ void main() {
       await tester.tap(action);
       await tester.pumpAndSettle();
       expect(find.text('Draft depth'), findsOneWidget);
+      await tester.scrollUntilVisible(find.text('Return to report'), 200);
       await tester.tap(find.text('Return to report'));
       await tester.pumpAndSettle();
       expect(find.text('0.5'), findsOneWidget);
@@ -138,7 +139,7 @@ void main() {
         ),
       ),
     );
-    await tester.ensureVisible(find.text('Open AR preview'));
+    await tester.scrollUntilVisible(find.text('Open AR preview'), 200);
     await tester.tap(find.text('Open AR preview'));
     await tester.pumpAndSettle();
     expect(
