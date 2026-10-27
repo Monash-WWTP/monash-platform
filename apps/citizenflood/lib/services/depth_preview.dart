@@ -26,6 +26,8 @@ class DepthPreview {
     return DepthPreview._(value.toDouble(), reference.trim());
   }
 
+  static Future<void> close() => channel.invokeMethod<void>('close');
+
   Future<void> open({required String contextLabel}) =>
       channel.invokeMethod<void>('open', {
         'depthM': depthM,

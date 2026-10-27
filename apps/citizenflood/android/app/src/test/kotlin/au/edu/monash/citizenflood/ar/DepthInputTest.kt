@@ -11,6 +11,19 @@ class DepthInputTest {
         assertNull(DepthInput.parse(0.5, " ", "Draft depth"))
         assertNull(DepthInput.parse("0.5", "road", "Draft depth"))
     }
+    @Test fun closeCancelsEvenAnActivityThatHasNotStarted() {
+        val pending = DepthLaunch.begin()
+        assertTrue(DepthLaunch.isCurrent(pending))
+        DepthLaunch.invalidate()
+        assertFalse(DepthLaunch.isCurrent(pending))
+    }
+    @Test fun newLaunchRejectsAnOlderIntent() {
+        val old = DepthLaunch.begin()
+        val current = DepthLaunch.begin()
+        assertFalse(DepthLaunch.isCurrent(old))
+        assertTrue(DepthLaunch.isCurrent(current))
+        assertFalse(DepthLaunch.isCurrent(-1))
+    }
     @Test fun preservesZeroAndMetres() {
         assertEquals(0f, DepthInput.parse(0, "road", "Draft depth")!!.metres, 0f)
         assertEquals(0.5f, DepthInput.parse(0.5, "road", "Draft depth")!!.metres, 0f)

@@ -26,7 +26,7 @@ Reject gauge stage; preserve draft; handle unsupported/denied camera; hide water
 - [x] Add private ar/DepthPreviewActivity.kt, ar/DepthRenderer.kt and method channel.
 - [x] Configure optional ARCore, permission, installation and lifecycle handling.
 - [x] Render camera, horizontal hit-test confirmation, bounded water, ruler and optional depth occlusion.
-- [ ] Package APK on x86 CI; native compilation and 2 input tests passed locally.
+- [ ] Package final APK on x86 CI; initial x86 packaging and native tests passed.
 
 ### Task 3: Verification
 - [x] Review against spec and fix material findings.
@@ -34,4 +34,6 @@ Reject gauge stage; preserve draft; handle unsupported/denied camera; hide water
 
 User authorised implementation in this session. Execute inline on feat/reported-depth-ar.
 
-Verification: Flutter 65 tests and analyzer pass; repository policy and 207 pinned source files pass. Camera/water shaders compile and link. Independent review complete. No connected Android device: physical tracking, alignment, rotation and thermal acceptance remain open.
+Verification: Flutter 66 tests and analyzer pass; repository policy and 207 pinned source files pass. Camera/water shaders compile and link. Independent review complete. No connected Android device: physical tracking, alignment, rotation and thermal acceptance remain open.
+
+Account changes clear Flutter preview context and cancel both active and pending native launches. Follow-up independent review found no remaining material defect in these guards; physical-device acceptance is still required.

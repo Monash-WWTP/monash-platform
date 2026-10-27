@@ -2,6 +2,7 @@ package au.edu.monash.citizenflood
 
 import android.content.Intent
 import android.os.Build
+import au.edu.monash.citizenflood.ar.DepthLaunch
 import au.edu.monash.citizenflood.ar.DepthInput
 import au.edu.monash.citizenflood.ar.DepthPreviewActivity
 import io.flutter.embedding.android.FlutterActivity
@@ -13,6 +14,11 @@ class MainActivity : FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "citizenflood/depth_preview")
             .setMethodCallHandler { call, result ->
+                if (call.method == "close") {
+                    DepthPreviewActivity.closeActive()
+                    result.success(null)
+                    return@setMethodCallHandler
+                }
                 if (call.method != "open") { result.notImplemented(); return@setMethodCallHandler }
                 val input = DepthInput.parse(call.argument<Any>("depthM"),
                     call.argument<Any>("reference"), call.argument<Any>("contextLabel"))
@@ -22,7 +28,10 @@ class MainActivity : FlutterActivity() {
                     result.error("unavailable", "AR requires Android 7 or later. Continue reporting normally.", null)
                 } else {
                     try {
+                        DepthPreviewActivity.closeActive()
+                        val launchToken = DepthLaunch.begin()
                         startActivity(Intent(this, DepthPreviewActivity::class.java)
+                            .putExtra("launchToken", launchToken)
                             .putExtra("depthM", input.metres).putExtra("reference", input.reference)
                             .putExtra("contextLabel", input.context))
                         result.success(null)

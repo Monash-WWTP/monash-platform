@@ -1,5 +1,6 @@
 package au.edu.monash.citizenflood.ar
 
+import java.lang.ref.WeakReference
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
@@ -23,6 +24,13 @@ import com.google.ar.core.Session
 
 /** Optional local illustration. No capture, location or upload functionality. */
 class DepthPreviewActivity : Activity() {
+    companion object {
+        private var active = WeakReference<DepthPreviewActivity>(null)
+        fun closeActive() {
+            DepthLaunch.invalidate()
+            active.get()?.let { activity -> activity.runOnUiThread { activity.finish() } }
+        }
+    }
     private var session: Session? = null
     private lateinit var surface: GLSurfaceView
     private lateinit var renderer: DepthRenderer
@@ -38,6 +46,8 @@ class DepthPreviewActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!DepthLaunch.isCurrent(intent.getLongExtra("launchToken", -1))) { finish(); return }
+        active = WeakReference(this)
         val input = DepthInput.parse(intent.getFloatExtra("depthM", Float.NaN),
             intent.getStringExtra("reference"), intent.getStringExtra("contextLabel"))
         if (input == null) { finish(); return }
@@ -121,6 +131,7 @@ class DepthPreviewActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
+        if (!DepthLaunch.isCurrent(intent.getLongExtra("launchToken", -1))) { finish(); return }
         if (failed || !::surface.isInitialized) return
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.CAMERA), 71); return
@@ -182,6 +193,7 @@ class DepthPreviewActivity : Activity() {
     }
     override fun onDestroy() {
         destroyed = true
+        if (active.get() === this) active.clear()
         if (::renderer.isInitialized) renderer.session = null
         session?.close(); session = null
         super.onDestroy()
