@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../services/depth_preview.dart';
+import '../screens/depth_preview_screen.dart';
 
 class MeasurementFields extends StatefulWidget {
   const MeasurementFields({
@@ -48,7 +50,10 @@ class MeasurementFieldsState extends State<MeasurementFields> {
       keyboardType: numeric
           ? const TextInputType.numberWithOptions(decimal: true, signed: true)
           : TextInputType.text,
-      onChanged: (_) => widget.onChanged(),
+      onChanged: (_) {
+        setState(() {});
+        widget.onChanged();
+      },
       validator: (v) {
         if (required && (v?.trim().isEmpty ?? true)) return 'Required';
         if (numeric && v != null && v.isNotEmpty) {
@@ -259,6 +264,36 @@ class MeasurementFieldsState extends State<MeasurementFields> {
           numeric: true,
         ),
         if (_method == 'instrument') text('instrument', 'Instrument or gauge'),
+        if (_reference == 'depth')
+          Builder(
+            builder: (context) {
+              final preview = DepthPreview.fromObservation({
+                'kind': 'water_reading',
+                'reference_kind': _reference,
+                'unit': 'm',
+                'value': double.tryParse(field('value').text.trim()),
+                'reference_description': field('surface').text,
+              });
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: OutlinedButton.icon(
+                  onPressed: preview == null
+                      ? null
+                      : () => Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (_) => DepthPreviewScreen(
+                              preview: preview,
+                              contextLabel: 'Draft depth',
+                            ),
+                          ),
+                        ),
+                  icon: const Icon(Icons.view_in_ar),
+                  label: const Text('Preview depth in AR'),
+                ),
+              );
+            },
+          ),
       ] else ...[
         choice('Temperature subject', _subject, const [
           ('water', 'Water'),

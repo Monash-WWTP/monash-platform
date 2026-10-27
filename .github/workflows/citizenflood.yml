@@ -25,3 +25,10 @@ jobs:
       - run: flutter test
       - run: flutter build apk --debug --dart-define-from-file=staging-config.example.json
       - run: test -s build/app/outputs/flutter-apk/app-debug.apk
+      - name: Native AR input tests
+        run: cd android && ./gradlew :app:testDebugUnitTest --tests '*DepthInputTest'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: citizenflood-staging-apk
+          path: apps/citizenflood/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 7
