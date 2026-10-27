@@ -82,3 +82,12 @@ The separate Fumadocs manual is linked from platform navigation and current READ
 ## Neutral interface and progressive disclosure
 
 The user requested neutral interface colours and less clutter on 19 October 2026. Existing adapted dashboard tokens, chart palette, station/scenario interfaces and Android theme/report/map screens were revised. Labelled native disclosures retain all controls and values. The map observation detail sheet scrolls. Native reporting categories, severity labels, permissions, transport, model equations and immutable release artifacts are preserved. No new imported-file exemption is introduced; existing adaptations remain explicit in `tests/test_client_imports.py`.
+
+## Reported-depth AR — 27 October 2026
+
+The Android `MainActivity.kt` now exposes a validated local method channel to
+an optional, private native AR activity. The manifest and app Gradle file add
+optional ARCore support and its pinned SDK. Existing reporting widgets expose
+previews only for structured depth readings; no observation contract changes.
+The entry point is recorded in `MOBILE_ADAPTATIONS`; original source hashes
+remain unchanged. Physical-device AR acceptance remains outstanding.
