@@ -44,6 +44,43 @@ class DepthRenderer(
     private val mvp = FloatArray(16)
     private var depthBytes: ByteBuffer? = null
     private var frameDepthAvailable = false
+    private val ripples = RippleSurface()
+    private val waterMesh = ByteBuffer.allocateDirect((ripples.size-1)*(ripples.size-1)*6*6*4)
+        .order(ByteOrder.nativeOrder()).asFloatBuffer()
+    private val waterVertices = (ripples.size-1)*(ripples.size-1)*6
+    private var rippleTimestamp = 0L
+    private var rippleAccumulator = 0f
+    private var rippleClock = 0f
+    private var dropClock = 0f
+    private val inverseModel = FloatArray(16)
+    private val localEye = FloatArray(4)
+    private val worldEye = FloatArray(4)
+
+    private fun animateWater(timestamp: Long) {
+        val elapsed = if (rippleTimestamp == 0L) 0f else
+            ((timestamp-rippleTimestamp)/1_000_000_000f).coerceIn(0f,.1f)
+        rippleTimestamp=timestamp; rippleAccumulator+=elapsed; rippleClock+=elapsed; dropClock+=elapsed
+        if (dropClock>.8f) {
+            dropClock=0f
+            ripples.drop(kotlin.math.sin(rippleClock*.71f),kotlin.math.cos(rippleClock*.53f),.22f,.006f)
+        }
+        while (rippleAccumulator>=1f/60f) { ripples.step(); rippleAccumulator-=1f/60f }
+        waterMesh.clear()
+        val spacing=3f/(ripples.size-1)
+        // Do not let decorative ripples cross the reference on very shallow reports.
+        val amplitude=minOf(1f,depthM/.1f)
+        fun vertex(i:Int,j:Int) {
+            waterMesh.put(-1.5f+i*spacing);waterMesh.put(ripples.height(i,j)*amplitude);waterMesh.put(-1.5f+j*spacing)
+            waterMesh.put((ripples.height(i-1,j)-ripples.height(i+1,j))*amplitude/(2f*spacing))
+            waterMesh.put(1f)
+            waterMesh.put((ripples.height(i,j-1)-ripples.height(i,j+1))*amplitude/(2f*spacing))
+        }
+        for(j in 0 until ripples.size-1) for(i in 0 until ripples.size-1) {
+            vertex(i,j);vertex(i+1,j);vertex(i,j+1)
+            vertex(i+1,j);vertex(i+1,j+1);vertex(i,j+1)
+        }
+        waterMesh.flip()
+    }
 
     fun tap(x: Float, y: Float) { pendingTap.set(x to y) }
     fun confirmReference() {
@@ -54,6 +91,7 @@ class DepthRenderer(
     fun reset() {
         anchor?.detach(); anchor = null; confirmed = false
         pendingTap.set(null); candidateChanged(false)
+        ripples.clear(); rippleTimestamp=0L; rippleAccumulator=0f; rippleClock=0f; dropClock=0f
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
@@ -119,6 +157,7 @@ class DepthRenderer(
                 status("Reference selected: outlined 3 m patch. Confirm it matches your described surface.")
                 return
             }
+            animateWater(frame.timestamp)
             updateDepth(frame)
             drawWater(frame, frameDepthAvailable, false)
             status(if (frameDepthAvailable)
@@ -177,7 +216,18 @@ class DepthRenderer(
         Matrix.multiplyMM(mv, 0, view, 0, model, 0)
         Matrix.multiplyMM(mvp, 0, projection, 0, mv, 0)
         uniformMatrix("mvp", mvp); uniformMatrix("mv", mv)
-        GL.glUniform1f(location("time"), (frame.timestamp % 60_000_000_000L) / 1_000_000_000f)
+        Matrix.invertM(inverseModel,0,model,0)
+        val pose=frame.camera.pose
+        worldEye[0]=pose.tx();worldEye[1]=pose.ty();worldEye[2]=pose.tz();worldEye[3]=1f
+        Matrix.multiplyMV(localEye,0,inverseModel,0,worldEye,0)
+        GL.glUniform3f(location("eyeLocal"),localEye[0],localEye[1],localEye[2])
+        GL.glActiveTexture(GL.GL_TEXTURE0)
+        GL.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,cameraTexture)
+        GL.glUniform1i(location("cameraFeed"),0)
+        val camUv=FloatArray(8);cameraUv.position(0);cameraUv.get(camUv);cameraUv.position(0)
+        GL.glUniform2f(location("cameraOrigin"),camUv[0],camUv[1])
+        GL.glUniform2f(location("cameraX"),camUv[2]-camUv[0],camUv[3]-camUv[1])
+        GL.glUniform2f(location("cameraY"),camUv[4]-camUv[0],camUv[5]-camUv[1])
         GL.glUniform1f(location("referenceOnly"), if (referenceOnly) 1f else 0f)
         GL.glUniform1f(location("occlusion"), if (occlude) 1f else 0f)
         GL.glUniform2f(location("viewport"), width.toFloat(), height.toFloat())
@@ -188,8 +238,20 @@ class DepthRenderer(
         GL.glUniform2f(location("uvY"), u[4] - u[0], u[5] - u[1])
         GL.glActiveTexture(GL.GL_TEXTURE1); GL.glBindTexture(GL.GL_TEXTURE_2D, depthTexture)
         GL.glUniform1i(location("depthImage"), 1)
-        attribute(waterProgram, "position", quad, 3)
-        GL.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4)
+        val normalLocation=GL.glGetAttribLocation(waterProgram,"surfaceNormal")
+        if(referenceOnly) {
+            GL.glDisableVertexAttribArray(normalLocation);GL.glVertexAttrib3f(normalLocation,0f,1f,0f)
+            attribute(waterProgram,"position",quad,3)
+            GL.glDrawArrays(GL.GL_TRIANGLE_STRIP,0,4)
+        } else {
+            val positionLocation=GL.glGetAttribLocation(waterProgram,"position")
+            waterMesh.position(0);GL.glEnableVertexAttribArray(positionLocation)
+            GL.glVertexAttribPointer(positionLocation,3,GL.GL_FLOAT,false,24,waterMesh)
+            waterMesh.position(3);GL.glEnableVertexAttribArray(normalLocation)
+            GL.glVertexAttribPointer(normalLocation,3,GL.GL_FLOAT,false,24,waterMesh)
+            GL.glDrawArrays(GL.GL_TRIANGLES,0,waterVertices)
+            GL.glDisableVertexAttribArray(normalLocation);GL.glVertexAttrib3f(normalLocation,0f,1f,0f)
+        }
         disableAttributes(waterProgram, "position")
         if (!referenceOnly) drawRuler()
         GL.glDisable(GL.GL_BLEND)
@@ -255,14 +317,21 @@ class DepthRenderer(
             void main() { gl_FragColor = texture2D(camera, tex); }
         """
         private const val WATER_VERTEX = """
-            uniform mat4 mvp; uniform mat4 mv; attribute vec3 position;
+            uniform mat4 mvp; uniform mat4 mv; attribute vec3 position; attribute vec3 surfaceNormal;
+            varying vec3 pointLocal; varying vec3 normalLocal;
             varying vec2 local; varying float distanceM;
             void main() { gl_Position = mvp * vec4(position, 1.0);
-                distanceM = -(mv * vec4(position, 1.0)).z; local = position.xz; }
+                distanceM = -(mv * vec4(position, 1.0)).z; local = position.xz; pointLocal=position; normalLocal=surfaceNormal; }
         """
         private const val WATER_FRAGMENT = """
+            #extension GL_OES_EGL_image_external : require
             precision highp float;
-            uniform sampler2D depthImage; uniform float occlusion; uniform float time;
+            uniform samplerExternalOES cameraFeed;
+            uniform mat4 mv;
+            uniform vec2 cameraOrigin; uniform vec2 cameraX; uniform vec2 cameraY;
+            uniform vec3 eyeLocal;
+            varying vec3 pointLocal; varying vec3 normalLocal;
+            uniform sampler2D depthImage; uniform float occlusion;
             uniform float referenceOnly; uniform vec2 viewport;
             uniform vec2 uvOrigin; uniform vec2 uvX; uniform vec2 uvY;
             varying vec2 local; varying float distanceM;
@@ -280,10 +349,23 @@ class DepthRenderer(
                     if (edge < 1.45) discard;
                     gl_FragColor = vec4(0.45, 1.0, 0.65, 0.95); return;
                 }
-                float waves = sin(local.x * 15.0 + time * 1.5) *
-                    sin(local.y * 12.0 - time * 1.1);
-                vec3 colour = mix(vec3(0.04, 0.30, 0.37), vec3(0.25, 0.60, 0.63), waves * 0.5 + 0.5);
-                gl_FragColor = vec4(colour, edge > 1.46 ? 0.9 : 0.58);
+                // Heightfield normals drive reflection/refraction, adapted from Evan Wallace's MIT water demo.
+                vec3 n=normalize(normalLocal);
+                vec3 v=normalize(eyeLocal-pointLocal);
+                float fresnel=0.025+0.975*pow(1.0-max(dot(n,v),0.0),5.0);
+                vec2 screen=gl_FragCoord.xy/viewport;
+                // Convert the ripple perturbation into camera axes before offsetting screen UV.
+                vec3 slopeView=mat3(mv)*(n-vec3(0.0,1.0,0.0));
+                vec2 distorted=clamp(screen+slopeView.xy*0.025,vec2(0.002),vec2(0.998));
+                vec2 cameraUv=clamp(cameraOrigin+distorted.x*cameraX+distorted.y*cameraY,vec2(0.002),vec2(0.998));
+                vec3 transmitted=texture2D(cameraFeed,cameraUv).rgb;
+                transmitted=mix(transmitted,vec3(0.06,0.25,0.27),0.24);
+                // Synthetic sky fallback: no claim of measured surrounding reflections.
+                vec3 reflected=mix(vec3(0.24,0.38,0.43),vec3(0.75,0.84,0.86),clamp(reflect(-v,n).y,0.0,1.0));
+                vec3 halfLight=normalize(v+normalize(vec3(-0.4,1.0,0.3)));
+                float highlight=pow(max(dot(n,halfLight),0.0),120.0)*0.45;
+                vec3 colour=mix(transmitted,reflected,fresnel)+vec3(highlight);
+                gl_FragColor=vec4(colour,edge>1.46?0.85:0.78);
             }
         """
     }
