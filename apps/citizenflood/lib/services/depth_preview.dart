@@ -28,6 +28,13 @@ class DepthPreview {
 
   static Future<void> close() => channel.invokeMethod<void>('close');
 
+  Future<void> open3d({required String contextLabel}) =>
+      channel.invokeMethod<void>('open3d', {
+        'depthM': depthM,
+        'reference': reference,
+        'contextLabel': contextLabel,
+      });
+
   Future<void> open({required String contextLabel}) =>
       channel.invokeMethod<void>('open', {
         'depthM': depthM,

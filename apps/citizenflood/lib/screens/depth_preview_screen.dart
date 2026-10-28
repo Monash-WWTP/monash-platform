@@ -24,6 +24,7 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
   late final _session = widget.session ?? AccountSession.instance;
   late final int _generation;
   bool _invalidated = false;
+  final _scroll = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -40,6 +41,7 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
   @override
   void dispose() {
     _session.removeListener(_accountChanged);
+    _scroll.dispose();
     // The parent reporting route can also be dismissed by account invalidation.
     unawaited(DepthPreview.close().catchError((Object _) {}));
     super.dispose();
@@ -47,19 +49,23 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
 
   bool _opening = false;
   String? _error;
-  Future<void> _open() async {
+  Future<void> _open({bool threeDimensional = false}) async {
     if (_invalidated) return;
     setState(() {
       _opening = true;
       _error = null;
     });
     try {
-      await widget.preview.open(contextLabel: widget.contextLabel);
+      if (threeDimensional) {
+        await widget.preview.open3d(contextLabel: widget.contextLabel);
+      } else {
+        await widget.preview.open(contextLabel: widget.contextLabel);
+      }
     } on MissingPluginException {
       if (mounted) {
         setState(
           () => _error =
-              'AR preview is unavailable in this build. You can continue reporting normally.',
+              'Water preview is unavailable in this build. You can continue reporting normally.',
         );
       }
     } on PlatformException catch (e) {
@@ -67,11 +73,14 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
         setState(
           () => _error =
               e.message ??
-              'AR could not open. You can continue reporting normally.',
+              'Preview could not open. You can continue reporting normally.',
         );
       }
     } finally {
-      if (mounted) setState(() => _opening = false);
+      if (mounted) {
+        setState(() => _opening = false);
+        if (_error != null && _scroll.hasClients) _scroll.jumpTo(0);
+      }
     }
   }
 
@@ -97,6 +106,7 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
       appBar: AppBar(title: const Text('Visualise reported depth')),
       body: SafeArea(
         child: ListView(
+          controller: _scroll,
           padding: const EdgeInsets.all(24),
           children: [
             Text(
@@ -114,6 +124,34 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
             const Text(
               'This illustrates your entered depth. It does not measure water or predict flooding.',
             ),
+            const SizedBox(height: 16),
+            if (!supported)
+              const Text(
+                'Water previews are available on Android. Reporting remains available.',
+              ),
+            if (_error != null) ...[
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  _error!,
+                  style: TextStyle(color: theme.colorScheme.error),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+            FilledButton.icon(
+              onPressed: supported && !_opening
+                  ? () => _open(threeDimensional: true)
+                  : null,
+              icon: const Icon(Icons.water),
+              label: const Text('3D water preview'),
+            ),
+            const Text(
+              'Rotate and zoom an illustrative scene. No camera needed.',
+            ),
+            const SizedBox(height: 16),
+            const Divider(height: 32),
+            Text('AR in your surroundings', style: theme.textTheme.titleMedium),
             const SizedBox(height: 16),
             const Text(
               'Choose a visible, safe surface matching this reference. The camera will help place the illustration above it. If the reference is submerged or inaccessible, skip the preview. Never enter floodwater.',
@@ -151,22 +189,8 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
               'Camera frames are not uploaded by this preview. No rendered image is attached to your report. A past report is illustrated in your current surroundings, not reconstructed.',
             ),
             const SizedBox(height: 24),
-            if (!supported)
-              const Text(
-                'AR preview is available on compatible Android phones. Reporting remains available.',
-              ),
-            if (_error != null) ...[
-              Semantics(
-                liveRegion: true,
-                child: Text(
-                  _error!,
-                  style: TextStyle(color: theme.colorScheme.error),
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
-            FilledButton.icon(
-              onPressed: supported && !_opening ? _open : null,
+            OutlinedButton.icon(
+              onPressed: supported && !_opening ? () => _open() : null,
               icon: const Icon(Icons.view_in_ar),
               label: Text(_opening ? 'Opening camera…' : 'Open AR preview'),
             ),

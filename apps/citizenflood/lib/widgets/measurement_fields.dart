@@ -289,7 +289,7 @@ class MeasurementFieldsState extends State<MeasurementFields> {
                           ),
                         ),
                   icon: const Icon(Icons.view_in_ar),
-                  label: const Text('Preview depth in AR'),
+                  label: const Text('Preview depth'),
                 ),
               );
             },

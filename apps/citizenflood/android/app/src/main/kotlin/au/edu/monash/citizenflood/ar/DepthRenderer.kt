@@ -19,9 +19,21 @@ class DepthRenderer(
     private val status: (String) -> Unit,
     private val candidateChanged: (Boolean) -> Unit,
     private val failed: () -> Unit,
+    private val standalone: Boolean = false,
 ) : GLSurfaceView.Renderer {
     @Volatile var session: Session? = null
     @Volatile var rotation: Int = 0
+    private val orbit = if (standalone) PreviewOrbit(depthM) else null
+    private val patchSize = orbit?.surfaceSize ?: 3f
+    private val halfExtent = patchSize / 2f
+    private val floorQuad = floats(-halfExtent, 0f, -halfExtent, halfExtent, 0f, -halfExtent,
+        -halfExtent, 0f, halfExtent, halfExtent, 0f, halfExtent)
+    private var paused = false
+    fun rotate(horizontal: Float, vertical: Float) { orbit?.rotate(horizontal, vertical) }
+    fun zoom(scale: Float) { orbit?.zoom(scale) }
+    fun setPaused(value: Boolean) { paused = value; rippleTimestamp = 0L }
+    fun addRipple() { ripples.drop(0f, 0f, .35f, .02f) }
+    fun resetScene() { reset(); orbit?.reset(); paused = false }
     private var width = 1
     private var height = 1
     private val pendingTap = AtomicReference<Pair<Float, Float>?>(null)
@@ -66,11 +78,11 @@ class DepthRenderer(
         }
         while (rippleAccumulator>=1f/60f) { ripples.step(); rippleAccumulator-=1f/60f }
         waterMesh.clear()
-        val spacing=3f/(ripples.size-1)
+        val spacing=patchSize/(ripples.size-1)
         // Do not let decorative ripples cross the reference on very shallow reports.
         val amplitude=minOf(1f,depthM/.1f)
         fun vertex(i:Int,j:Int) {
-            waterMesh.put(-1.5f+i*spacing);waterMesh.put(ripples.height(i,j)*amplitude);waterMesh.put(-1.5f+j*spacing)
+            waterMesh.put(-halfExtent+i*spacing);waterMesh.put(ripples.height(i,j)*amplitude);waterMesh.put(-halfExtent+j*spacing)
             waterMesh.put((ripples.height(i-1,j)-ripples.height(i+1,j))*amplitude/(2f*spacing))
             waterMesh.put(1f)
             waterMesh.put((ripples.height(i,j-1)-ripples.height(i,j+1))*amplitude/(2f*spacing))
@@ -97,11 +109,15 @@ class DepthRenderer(
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         try {
             GL.glClearColor(0f, 0f, 0f, 1f)
-            cameraTexture = texture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES)
+            if (!standalone) cameraTexture = texture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES)
             depthTexture = texture(GL.GL_TEXTURE_2D)
             textureSession = null
-            cameraProgram = program(CAMERA_VERTEX, CAMERA_FRAGMENT)
-            waterProgram = program(WATER_VERTEX, WATER_FRAGMENT)
+            if (!standalone) cameraProgram = program(CAMERA_VERTEX, CAMERA_FRAGMENT)
+            val fragment = if (standalone) WATER_FRAGMENT
+                .replace("#extension GL_OES_EGL_image_external : require", "")
+                .replace("uniform samplerExternalOES cameraFeed;", "")
+                .replace("texture2D(cameraFeed,cameraUv).rgb", "vec3(0.0)") else WATER_FRAGMENT
+            waterProgram = program(WATER_VERTEX, fragment)
         } catch (_: Exception) { failed() }
     }
     override fun onSurfaceChanged(gl: GL10?, w: Int, h: Int) {
@@ -109,6 +125,12 @@ class DepthRenderer(
     }
     override fun onDrawFrame(gl: GL10?) {
         GL.glClear(GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT)
+        if (standalone) {
+            try { drawStandalone() } catch (error: Exception) {
+                android.util.Log.e("WaterPreview", "3D rendering failed", error); failed()
+            }
+            return
+        }
         val current = session ?: return
         try {
             if (textureSession !== current) {
@@ -151,19 +173,42 @@ class DepthRenderer(
             camera.getViewMatrix(view, 0)
             camera.getProjectionMatrix(projection, 0, 0.05f, 100f)
             placed.pose.toMatrix(model, 0)
+            val pose = frame.camera.pose
+            worldEye[0] = pose.tx(); worldEye[1] = pose.ty(); worldEye[2] = pose.tz(); worldEye[3] = 1f
             if (!confirmed) {
                 candidateChanged(true)
-                drawWater(frame, false, true)
+                drawWater(false, true)
                 status("Reference selected: outlined 3 m patch. Confirm it matches your described surface.")
                 return
             }
             animateWater(frame.timestamp)
             updateDepth(frame)
-            drawWater(frame, frameDepthAvailable, false)
+            drawWater(frameDepthAvailable, false)
             status(if (frameDepthAvailable)
                 "Local illustration · depth occlusion active. Reset if the reference drifts."
                 else "Simplified preview · real objects may overlap virtual water.")
         } catch (_: Exception) { failed() }
+    }
+
+    private fun drawStandalone() {
+        GL.glClearColor(.035f, .065f, .06f, 1f)
+        GL.glClear(GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT)
+        GL.glEnable(GL.GL_DEPTH_TEST)
+        val eye = orbit!!.eye()
+        worldEye[0] = eye[0]; worldEye[1] = eye[1]; worldEye[2] = eye[2]; worldEye[3] = 1f
+        Matrix.setLookAtM(view, 0, eye[0], eye[1], eye[2], 0f, depthM / 2f, 0f, 0f, 1f, 0f)
+        val aspect = width.toFloat() / height.coerceAtLeast(1)
+        val fov = Math.toDegrees(2 * kotlin.math.atan(kotlin.math.tan(Math.toRadians(25.0)) / minOf(1f, aspect))).toFloat()
+        Matrix.perspectiveM(projection, 0, fov, aspect, .05f, 10000f)
+        val now = System.nanoTime()
+        if (paused) rippleTimestamp = now
+        animateWater(now)
+        Matrix.setIdentityM(model, 0)
+        drawWater(false, true, floor = true)
+        Matrix.setIdentityM(model, 0)
+        drawWater(false, false)
+        // Make runtime shader/driver faults visible to the Activity, not a silent blank view.
+        check(GL.glGetError() == GL.GL_NO_ERROR) { "Water preview GL error" }
     }
 
     private fun drawCamera() {
@@ -208,7 +253,7 @@ class DepthRenderer(
         catch (_: java.lang.IllegalStateException) { /* Depth unsupported. */ }
     }
 
-    private fun drawWater(frame: Frame, occlude: Boolean, referenceOnly: Boolean) {
+    private fun drawWater(occlude: Boolean, referenceOnly: Boolean, floor: Boolean = false) {
         GL.glUseProgram(waterProgram)
         GL.glEnable(GL.GL_BLEND); GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
         // A selected reference is drawn at ground height; confirmed water uses reported depth.
@@ -217,18 +262,21 @@ class DepthRenderer(
         Matrix.multiplyMM(mvp, 0, projection, 0, mv, 0)
         uniformMatrix("mvp", mvp); uniformMatrix("mv", mv)
         Matrix.invertM(inverseModel,0,model,0)
-        val pose=frame.camera.pose
-        worldEye[0]=pose.tx();worldEye[1]=pose.ty();worldEye[2]=pose.tz();worldEye[3]=1f
         Matrix.multiplyMV(localEye,0,inverseModel,0,worldEye,0)
         GL.glUniform3f(location("eyeLocal"),localEye[0],localEye[1],localEye[2])
-        GL.glActiveTexture(GL.GL_TEXTURE0)
-        GL.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,cameraTexture)
-        GL.glUniform1i(location("cameraFeed"),0)
+        if (!standalone) {
+            GL.glActiveTexture(GL.GL_TEXTURE0)
+            GL.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,cameraTexture)
+            GL.glUniform1i(location("cameraFeed"),0)
+        }
+        GL.glUniform1f(location("standalone"), if (standalone) 1f else 0f)
+        GL.glUniform1f(location("reportedDepth"), depthM)
+        GL.glUniform1f(location("halfExtent"), halfExtent)
         val camUv=FloatArray(8);cameraUv.position(0);cameraUv.get(camUv);cameraUv.position(0)
         GL.glUniform2f(location("cameraOrigin"),camUv[0],camUv[1])
         GL.glUniform2f(location("cameraX"),camUv[2]-camUv[0],camUv[3]-camUv[1])
         GL.glUniform2f(location("cameraY"),camUv[4]-camUv[0],camUv[5]-camUv[1])
-        GL.glUniform1f(location("referenceOnly"), if (referenceOnly) 1f else 0f)
+        GL.glUniform1f(location("referenceOnly"), if (floor) 3f else if (referenceOnly) 1f else 0f)
         GL.glUniform1f(location("occlusion"), if (occlude) 1f else 0f)
         GL.glUniform2f(location("viewport"), width.toFloat(), height.toFloat())
         // ARCore's mapping is affine for this un-stabilised camera image.
@@ -241,7 +289,7 @@ class DepthRenderer(
         val normalLocation=GL.glGetAttribLocation(waterProgram,"surfaceNormal")
         if(referenceOnly) {
             GL.glDisableVertexAttribArray(normalLocation);GL.glVertexAttrib3f(normalLocation,0f,1f,0f)
-            attribute(waterProgram,"position",quad,3)
+            attribute(waterProgram,"position",if (floor) floorQuad else quad,3)
             GL.glDrawArrays(GL.GL_TRIANGLE_STRIP,0,4)
         } else {
             val positionLocation=GL.glGetAttribLocation(waterProgram,"position")
@@ -260,17 +308,22 @@ class DepthRenderer(
     private fun drawRuler() {
         // A vertical scale beside the bounded patch; ticks every 10 cm, up to 100 ticks.
         val verts = ArrayList<Float>()
-        fun point(x: Float, y: Float) { verts.add(x); verts.add(y); verts.add(0f) }
+        fun point(x: Float, y: Float) {
+            verts.add(x + if (standalone) halfExtent + patchSize * .05f else 0f)
+            verts.add(y); verts.add(0f)
+        }
         point(0f, -depthM); point(0f, 0f)
         val count = minOf((depthM / 0.1f).toInt(), 100)
         for (i in 0..count) {
             val y = -depthM + i * 0.1f
             point(-0.035f, y); point(0.035f, y)
         }
+        if (standalone) GL.glDisable(GL.GL_DEPTH_TEST) // Intentional scale overlay, never hidden by water.
         GL.glUniform1f(location("referenceOnly"), 2f)
         attribute(waterProgram, "position", floats(*verts.toFloatArray()), 3)
         GL.glLineWidth(2f)
         GL.glDrawArrays(GL.GL_LINES, 0, verts.size / 3)
+        if (standalone) GL.glEnable(GL.GL_DEPTH_TEST)
         disableAttributes(waterProgram, "position")
     }
     private fun location(name: String) = GL.glGetUniformLocation(waterProgram, name)
@@ -330,12 +383,22 @@ class DepthRenderer(
             uniform mat4 mv;
             uniform vec2 cameraOrigin; uniform vec2 cameraX; uniform vec2 cameraY;
             uniform vec3 eyeLocal;
+            uniform float standalone; uniform float reportedDepth; uniform float halfExtent;
             varying vec3 pointLocal; varying vec3 normalLocal;
             uniform sampler2D depthImage; uniform float occlusion;
             uniform float referenceOnly; uniform vec2 viewport;
             uniform vec2 uvOrigin; uniform vec2 uvX; uniform vec2 uvY;
             varying vec2 local; varying float distanceM;
+            vec3 floorColour(vec2 p) {
+                if (max(abs(p.x),abs(p.y)) > halfExtent) return vec3(0.035,0.065,0.06);
+                vec2 tilePosition=(p+halfExtent)*6.0/halfExtent;
+                vec2 cell=fract(tilePosition);
+                float line=step(0.025,min(min(cell.x,cell.y),min(1.0-cell.x,1.0-cell.y)));
+                float tile=mod(floor(tilePosition.x)+floor(tilePosition.y),2.0);
+                return mix(vec3(0.23,0.29,0.27),mix(vec3(0.55,0.61,0.56),vec3(0.65,0.69,0.63),tile),line);
+            }
             void main() {
+                if (referenceOnly > 2.5) { gl_FragColor=vec4(floorColour(local),1.0); return; }
                 if (occlusion > 0.5) {
                     vec2 screen = gl_FragCoord.xy / viewport;
                     vec2 uv = uvOrigin + screen.x * uvX + screen.y * uvY;
@@ -359,13 +422,18 @@ class DepthRenderer(
                 vec2 distorted=clamp(screen+slopeView.xy*0.025,vec2(0.002),vec2(0.998));
                 vec2 cameraUv=clamp(cameraOrigin+distorted.x*cameraX+distorted.y*cameraY,vec2(0.002),vec2(0.998));
                 vec3 transmitted=texture2D(cameraFeed,cameraUv).rgb;
+                if (standalone > 0.5) {
+                    vec3 ray=refract(-v,n,1.0/1.333);
+                    float travel=(-reportedDepth-pointLocal.y)/min(ray.y,-0.001);
+                    transmitted=floorColour((pointLocal+ray*travel).xz);
+                }
                 transmitted=mix(transmitted,vec3(0.06,0.25,0.27),0.24);
                 // Synthetic sky fallback: no claim of measured surrounding reflections.
                 vec3 reflected=mix(vec3(0.24,0.38,0.43),vec3(0.75,0.84,0.86),clamp(reflect(-v,n).y,0.0,1.0));
                 vec3 halfLight=normalize(v+normalize(vec3(-0.4,1.0,0.3)));
                 float highlight=pow(max(dot(n,halfLight),0.0),120.0)*0.45;
                 vec3 colour=mix(transmitted,reflected,fresnel)+vec3(highlight);
-                gl_FragColor=vec4(colour,edge>1.46?0.85:0.78);
+                gl_FragColor=vec4(colour,standalone>0.5?1.0:(edge>1.46?0.85:0.78));
             }
         """
     }

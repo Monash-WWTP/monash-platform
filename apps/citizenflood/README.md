@@ -27,11 +27,20 @@ Protocol revision2 adds optional flooding movement and owned-report follow-ups, 
 ## Reported-depth AR (source feature; device acceptance pending)
 
 For a water reading expressed as depth in metres above a described surface,
-choose **Preview depth in AR** in the form or **Visualise reported depth** in
+choose **Preview depth** in the form or **Visualise reported depth** in
 an owned report. The preview uses the existing value; it never measures water,
 changes the reading or predicts flooding. Gauge stages, qualitative and
 unstructured legacy reports are excluded. Saved reports show their observation
 time, or explicitly state that it is unavailable.
+
+On Android, **3D water preview** opens a synthetic gridded scene without ARCore,
+camera permission or network access. Drag to orbit, pinch to zoom, or use
+**View controls**. **Ripple**, **Pause/Play**, **Reset** and **Close preview**
+control the shared native ripple simulation. The scene is illustrative, not a
+reconstruction of the observation location. Refraction samples a synthetic
+floor; reflections use synthetic sky lighting. Rendering supports depths up to
+1000 m; larger entries remain reportable but cannot open this preview. Account
+changes close both native preview modes. See [water rendering](../../docs/operations/ar-water-rendering.md).
 
 On compatible Android phones, optional Google Play Services for AR setup and
 camera access occur only on entry. The pre-camera screen includes the
