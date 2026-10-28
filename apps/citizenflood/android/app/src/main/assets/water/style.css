@@ -1,0 +1,1 @@
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1718;touch-action:none}canvas#water{display:block;width:100%;height:100%;outline:none}canvas.texture{display:none}#status{position:absolute;inset:0;display:grid;place-items:center;color:#e6eee9;font:16px system-ui;padding:24px;text-align:center;pointer-events:none}#status:empty{display:none}

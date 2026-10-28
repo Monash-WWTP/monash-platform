@@ -1,4 +1,5 @@
-Heightfield algorithm adapted from WebGL Water
+WebGL Water and lightgl.js source bundled and adapted for the mobile preview;
+heightfield algorithm also adapted in the native AR renderer
 https://github.com/evanw/webgl-water
 Copyright (c) 2011 Evan Wallace
 

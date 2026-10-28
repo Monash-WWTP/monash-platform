@@ -36,9 +36,8 @@ time, or explicitly state that it is unavailable.
 On Android, **3D water preview** opens a synthetic gridded scene without ARCore,
 camera permission or network access. Drag to orbit, pinch to zoom, or use
 **View controls**. **Ripple**, **Pause/Play**, **Reset** and **Close preview**
-control the shared native ripple simulation. The scene is illustrative, not a
-reconstruction of the observation location. Refraction samples a synthetic
-floor; reflections use synthetic sky lighting. Rendering supports depths up to
+control the bundled GPU water simulation. **Underwater** shows the synthetic scene from below the surface. The scene is illustrative, not a
+reconstruction of the observation location. The full effect uses Evan Wallace’s MIT WebGL Water simulation and shaders, including ray-traced synthetic pool reflections/refraction, moving caustics and shadows. Project-owned procedural textures replace the original photographs. **Basic graphics** is the compatibility fallback when the full GPU effect is unavailable or too slow. Rendering supports depths up to
 1000 m; larger entries remain reportable but cannot open this preview. Account
 changes close both native preview modes. See [water rendering](../../docs/operations/ar-water-rendering.md).
 
