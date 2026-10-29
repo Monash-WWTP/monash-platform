@@ -24,6 +24,15 @@ See the [platform manual](https://monash-platform-docs.vercel.app) for Android s
 
 Protocol revision2 adds optional flooding movement and owned-report follow-ups, plus private camera/gallery provenance. Follow-ups reuse the selected point without old GPS accuracy; changed points become ordinary reports. New context activates only when advertised by the API. See [protocol operations](../../docs/operations/citizen-observation-protocol.md); citizen observations remain separate from laboratory measurements and simulation inputs.
 
+## Camera water
+
+Tap the camera icon in the main toolbar to open live camera water without an account,
+backend connection or ARCore. Adjust coverage with the slider/drag, tap or use Ripple,
+and use Pause/Play, Reset or Close. Only camera permission is required. The feature
+has no recording/upload path and does not change observations. See
+[camera water operations](../../docs/operations/camera-water-filter.md) for rendering
+paths, compatibility and device acceptance.
+
 ## Reported-depth AR (source feature; device acceptance pending)
 
 For a water reading expressed as depth in metres above a described surface,

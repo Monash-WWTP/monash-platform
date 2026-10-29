@@ -88,3 +88,7 @@ Debug staging APK, API 36 emulator, ARCore disabled and camera denied:
 Startup timeout, missing WebView/provider and unsupported real-device extension combinations are implemented but not all independently injected here. Physical phone thermal/battery/long-run performance and real-camera AR acceptance remain open.
 
 - Final full-renderer rotation check: landscape at font scale 1.5 retains the scene and scrollable Close/control access; portrait/font scale restored. Home stops WaterPreview frame-stat logging; selecting CitizenFlood from Recents resumes the native scene with unchanged 0.5 m/floor context. Native shader readback, failure injection and recording used the same final APK. A synthetic above/underwater recording was captured locally; it is not attached to a report.
+
+### Native GPU port and camera filter (2026-10-29)
+
+The native renderer now includes extracted Evan drop/update/normal shaders, VBO mesh displacement, peaked normals, reference-plane refraction and AR ambient lighting, with guarded CPU fallback. Source provenance and bounded/rate-switch clocks are tested. This is separate from the verified WebView GPU pipeline above. Native float execution and real AR visuals remain unverified on physical hardware; emulator native GLES3 attempts terminated the host, so emulator native surfaces deliberately use GLES2 compatibility. See [camera-water-filter.md](camera-water-filter.md) for camera-only entry, lifecycle, test evidence and remaining gates.

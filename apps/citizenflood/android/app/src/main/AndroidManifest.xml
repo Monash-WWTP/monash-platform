@@ -11,6 +11,7 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.ar.core" android:value="optional"/>
+        <activity android:name=".ar.CameraWaterActivity" android:exported="false" android:theme="@android:style/Theme.Material.NoActionBar"/>
         <activity android:name=".ar.WaterPreviewActivity" android:exported="false" android:theme="@android:style/Theme.Material.NoActionBar"/>
         <activity android:name=".ar.DepthPreviewActivity" android:exported="false" android:theme="@android:style/Theme.Material.NoActionBar"/>
         <activity

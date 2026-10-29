@@ -8,7 +8,7 @@ import android.view.ScaleGestureDetector
 /** Compatibility path for devices that cannot render the full floating-point WebGL effect. */
 class BasicWaterScene(context: Context, depthM: Float, failed: () -> Unit) : WaterScene {
     private val surface = GLSurfaceView(context).apply {
-        setEGLContextClientVersion(2);setEGLConfigChooser(8,8,8,8,16,0)
+        setEGLContextClientVersion(nativeWaterGlVersion(context));setEGLConfigChooser(8,8,8,8,16,0)
         preserveEGLContextOnPause = true
         contentDescription = "Illustrative 3D water scene. View controls are below."
     }

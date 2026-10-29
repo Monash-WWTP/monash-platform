@@ -1,21 +1,73 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../services/depth_preview.dart';
+import '../services/account_session.dart';
 import 'map_screen.dart';
 import 'my_reports_screen.dart';
 import 'profile_screen.dart';
 
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key});
+  const HomeShell({super.key, this.session});
+  final AccountSession? session;
   @override
   State<HomeShell> createState() => _HomeShellState();
 }
 
 class _HomeShellState extends State<HomeShell> {
   int _index = 0;
+  bool _openingCamera = false;
+  late final _session = widget.session ?? AccountSession.instance;
+  late int _generation = _session.generation;
+  @override
+  void initState() {
+    super.initState();
+    _session.addListener(_accountChanged);
+  }
+
+  void _accountChanged() {
+    if (_generation == _session.generation) return;
+    _generation = _session.generation;
+    unawaited(DepthPreview.close().catchError((Object _) {}));
+  }
+
+  @override
+  void dispose() {
+    _session.removeListener(_accountChanged);
+    unawaited(DepthPreview.close().catchError((Object _) {}));
+    super.dispose();
+  }
+
+  Future<void> _cameraWater() async {
+    final generation = _generation;
+    setState(() => _openingCamera = true);
+    try {
+      await DepthPreview.openCameraFilter();
+      if (!mounted || generation != _generation) await DepthPreview.close();
+    } catch (_) {
+      if (mounted && generation == _generation) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Camera could not open. Please retry.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _openingCamera = false);
+    }
+  }
+
   static const _titles = ['CitizenFlood', 'My reports', 'Account'];
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
       centerTitle: false,
+      actions: [
+        if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
+          IconButton(
+            tooltip: 'Camera water',
+            icon: const Icon(Icons.camera_alt_outlined),
+            onPressed: _openingCamera ? null : _cameraWater,
+          ),
+      ],
       title: Row(
         children: [
           ClipRRect(

@@ -49,14 +49,19 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
 
   bool _opening = false;
   String? _error;
-  Future<void> _open({bool threeDimensional = false}) async {
+  Future<void> _open({
+    bool threeDimensional = false,
+    bool cameraFilter = false,
+  }) async {
     if (_invalidated) return;
     setState(() {
       _opening = true;
       _error = null;
     });
     try {
-      if (threeDimensional) {
+      if (cameraFilter) {
+        await widget.preview.openCamera(contextLabel: widget.contextLabel);
+      } else if (threeDimensional) {
         await widget.preview.open3d(contextLabel: widget.contextLabel);
       } else {
         await widget.preview.open(contextLabel: widget.contextLabel);
@@ -139,6 +144,14 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
               ),
               const SizedBox(height: 16),
             ],
+            FilledButton.icon(
+              onPressed: supported && !_opening
+                  ? () => _open(cameraFilter: true)
+                  : null,
+              icon: const Icon(Icons.camera_alt_outlined),
+              label: const Text('Camera water'),
+            ),
+            const SizedBox(height: 12),
             FilledButton.icon(
               onPressed: supported && !_opening
                   ? () => _open(threeDimensional: true)

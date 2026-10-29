@@ -16,3 +16,8 @@ test('bundled Evan Wallace sources match the recorded adaptation and keep MIT no
   }
   assert.match(fs.readFileSync(path.join(root,'LICENSE.txt'),'utf8'),/Permission is hereby granted, free of charge/);
 });
+test('native GPU shaders are extracted from the pinned Evan source',()=>{
+  const {spawnSync}=require('node:child_process');
+  const result=spawnSync(process.execPath,[path.resolve(__dirname,'../../../../scripts/export_native_water_shaders.cjs'),'--check'],{encoding:'utf8'});
+  assert.equal(result.status,0,result.stderr);
+});

@@ -2,6 +2,7 @@ package au.edu.monash.citizenflood
 
 import android.content.Intent
 import android.os.Build
+import au.edu.monash.citizenflood.ar.CameraWaterActivity
 import au.edu.monash.citizenflood.ar.DepthLaunch
 import au.edu.monash.citizenflood.ar.DepthInput
 import au.edu.monash.citizenflood.ar.WaterPreviewActivity
@@ -18,7 +19,16 @@ class MainActivity : FlutterActivity() {
                 if (call.method == "close") {
                     DepthPreviewActivity.closeActive()
                     WaterPreviewActivity.closeActive()
+                    CameraWaterActivity.closeActive()
                     result.success(null)
+                    return@setMethodCallHandler
+                }
+                if (call.method == "openCamera") {
+                    try {
+                        DepthPreviewActivity.closeActive();WaterPreviewActivity.closeActive();CameraWaterActivity.closeActive()
+                        startActivity(Intent(this,CameraWaterActivity::class.java).putExtra("launchToken",DepthLaunch.begin()))
+                        result.success(null)
+                    } catch (_: Exception) { result.error("unavailable","Camera could not open. Please retry.",null) }
                     return@setMethodCallHandler
                 }
                 if (call.method != "open" && call.method != "open3d") { result.notImplemented(); return@setMethodCallHandler }
@@ -34,8 +44,9 @@ class MainActivity : FlutterActivity() {
                     try {
                         DepthPreviewActivity.closeActive()
                         WaterPreviewActivity.closeActive()
+                    CameraWaterActivity.closeActive()
                         val launchToken = DepthLaunch.begin()
-                        val activity = if (call.method == "open3d") WaterPreviewActivity::class.java else DepthPreviewActivity::class.java
+                        val activity = when(call.method){"open3d"->WaterPreviewActivity::class.java;else->DepthPreviewActivity::class.java}
                         startActivity(Intent(this, activity)
                             .putExtra("launchToken", launchToken)
                             .putExtra("depthM", input.metres).putExtra("reference", input.reference)
