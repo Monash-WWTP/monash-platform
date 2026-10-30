@@ -53,7 +53,7 @@ class DepthPreviewActivity : Activity() {
         if (input == null) { finish(); return }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         surface = GLSurfaceView(this).apply {
-            setEGLContextClientVersion(2)
+            setEGLContextClientVersion(nativeWaterGlVersion(this@DepthPreviewActivity))
             setEGLConfigChooser(8, 8, 8, 8, 16, 0)
             preserveEGLContextOnPause = true
         }
@@ -150,6 +150,7 @@ class DepthPreviewActivity : Activity() {
                 val created = Session(this)
                 session = created
                 created.configure(Config(created).apply {
+                    lightEstimationMode = Config.LightEstimationMode.AMBIENT_INTENSITY
                     planeFindingMode = Config.PlaneFindingMode.HORIZONTAL
                     depthMode = if (created.isDepthModeSupported(Config.DepthMode.AUTOMATIC))
                         Config.DepthMode.AUTOMATIC else Config.DepthMode.DISABLED

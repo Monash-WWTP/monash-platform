@@ -1,0 +1,24 @@
+{
+  "repository": "https://github.com/evanw/webgl-water",
+  "commit": "73eda8be832b649367b25ea5690c1f0181bb56ad",
+  "copyright": "2011 Evan Wallace",
+  "license": "MIT",
+  "files": {
+    "lightgl.js": {
+      "upstreamSha256": "fbe0cdfbf29711873c124eb2d5c3e633477ffec13618202e9cf4276911183f81",
+      "bundledSha256": "fbe0cdfbf29711873c124eb2d5c3e633477ffec13618202e9cf4276911183f81"
+    },
+    "cubemap.js": {
+      "upstreamSha256": "bea3c99376b45efc31b3f2cb4f8220c2567e590543015699b606e43e50a0057f",
+      "bundledSha256": "bea3c99376b45efc31b3f2cb4f8220c2567e590543015699b606e43e50a0057f"
+    },
+    "water.js": {
+      "upstreamSha256": "87f1377aa9bce86065a8e4b50aebc7888b8cdea6f6735353b30ef08ef06d3f69",
+      "bundledSha256": "5859a59d02c3cb887b965c9a2c92a11795a75f3376affc6766c2b187bfbe83f8"
+    },
+    "renderer.js": {
+      "upstreamSha256": "3cee334593ae8a9021578c69d5309a3d7afa0fae9781ec82cdbed09c3ab82d92",
+      "bundledSha256": "83e23e92dc1f12044d5023990b4e89836f27202c0f56fdbf613ef2cd2d22a93e"
+    }
+  }
+}

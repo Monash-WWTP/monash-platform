@@ -24,14 +24,31 @@ See the [platform manual](https://monash-platform-docs.vercel.app) for Android s
 
 Protocol revision2 adds optional flooding movement and owned-report follow-ups, plus private camera/gallery provenance. Follow-ups reuse the selected point without old GPS accuracy; changed points become ordinary reports. New context activates only when advertised by the API. See [protocol operations](../../docs/operations/citizen-observation-protocol.md); citizen observations remain separate from laboratory measurements and simulation inputs.
 
+## Camera water
+
+Tap the camera icon in the main toolbar to open live camera water without an account,
+backend connection or ARCore. Adjust coverage with the slider/drag, tap or use Ripple,
+and use Pause/Play, Reset or Close. Only camera permission is required. The feature
+has no recording/upload path and does not change observations. See
+[camera water operations](../../docs/operations/camera-water-filter.md) for rendering
+paths, compatibility and device acceptance.
+
 ## Reported-depth AR (source feature; device acceptance pending)
 
 For a water reading expressed as depth in metres above a described surface,
-choose **Preview depth in AR** in the form or **Visualise reported depth** in
+choose **Preview depth** in the form or **Visualise reported depth** in
 an owned report. The preview uses the existing value; it never measures water,
 changes the reading or predicts flooding. Gauge stages, qualitative and
 unstructured legacy reports are excluded. Saved reports show their observation
 time, or explicitly state that it is unavailable.
+
+On Android, **3D water preview** opens a synthetic gridded scene without ARCore,
+camera permission or network access. Drag to orbit, pinch to zoom, or use
+**View controls**. **Ripple**, **Pause/Play**, **Reset** and **Close preview**
+control the bundled GPU water simulation. **Underwater** shows the synthetic scene from below the surface. The scene is illustrative, not a
+reconstruction of the observation location. The full effect uses Evan Wallace’s MIT WebGL Water simulation and shaders, including ray-traced synthetic pool reflections/refraction, moving caustics and shadows. Project-owned procedural textures replace the original photographs. **Basic graphics** is the compatibility fallback when the full GPU effect is unavailable or too slow. Rendering supports depths up to
+1000 m; larger entries remain reportable but cannot open this preview. Account
+changes close both native preview modes. See [water rendering](../../docs/operations/ar-water-rendering.md).
 
 On compatible Android phones, optional Google Play Services for AR setup and
 camera access occur only on entry. The pre-camera screen includes the
