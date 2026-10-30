@@ -145,7 +145,10 @@ internal class CameraWaterRenderer(private val textureReady:(SurfaceTexture)->Un
  void main(){
   vec3 original=camera(screen);
   if(screen.y>=waterLine){gl_FragColor=vec4(original,1.0);return;}
-  vec2 coord=vec2(screen.x,screen.y/max(waterLine,0.01));
+  float distanceToLine=max(.025,waterLine-screen.y);
+  float perspective=.18/distanceToLine;
+  vec2 world=vec2((screen.x-.5)*perspective,perspective);
+  vec2 coord=fract(world*.32+vec2(time*.009,-time*.014));
   vec3 n;
   if(gpuWater>0.5){
    vec4 info=texture2D(waterField,coord);
@@ -158,13 +161,13 @@ internal class CameraWaterRenderer(private val textureReady:(SurfaceTexture)->Un
    n=normalize(vec3(slope.x,1.0,slope.y));
   }
   float nearLine=clamp(screen.y/max(waterLine,.01),0.0,1.0);
-  vec2 distortion=n.xz*.04;
-  vec3 transmitted=mix(camera(screen+distortion),vec3(.035,.23,.26),.18);
-  vec3 reflected=camera(vec2(screen.x,2.0*waterLine-screen.y)+distortion*.6);
-  float fresnel=.12+.7*pow(nearLine,4.0);
-  float highlight=pow(max(0.0,dot(n,normalize(vec3(.15,1.0,.1)))),100.0)*.14;
+  vec2 distortion=n.xz*vec2(.028,.013)*smoothstep(0.0,.16,distanceToLine);
+  vec3 transmitted=mix(camera(screen+distortion),vec3(.08,.24,.23),.06+.12*nearLine);
+  vec3 reflected=camera(vec2(screen.x,waterLine+distanceToLine*.65)+distortion*.6);
+  float fresnel=.035+.42*pow(nearLine,5.0);
+  float highlight=pow(max(0.0,dot(n,normalize(vec3(-.4,.8,.25)))),100.0)*.14;
   vec3 water=mix(transmitted,reflected,fresnel)+vec3(highlight);
-  float edge=(1.0-smoothstep(waterLine-.008,waterLine,screen.y));
+  float edge=(1.0-smoothstep(waterLine-.045,waterLine,screen.y));
   gl_FragColor=vec4(mix(original,water,edge),1.0);
  }
  """

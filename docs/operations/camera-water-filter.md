@@ -36,3 +36,7 @@ Implementation reference: [Android Camera2 preview](https://developer.android.co
 API 36 emulator, ARCore disabled: direct toolbar launch displays the live virtual rear camera without an account/API/report. Compatibility compositor samples approximately 60 rendered frames/s and 30 consumed camera frames/s at 625×1279; these are delivery counts, not physical GPU timings. Pause changes to Play; ripple, drag/coverage, reset and close were exercised. Backgrounding disconnects the camera (no active CameraService client); Recents resumes it. Closing returns to the app. Local demo: `/tmp/camera-water-demo.mp4`.
 
 69 Flutter tests, 18 native unit tests and seven Node tests pass (94 total), alongside static analysis, staging debug build, shader extraction, repository policy and pinned-source inventory checks. Physical orientation/thermal/performance, denied/revoked permission and camera contention remain acceptance gates.
+
+### 2026-10-30 visual iteration
+
+Following Samsung feedback that the camera effect looked like a flat tint, the compositor now projects wave coordinates onto a receding horizontal plane, fades the boundary over a wider band, reduces tint and reflection strength, and limits near-edge distortion. This is a visual iteration requiring user review on the phone, not a realism acceptance claim. No tracking or phone-rotation compensation has been added in this iteration.
