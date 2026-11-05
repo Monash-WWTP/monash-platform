@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../maps/citizen_map.dart';
+import '../services/station_repository.dart';
+import '../widgets/station_detail_sheet.dart';
 import '../maps/map_selection.dart';
 import '../models/report.dart';
 import '../services/report_repository.dart';
@@ -15,6 +17,7 @@ class MapScreen extends StatefulWidget {
   const MapScreen({
     super.key,
     this.repository,
+    this.stations,
     this.session,
     this.location,
     this.onShowReports,
@@ -22,12 +25,15 @@ class MapScreen extends StatefulWidget {
   final VoidCallback? onShowReports;
   final LocationService? location;
   final ReportRepository? repository;
+  final StationRepository? stations;
   final AccountSession? session;
   @override
   State<MapScreen> createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreen> {
+  late final _stations = widget.stations ?? StationRepository();
+  late Future<List<MonitoringStation>> _stationFuture = _stations.stations();
   late final _repo = widget.repository ?? ReportRepository();
   late final _session = widget.session ?? AccountSession.instance;
   late Future<List<Report>> _future = _repo.recent();
@@ -74,7 +80,72 @@ class _MapScreenState extends State<MapScreen> {
     super.dispose();
   }
 
-  void _refresh() => setState(() => _future = _repo.recent());
+  void _refresh() => setState(() {
+    _future = _repo.recent();
+    _stationFuture = _stations.stations();
+  });
+
+  Future<void> _showStation(MonitoringStation station) async {
+    setState(
+      () => _center = SelectedLocation(
+        latitude: station.latitude,
+        longitude: station.longitude,
+        source: LocationSource.selected,
+      ),
+    );
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) =>
+          StationDetailSheet(station: station, repository: _stations),
+    );
+  }
+
+  Future<void> _listStations(List<MonitoringStation> stations) async {
+    final chosen = await showModalBottomSheet<MonitoringStation>(
+      context: context,
+      showDragHandle: true,
+      useSafeArea: true,
+      builder: (c) => SafeArea(
+        child: SizedBox(
+          height: MediaQuery.sizeOf(c).height * .6,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'Plants and stations',
+                  style: Theme.of(c).textTheme.titleLarge,
+                ),
+              ),
+              Expanded(
+                child: stations.isEmpty
+                    ? const Center(
+                        child: Text('No monitoring stations available.'),
+                      )
+                    : ListView(
+                        children: [
+                          for (final station in stations)
+                            ListTile(
+                              leading: const Icon(Icons.factory_outlined),
+                              title: Text(station.name),
+                              subtitle: Text(station.code),
+                              trailing: const Icon(Icons.chevron_right),
+                              onTap: () => Navigator.pop(c, station),
+                            ),
+                        ],
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (mounted && chosen != null) _showStation(chosen);
+  }
+
   Future<void> _locate() async {
     final generation = _generation;
     setState(() => _locating = true);
@@ -314,78 +385,106 @@ class _MapScreenState extends State<MapScreen> {
     future: _future,
     builder: (context, snapshot) {
       final reports = snapshot.data ?? <Report>[];
-      return Stack(
-        children: [
-          Positioned.fill(
-            child: CitizenMap(
-              key: ValueKey(_generation),
-              resetKey: _generation,
-              center: _center,
-              deviceLocation: _device,
-              reports: reports,
-              selectedId: _selectedId,
-              onObservation: (r) => _showDetail(r, reports),
-              onCenterChanged: (p) {
-                _viewportCenter = p;
-              },
-            ),
-          ),
-          Positioned(
-            top: 12,
-            left: 16,
-            child: Material(
-              elevation: 1,
-              borderRadius: BorderRadius.circular(16),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Tooltip(
-                    message: 'List observations',
-                    child: TextButton.icon(
-                      onPressed: () => _showObservations(reports),
-                      icon: const Icon(Icons.list_alt),
-                      label: Text(
-                        snapshot.connectionState == ConnectionState.waiting
-                            ? '…'
-                            : '${reports.length}',
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: snapshot.hasError
-                        ? 'Observations unavailable. Retry'
-                        : 'Refresh observations',
-                    onPressed: _refresh,
-                    icon: Icon(
-                      snapshot.hasError ? Icons.sync_problem : Icons.refresh,
-                    ),
-                  ),
-                ],
+      return FutureBuilder<List<MonitoringStation>>(
+        future: _stationFuture,
+        builder: (context, stationSnapshot) {
+          final stations = stationSnapshot.data ?? <MonitoringStation>[];
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: CitizenMap(
+                  key: ValueKey(_generation),
+                  resetKey: _generation,
+                  center: _center,
+                  deviceLocation: _device,
+                  reports: reports,
+                  stations: stations,
+                  onStation: _showStation,
+                  selectedId: _selectedId,
+                  onObservation: (r) => _showDetail(r, reports),
+                  onCenterChanged: (p) {
+                    _viewportCenter = p;
+                  },
+                ),
               ),
-            ),
-          ),
-          Positioned(
-            top: 12,
-            right: 16,
-            child: FloatingActionButton.small(
-              heroTag: 'locate',
-              tooltip: 'Use current location',
-              onPressed: _locating ? null : _locate,
-              child: _locating
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.my_location),
-            ),
-          ),
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: ReportMenu(onSelected: _report),
-          ),
-        ],
+              Positioned(
+                top: 12,
+                left: 16,
+                child: Material(
+                  elevation: 1,
+                  borderRadius: BorderRadius.circular(16),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextButton.icon(
+                        onPressed: stationSnapshot.hasError
+                            ? _refresh
+                            : () => _listStations(stations),
+                        icon: Icon(
+                          stationSnapshot.hasError
+                              ? Icons.sync_problem
+                              : Icons.factory_outlined,
+                        ),
+                        label: Text(
+                          stationSnapshot.hasError
+                              ? 'Retry plants'
+                              : stationSnapshot.connectionState ==
+                                    ConnectionState.waiting
+                              ? 'Plants …'
+                              : 'Plants ${stations.length}',
+                        ),
+                      ),
+                      Tooltip(
+                        message: 'List observations',
+                        child: TextButton.icon(
+                          onPressed: () => _showObservations(reports),
+                          icon: const Icon(Icons.list_alt),
+                          label: Text(
+                            snapshot.connectionState == ConnectionState.waiting
+                                ? '…'
+                                : '${reports.length}',
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: snapshot.hasError
+                            ? 'Observations unavailable. Retry'
+                            : 'Refresh observations',
+                        onPressed: _refresh,
+                        icon: Icon(
+                          snapshot.hasError
+                              ? Icons.sync_problem
+                              : Icons.refresh,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 12,
+                right: 16,
+                child: FloatingActionButton.small(
+                  heroTag: 'locate',
+                  tooltip: 'Use current location',
+                  onPressed: _locating ? null : _locate,
+                  child: _locating
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.my_location),
+                ),
+              ),
+              Positioned(
+                bottom: 20,
+                right: 20,
+                child: ReportMenu(onSelected: _report),
+              ),
+            ],
+          );
+        },
       );
     },
   );

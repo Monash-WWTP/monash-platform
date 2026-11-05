@@ -13,6 +13,7 @@ import { useWorkspaceStore } from '../../stores/scenarioStore'
 import { Button, Card, Input, Label, SegmentGroup, Select, Spinner } from '../ui'
 import OperatorAccess from '../auth/OperatorAccess'
 import { revealInvalidField } from './validationFocus'
+import { ApiRequestError } from '../../api/transport'
 
 const UNIT_LABEL: Record<UnitType, string> = {
   pump: 'Pump Station',
@@ -144,7 +145,7 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
 
   return (
     <div ref={panel} className="flex h-full flex-col gap-3 overflow-y-auto p-3">
-      <OperatorAccess />
+      <OperatorAccess simulation />
       <Card
         title="Saved Scenarios"
         action={
@@ -157,11 +158,11 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
           {scenariosLoading && <Spinner />}
           {scenariosError && (
             <p role="alert" className="text-xs text-destructive">
-              {scenariosError.message.startsWith('401')
-                ? 'Sign in with an approved operator account to view saved scenarios.'
-                : scenariosError.message.startsWith('403')
-                  ? 'This account does not have WWTP operator access.'
-                  : scenariosError.message.startsWith('503')
+              {scenariosError instanceof ApiRequestError && scenariosError.status === 401
+                ? 'Sign in to view saved scenarios.'
+                : scenariosError instanceof ApiRequestError && scenariosError.status === 403
+                  ? 'The request was not permitted. Refresh and try again.'
+                  : scenariosError instanceof ApiRequestError && scenariosError.status === 503
                     ? 'Operator access is not configured on the server.'
                     : 'Saved scenarios could not be loaded.'}
             </p>

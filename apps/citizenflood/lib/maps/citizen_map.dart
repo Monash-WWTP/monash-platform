@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:maplibre_gl/maplibre_gl.dart' hide LocationSource;
 import '../models/report.dart';
+import '../services/station_repository.dart';
 import 'map_selection.dart';
 
 class CitizenMap extends StatefulWidget {
@@ -14,6 +15,8 @@ class CitizenMap extends StatefulWidget {
     super.key,
     required this.center,
     this.reports = const [],
+    this.stations = const [],
+    this.onStation,
     this.selectedId,
     this.onObservation,
     this.onCenterChanged,
@@ -24,6 +27,8 @@ class CitizenMap extends StatefulWidget {
   final SelectedLocation center;
   final SelectedLocation? deviceLocation;
   final List<Report> reports;
+  final List<MonitoringStation> stations;
+  final ValueChanged<MonitoringStation>? onStation;
   final String? selectedId;
   final ValueChanged<Report>? onObservation;
   final ValueChanged<SelectedLocation>? onCenterChanged;
@@ -60,7 +65,8 @@ class _CitizenMapState extends State<CitizenMap> {
   void didUpdateWidget(CitizenMap old) {
     super.didUpdateWidget(old);
     if (_ready) {
-      if (!listEquals(old.reports, widget.reports) ||
+      if (!listEquals(old.stations, widget.stations) ||
+          !listEquals(old.reports, widget.reports) ||
           old.selectedId != widget.selectedId ||
           old.deviceLocation != widget.deviceLocation) {
         _draw();
@@ -120,6 +126,36 @@ class _CitizenMapState extends State<CitizenMap> {
             .asUint8List();
       }
     }
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(3, 3, 58, 58),
+        const Radius.circular(14),
+      ),
+      Paint()..color = const Color(0xFF146346),
+    );
+    final painter = TextPainter(
+      text: TextSpan(
+        text: String.fromCharCode(Icons.factory_outlined.codePoint),
+        style: TextStyle(
+          fontFamily: Icons.factory_outlined.fontFamily,
+          fontSize: 36,
+          color: Colors.white,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    painter.paint(
+      canvas,
+      Offset(32 - painter.width / 2, 32 - painter.height / 2),
+    );
+    final picture = recorder.endRecording();
+    final image = await picture.toImage(64, 64);
+    final data = await image.toByteData(format: ui.ImageByteFormat.png);
+    images['monitoring-station'] = data!.buffer.asUint8List();
+    image.dispose();
+    picture.dispose();
     return images;
   }
 
@@ -166,6 +202,17 @@ class _CitizenMapState extends State<CitizenMap> {
         {'reportId': report.id},
       );
     }
+    for (final station in widget.stations) {
+      if (!mounted || revision != _revision) return;
+      await controller.addSymbol(
+        SymbolOptions(
+          geometry: LatLng(station.latitude, station.longitude),
+          iconImage: 'monitoring-station',
+          iconSize: 0.75,
+        ),
+        {'stationCode': station.code},
+      );
+    }
     final location = widget.deviceLocation;
     if (location != null) {
       await controller.addCircle(
@@ -187,6 +234,12 @@ class _CitizenMapState extends State<CitizenMap> {
         color: const Color(0xFFEAF0EC),
         child: Stack(
           children: [
+            for (final station in widget.stations)
+              IconButton(
+                tooltip: station.name,
+                onPressed: () => widget.onStation?.call(station),
+                icon: const Icon(Icons.factory_outlined),
+              ),
             for (final report in widget.reports)
               Align(
                 alignment: Alignment.center,
@@ -226,6 +279,14 @@ class _CitizenMapState extends State<CitizenMap> {
             _controller = controller;
             _styleAssets = null;
             controller.onSymbolTapped.add((symbol) {
+              final stationCode = symbol.data?['stationCode'];
+              if (stationCode != null) {
+                final station = widget.stations
+                    .where((s) => s.code == stationCode)
+                    .firstOrNull;
+                if (station != null) widget.onStation?.call(station);
+                return;
+              }
               final id = symbol.data?['reportId'];
               final report = widget.reports
                   .where((r) => r.id == id)

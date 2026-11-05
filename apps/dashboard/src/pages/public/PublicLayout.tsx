@@ -8,8 +8,8 @@ export default function PublicLayout() {
         Skip to content
       </a>
       <header className="public-header">
-        <Link className="public-brand" to="/">
-          Monash Water
+        <Link className="public-brand" to="/" aria-label="Monash Water home">
+          <img src="/assets/platform-logo.png" alt="Monash Water" width="40" height="40" />
         </Link>
         <nav aria-label="Main navigation">
           <Link to="/download">Download app</Link>

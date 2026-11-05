@@ -23,8 +23,8 @@ test('workspace and moderation share a recognizable route back to the platform',
   client.setQueryData(['scenarios', 1], [])
   for (const [path, Component] of [['/dashboard/plants/1', WorkspacePage], ['/dashboard/moderation', ModerationPage]] as const) {
     const html = render(client, path, Component)
-    assert.match(html, /href="\/"[^>]*>Monash Water/)
-    assert.match(html, /href="\/dashboard"/)
+    assert.match(html, /alt="Monash Water"/)
+    assert.match(html, /Back to main page/)
   }
   assert.match(render(client, '/dashboard/plants/1', WorkspacePage), /aria-pressed="true"/)
   assert.doesNotMatch(render(client, '/dashboard/plants/1', WorkspacePage), /3D Digital Twin/)
@@ -46,7 +46,8 @@ test('research is secondary and exposes methods before a run exists', () => {
   client.setQueryData(['scenarios', 1], [])
   const html = render(client, '/dashboard/plants/1', WorkspacePage)
   for (const label of ['Research sandbox', 'Configure', 'Run results', 'Compare scenarios', 'Methods and sources', 'Context only', 'Assumed influent']) assert.ok(html.includes(label), label)
-  assert.match(html, /doi.org\/10.2166\/9781789064223/)
+  assert.match(html, /href="\/dashboard\/simulation\/methods"/)
+  assert.doesNotMatch(html, /empirical coefficients lack/)
   assert.doesNotMatch(html, /recovery is bounded at zero/)
   client.clear()
 })

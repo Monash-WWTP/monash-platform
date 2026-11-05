@@ -1,13 +1,12 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Factory } from 'lucide-react'
+import { ChevronDown, Factory } from 'lucide-react'
 
 import { usePlant, useRun, useTimeseries } from '../api/hooks'
 import { useWorkspaceStore } from '../stores/scenarioStore'
 import ResultsPanel from '../components/results/ResultsPanel'
 import ScenarioPanel from '../components/scenario/ScenarioPanel'
 import OperatorHeader from '../components/OperatorHeader'
-import MethodsPanel from '../components/research/MethodsPanel'
 import { Button } from '../components/ui'
 const ComparisonView = lazy(() => import('../components/comparison/ComparisonView'))
 const TrendsChart = lazy(() => import('../components/dashboard/TrendsChart'))
@@ -29,10 +28,10 @@ export default function WorkspacePage() {
   }, [id, resetWorkspace])
 
   if (isLoading) {
-    return <div className="flex h-full flex-col"><OperatorHeader context="Research sandbox" /><p role="status" className="p-6 text-sm text-muted-foreground">Loading plant…</p></div>
+    return <div className="flex h-full flex-col"><OperatorHeader context="Simulation lab" /><p role="status" className="p-6 text-sm text-muted-foreground">Loading plant…</p></div>
   }
   if (isError) {
-    return <div className="flex h-full flex-col"><OperatorHeader context="Research sandbox" />
+    return <div className="flex h-full flex-col"><OperatorHeader context="Simulation lab" />
       <div role="alert" className="mx-auto max-w-xl space-y-4 p-6">
         <h1 className="text-2xl font-semibold">Plant information is unavailable</h1>
         <p className="text-sm text-muted-foreground">We couldn’t load this plant. Retry, or return to monitoring to select another plant.</p>
@@ -43,7 +42,7 @@ export default function WorkspacePage() {
   if (!plant) {
     return (
       <div className="flex h-full flex-col gap-4 text-muted-foreground">
-        <OperatorHeader context="Research sandbox" />
+        <OperatorHeader context="Simulation lab" />
         Plant not found.
         <Link to="/dashboard" className="text-primary underline">
           Back to map
@@ -54,22 +53,25 @@ export default function WorkspacePage() {
 
   return (
     <div className="flex h-full flex-col overflow-y-auto lg:overflow-hidden">
-      <OperatorHeader context="Research sandbox" />
-      <div className="shrink-0 border-b bg-background px-4 py-3">
-        <Link to={`/dashboard?station=${encodeURIComponent(plant.code ?? '')}`} className="text-sm text-primary underline">← Back to monitoring this plant</Link>
-        <p className="mt-2 text-xs text-muted-foreground">Research sandbox · illustrative, unvalidated simulations. Observations remain in monitoring.</p>
-        <div className="mt-3"><MethodsPanel /></div>
-      </div>
-      <div className="flex shrink-0 flex-wrap items-center justify-between gap-4 border-b border-border bg-card px-4 py-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <Factory className="size-5 text-primary" />
-          <div className="min-w-0">
-            <h1 className="text-sm font-semibold leading-tight [overflow-wrap:anywhere]">{plant.name}</h1>
-            <p className="text-[11px] text-muted-foreground leading-tight">
-              Configured capacity {plant.capacity_mld} MLD · {plant.description}
-            </p>
+      <OperatorHeader context="Simulation lab" />
+      <div className="flex shrink-0 flex-wrap items-start justify-between gap-x-4 gap-y-2 border-b border-border bg-background px-4 py-2">
+        <details className="group min-w-0 flex-1">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center gap-3 rounded focus-visible:outline-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+            <Factory className="size-5 shrink-0 text-primary" />
+            <h1 className="min-w-0 text-sm font-semibold [overflow-wrap:anywhere]">{plant.name}</h1>
+            <span className="ml-1 text-xs text-muted-foreground">Details</span>
+            <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="max-w-xl space-y-2 pb-3 pt-2 text-xs text-muted-foreground">
+            <p>Configured capacity {plant.capacity_mld} MLD · {plant.description}</p>
+            <p>Research sandbox · illustrative, unvalidated simulations. Observations remain in monitoring.</p>
+            <div className="flex flex-wrap gap-x-4 gap-y-2">
+              <Link to="/dashboard/simulation" className="text-primary underline">Simulation lab</Link>
+              <Link to={`/dashboard?station=${encodeURIComponent(plant.code ?? '')}`} className="text-primary underline">Back to monitoring</Link>
+              <Link to="/dashboard/simulation/methods" className="underline underline-offset-4">Methods and sources</Link>
+            </div>
           </div>
-        </div>
+        </details>
 
         <nav aria-label="Workspace views" className="flex max-w-full flex-wrap gap-1 rounded-md border border-border bg-muted p-0.5">
           {(

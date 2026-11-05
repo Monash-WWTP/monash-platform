@@ -31,8 +31,12 @@ def rows(path: Path, columns: list[str]):
         return result
 
 
-def import_snapshot(db:Session, directory:Path)->dict:
+def import_snapshot(db:Session, directory:Path, *, reuse_identical:bool=False)->dict:
     manifest=json.loads((directory/'manifest.json').read_text())
+    for name in ('stations.csv','effluent_samples.csv','emission_factors.csv'):
+        expected=manifest.get('sha256',{}).get(name)
+        if expected and hashlib.sha256((directory/name).read_bytes()).hexdigest()!=expected:
+            raise ValueError('Snapshot checksum mismatch: '+name)
     source_id=manifest['dataset']+':'+manifest['version']
     payload=b''.join((directory/name).read_bytes() for name in
                      ['manifest.json','stations.csv','effluent_samples.csv','emission_factors.csv'])
@@ -51,11 +55,17 @@ def import_snapshot(db:Session, directory:Path)->dict:
     if any(row['station_code'] not in {s['code'] for s in stations} for row in samples):
         raise ValueError('Sample refers to unknown station')
     for row in stations:
-        if db.get(Station,row['code']):raise ValueError('Station identifier already belongs to another import')
+        existing=db.get(Station,row['code'])
+        if existing:
+            if reuse_identical and existing.payload==row:continue
+            raise ValueError('Station identifier already belongs to another import or differs')
         db.add(Station(code=row['code'],payload=row))
     db.flush()
     for row in samples:
-        if db.get(Sample,row['id']):raise ValueError('Sample identifier already belongs to another import')
+        existing=db.get(Sample,row['id'])
+        if existing:
+            if reuse_identical and existing.payload==row:continue
+            raise ValueError('Sample identifier already belongs to another import or differs')
         db.add(Sample(id=row['id'],station_code=row['station_code'],payload=row))
     counts={'stations':len(stations),'effluent_samples':len(samples),'emission_factors':len(factors)}
     db.add(ImportRecord(source_id=source_id,digest=digest,

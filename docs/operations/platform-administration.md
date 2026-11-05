@@ -23,7 +23,7 @@ Only the trusted CLI can grant/revoke platform-administrator permission. Browser
 
 ## Daily tasks
 
-- **Users:** search native registered accounts; grant/revoke submission, report-review, monitoring and research-scenario permissions with a reason. Permission changes revoke that user's browser sessions; bearer requests re-read server-owned permissions. Account enrollment, invitations/email delivery, password resets and identity-provider disabling remain in authentik. Removing an application permission is not an identity-provider disable.
+- **Users:** search native registered accounts; grant/revoke submission, report-review, monitoring permissions with a reason. Permission changes revoke that user's browser sessions; bearer requests re-read server-owned permissions. Account enrollment, invitations/email delivery, password resets and identity-provider disabling remain in authentik. Removing an application permission is not an identity-provider disable.
 - **Plants:** create/update identity, location, design capacity, equipment baselines and settings. A plant's code should match its monitoring station code when they represent the same facility; the two records are edited explicitly rather than silently rewriting each other. Availability is a percentage, not measured removal efficiency or reactor geometry.
 - **Stations:** create/update metadata only. Historical laboratory samples and source-import provenance are not editable or deletable through this panel.
 - **History:** inspect administrator, timestamp, reason and previous/new values. The history view excludes report notes/photos, authentication proofs and secrets.
@@ -51,3 +51,15 @@ Screening supports upper limits for BOD, COD, TSS, ammonia, nitrate, phosphorus 
 ## Operator response permission
 
 `report:respond` grants the separate [operator response workflow](operator-response.md), with MFA on every read/write. It permits assignment, inspection/action records and closure history, not public-summary approval, configuration administration or scientific certification. Administration can grant/revoke it with a reason through the existing protected user permissions form; trusted CLI grants also support it. Removing permission revokes browser sessions. Existing `report:review` remains publication moderation.
+
+Simulation access update (2026-11-05): any signed-in platform account can use the shared research lab. Legacy `scenario:operate` grants no longer gate its endpoints. Administrative configuration and permissions remain independently protected.
+
+## Configure engineering inputs from an imported station
+
+In Stations, select **Configure engineering inputs** next to a location. This opens `?view=plants&station=CODE`. The editor reuses an existing plant with that code, or prefills a new configuration with the imported name, location and process label. The station code is locked in this workflow; capacity remains blank until explicitly entered. Equipment, thresholds and factor settings use the existing plant editor and revision/source requirements. Saving does not rewrite the station's laboratory records. The resulting **Open Simulation lab** link leads to influent, scenario equipment and maintenance inputs.
+
+Station lookup follows admin pagination with its 100-row limit, so a station or existing linked plant beyond the first page is not silently overlooked. Editable settings inputs use the background surface, while disabled identifiers retain their disabled appearance.
+
+## Plant input and prediction-quality guide
+
+See [Plant setup and prediction-quality guide](plant-engineering-guide.md) for field-by-field units, evidence requirements, current demo assumptions, data collection priorities and the calibration/validation work needed for more precise predictions.

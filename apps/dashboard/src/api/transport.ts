@@ -46,10 +46,10 @@ export async function fetchApi<T>(path: string, init?: RequestInit): Promise<T> 
 }
 
 export interface Page<T> { items: T[]; total: number; offset: number; limit: number }
-export async function allPages<T>(path: string): Promise<T[]> {
+export async function allPages<T>(path: string, pageSize = 500): Promise<T[]> {
   const values: T[] = []
-  for (let offset = 0; ; offset += 500) {
-    const page = await fetchApi<Page<T>>(`${path}${path.includes('?') ? '&' : '?'}offset=${offset}&limit=500`)
+  for (let offset = 0; ; offset += pageSize) {
+    const page = await fetchApi<Page<T>>(`${path}${path.includes('?') ? '&' : '?'}offset=${offset}&limit=${pageSize}`)
     values.push(...page.items)
     if (values.length >= page.total || page.items.length === 0) return values
   }

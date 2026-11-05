@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAccount } from '../api/accounts'
-import { adminApi, ordinaryCapabilities, capabilityLabels, type AdminUser, type PlantSettings, type AdminStation, newPlant } from '../api/admin'
+import { adminApi, ordinaryCapabilities, capabilityLabels, type AdminUser, type PlantSettings, type AdminStation, newPlant, plantFromStation } from '../api/admin'
 import type { Page } from '../api/transport'
 import OperatorHeader from '../components/OperatorHeader'
 import OperatorAccess from '../components/auth/OperatorAccess'
@@ -37,6 +37,27 @@ function UsersView({ self }: { self: string }) {
     <Pagination page={query.data} offset={offset} move={value => { setOffset(value); setSelected(null) }} />{selected && <PermissionForm key={selected.id} user={selected} saved={saved} />}
   </section>
 }
+function StationEngineeringView({ code }: { code: string }) {
+  const client = useQueryClient()
+  const [notice, setNotice] = useState('')
+  const [generation, setGeneration] = useState(0)
+  const query = useQuery({ queryKey: ['admin', 'station-engineering', code], queryFn: () => adminApi.stationEngineering(code), retry: false })
+  async function reload() { setGeneration(v => v + 1); await client.invalidateQueries({ queryKey: ['admin'] }) }
+  async function saved() {
+    await reload()
+    await client.invalidateQueries({ queryKey: ['plants'] })
+    setNotice('Engineering configuration saved.')
+  }
+  return <section className="space-y-5">
+    <h2 className="text-xl font-semibold">Engineering inputs · {code}</h2>
+    <p className="text-sm text-muted-foreground">Station identity and location are prefilled. Enter the plant's engineering values below. Influent and maintenance assumptions are entered in its Simulation lab after saving.</p>
+    <QueryState loading={query.isFetching} error={query.error} retry={() => void query.refetch()} />
+    {notice && <p role="status" className="text-sm">{notice}</p>}
+    {query.data && <PlantForm key={`${code}-${query.data.plant?.revision ?? 'new'}-${generation}`}
+      stationCode={code} initial={query.data.plant ?? plantFromStation(query.data.station)} saved={saved} discard={() => void reload()} />}
+    {query.data?.plant && <Link to={`/dashboard/plants/${query.data.plant.id}`} className="inline-flex min-h-11 items-center text-primary underline">Open Simulation lab</Link>}
+  </section>
+}
 function PlantsView() {
   const client = useQueryClient()
   const [offset, setOffset] = useState(0)
@@ -58,7 +79,7 @@ function StationsView() {
   async function reload() { setSelected(null); setGeneration(v => v + 1); await client.invalidateQueries({ queryKey: ['admin'] }) }
   async function saved() { await reload(); setNotice('Station metadata saved. Historical sample records were retained.') }
   const blank: AdminStation = { code: '', revision: '', payload: { name: '', category: '', stp_type: '', latitude: 0, longitude: 0 } }
-  return <section className="space-y-6"><h2 className="text-xl font-semibold">Stations</h2><QueryState loading={query.isFetching} error={query.error} retry={() => void query.refetch()} /><p role="status" className="text-sm">{notice}</p><div className="divide-y divide-border">{query.data?.items.map(station => <article key={station.code} className="flex flex-wrap items-center justify-between gap-3 py-4"><div><p className="font-medium">{station.payload.name}</p><p className="text-sm text-muted-foreground">{station.code}</p></div><Button variant="default" onClick={() => { setSelected(station); setNotice('') }}>Edit station</Button></article>)}</div><Pagination page={query.data} offset={offset} move={setOffset} /><StationForm key={`${selected?.code ?? 'new'}-${generation}`} initial={selected ?? blank} creating={!selected} saved={saved} discard={() => void reload()} /></section>
+  return <section className="space-y-6"><h2 className="text-xl font-semibold">Stations</h2><QueryState loading={query.isFetching} error={query.error} retry={() => void query.refetch()} /><p role="status" className="text-sm">{notice}</p><div className="divide-y divide-border">{query.data?.items.map(station => <article key={station.code} className="flex flex-wrap items-center justify-between gap-3 py-4"><div><p className="font-medium">{station.payload.name}</p><p className="text-sm text-muted-foreground">{station.code}</p></div><div className="flex flex-wrap items-center gap-3"><Button variant="default" onClick={() => { setSelected(station); setNotice('') }}>Edit station</Button><Link to={`/dashboard/admin?view=plants&station=${encodeURIComponent(station.code)}`} onClick={() => window.scrollTo(0, 0)} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm text-primary hover:bg-muted">Configure engineering inputs</Link></div></article>)}</div><Pagination page={query.data} offset={offset} move={setOffset} /><StationForm key={`${selected?.code ?? 'new'}-${generation}`} initial={selected ?? blank} creating={!selected} saved={saved} discard={() => void reload()} /></section>
 }
 function HistoryView() {
   const [offset, setOffset] = useState(0)
@@ -72,10 +93,11 @@ function StatusView() {
 export default function AdminPage() {
   const account = useAccount()
   const [params, setParams] = useSearchParams()
+  const stationCode = params.get('station')
   const requested = params.get('view') ?? 'users'
   const view = views.some(v => v.toLowerCase() === requested) ? requested : 'users'
   const capable = account.data?.capabilities.includes('platform:admin') ?? false
   const access = useQuery({ queryKey: ['admin', 'access'], queryFn: adminApi.status, enabled: capable, retry: false })
   const allowed = capable && !!access.data
-  return <div className="min-h-full bg-background text-foreground"><OperatorHeader context="Administration" /><main className="mx-auto max-w-5xl space-y-7 px-4 py-7 sm:px-6"><div><h1 className="text-3xl font-semibold tracking-tight">Platform administration</h1><p className="mt-3 max-w-2xl text-sm text-muted-foreground">Manage access and operational settings with a recorded reason for every change.</p></div><OperatorAccess />{capable && !access.data && <QueryState loading={access.isFetching} error={access.error} retry={() => void access.refetch()} />}{!allowed ? <p role="status">Platform administrator permission and MFA are required. Ask the platform owner to approve access.</p> : <><div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4"><nav aria-label="Administration sections" className="flex flex-wrap gap-2">{views.map(v => <Button key={v} variant={view === v.toLowerCase() ? 'primary' : 'default'} aria-pressed={view === v.toLowerCase()} onClick={() => setParams({ view: v.toLowerCase() })}>{v}</Button>)}</nav><Link to="/dashboard/moderation" className="text-sm text-primary underline underline-offset-4">Review reports</Link></div>{view === 'users' && <UsersView self={account.data!.id} />}{view === 'plants' && <PlantsView />}{view === 'stations' && <StationsView />}{view === 'history' && <HistoryView />}{view === 'status' && <StatusView />}</>}</main></div>
+  return <div className="min-h-full bg-background text-foreground"><OperatorHeader context="Administration" /><main className="mx-auto max-w-5xl space-y-7 px-4 py-7 sm:px-6"><div><h1 className="text-3xl font-semibold tracking-tight">Platform administration</h1><p className="mt-3 max-w-2xl text-sm text-muted-foreground">Manage access and operational settings with a recorded reason for every change.</p></div><OperatorAccess />{capable && !access.data && <QueryState loading={access.isFetching} error={access.error} retry={() => void access.refetch()} />}{!allowed ? <p role="status">Platform administrator permission and MFA are required. Ask the platform owner to approve access.</p> : <><div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4"><nav aria-label="Administration sections" className="flex flex-wrap gap-2">{views.map(v => <Button key={v} variant={view === v.toLowerCase() ? 'primary' : 'default'} aria-pressed={view === v.toLowerCase()} onClick={() => setParams({ view: v.toLowerCase() })}>{v}</Button>)}</nav><Link to="/dashboard/moderation" className="text-sm text-primary underline underline-offset-4">Review reports</Link></div>{view === 'users' && <UsersView self={account.data!.id} />}{view === 'plants' && (stationCode ? <StationEngineeringView key={stationCode} code={stationCode} /> : <PlantsView />)}{view === 'stations' && <StationsView />}{view === 'history' && <HistoryView />}{view === 'status' && <StatusView />}</>}</main></div>
 }

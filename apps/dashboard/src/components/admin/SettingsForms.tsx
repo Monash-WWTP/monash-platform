@@ -9,7 +9,7 @@ export function Failure({ error }: { error: unknown }) { return error ? <p role=
 
 const metricUnits: Record<string, string> = { bod: 'mg/L', cod: 'mg/L', tss: 'mg/L', ammonia: 'mg/L', nitrate: 'mg/L', phosphorus: 'mg/L', turbidity: 'NTU' }
 
-export function PlantForm({ initial, saved, discard }: { initial: PlantSettings; saved: () => Promise<void>; discard: () => void }) {
+export function PlantForm({ initial, saved, discard, stationCode }: { initial: PlantSettings; stationCode?: string; saved: () => Promise<void>; discard: () => void }) {
   const [value, setValue] = useState(() => structuredClone(initial))
   const [reason, setReason] = useState('')
   const [busy, setBusy] = useState(false)
@@ -25,13 +25,13 @@ export function PlantForm({ initial, saved, discard }: { initial: PlantSettings;
     <h2 className="text-xl font-semibold">{value.id ? `Edit ${initial.name}` : 'Create plant'}</h2>
     <p className="text-sm text-muted-foreground">Changes apply to future runs. Previous results and configuration history remain unchanged.</p>
     {initial.id && initial.revision === 0 && <p className="text-sm text-muted-foreground">No source references were recorded for this configuration. Review the existing values and supply their evidence before saving.</p>}
-    <fieldset disabled={busy} className="space-y-6">
+    <fieldset disabled={busy} className="space-y-6 [&_input:enabled]:bg-background [&_select:enabled]:bg-background">
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field title="Plant code"><Input required maxLength={80} value={value.code ?? ''} onChange={e => field('code', e.target.value)} /></Field>
+        <Field title="Plant code"><Input required disabled={!!stationCode} maxLength={80} value={value.code ?? ''} onChange={e => field('code', e.target.value)} /></Field>
         <Field title="Plant name"><Input required maxLength={200} value={value.name} onChange={e => field('name', e.target.value)} /></Field>
         <Field title="Latitude"><Input required type="number" step="any" min={-90} max={90} value={value.latitude} onChange={e => field('latitude', e.target.valueAsNumber)} /></Field>
         <Field title="Longitude"><Input required type="number" step="any" min={-180} max={180} value={value.longitude} onChange={e => field('longitude', e.target.valueAsNumber)} /></Field>
-        <Field title="Design capacity (MLD)"><Input required type="number" step="any" min={0.000001} value={value.capacity_mld} onChange={e => field('capacity_mld', e.target.valueAsNumber)} /></Field>
+        <Field title="Design capacity (MLD)"><Input required type="number" step="any" min={0.000001} value={Number.isFinite(value.capacity_mld) ? value.capacity_mld : ''} onChange={e => field('capacity_mld', e.target.valueAsNumber)} /></Field>
         <Field title="Process label"><Input value={value.stp_type} onChange={e => field('stp_type', e.target.value)} /></Field>
         <Field title="Status"><Select value={value.status} onChange={e => field('status', e.target.value)}>{['unknown', 'operational', 'maintenance'].map(status => <option key={status}>{status}</option>)}</Select></Field>
       </div>
@@ -78,7 +78,7 @@ export function StationForm({ initial, creating, saved, discard }: { initial: Ad
   const [error, setError] = useState<unknown>(null)
   async function submit(e: React.FormEvent) { e.preventDefault(); setBusy(true); setError(null); try { await adminApi.saveStation(station, reason.trim(), creating); await saved() } catch (e) { setError(e) } finally { setBusy(false) } }
   return <form onSubmit={submit} className="space-y-5 border-t border-border pt-6"><h2 className="text-xl font-semibold">{creating ? 'Create station' : `Edit ${initial.code}`}</h2><p className="text-sm text-muted-foreground">Metadata only. Historical sample values and import provenance are not edited here.</p>
-    <fieldset disabled={busy} className="space-y-5"><div className="grid gap-5 sm:grid-cols-2">
+    <fieldset disabled={busy} className="space-y-5 [&_input:enabled]:bg-background [&_select:enabled]:bg-background"><div className="grid gap-5 sm:grid-cols-2">
       <Field title="Station code"><Input required disabled={!creating} value={station.code} onChange={e => setStation(v => ({ ...v, code: e.target.value }))} /></Field>
       {(['name', 'category', 'stp_type'] as const).map(key => <Field key={key} title={key === 'stp_type' ? 'Process label' : key === 'name' ? 'Station name' : 'Category'}><Input required={key === 'name'} value={station.payload[key] ?? ''} onChange={e => setStation(v => ({ ...v, payload: { ...v.payload, [key]: e.target.value } }))} /></Field>)}
       {(['latitude', 'longitude'] as const).map(key => <Field key={key} title={key === 'latitude' ? 'Latitude' : 'Longitude'}><Input required type="number" step="any" min={key === 'latitude' ? -90 : -180} max={key === 'latitude' ? 90 : 180} value={station.payload[key]} onChange={e => setStation(v => ({ ...v, payload: { ...v.payload, [key]: e.target.valueAsNumber } }))} /></Field>)}

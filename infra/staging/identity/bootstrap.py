@@ -316,3 +316,6 @@ import sys
 sys.path.insert(0, '/monash-brand')
 from bootstrap_accounts import provision
 provision()
+
+from operator_mfa import provision as provision_operator_mfa
+provision_operator_mfa()
