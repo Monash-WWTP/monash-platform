@@ -44,3 +44,24 @@ def test_websocket_upgrade_and_bidirectional_bytes_are_preserved():
         for server in (proxy, upstream):
             server.shutdown()
             server.server_close()
+
+
+def test_mobile_discovery_uses_remote_endpoints_but_preserves_signed_issuer():
+    payload = {'issuer': 'http://localhost:9100/',
+               'authorization_endpoint': 'http://localhost:9100/application/o/authorize/',
+               'token_endpoint': 'http://localhost:9100/application/o/token/',
+               'jwks_uri': 'http://localhost:9100/application/o/citizen-mobile/jwks/'}
+    fixed = module.browser_json(payload, discovery=True)
+    assert fixed['issuer'] == 'http://localhost:9100/'
+    for key in ('authorization_endpoint', 'token_endpoint', 'jwks_uri'):
+        assert fixed[key].startswith('https://asus-dev.tail66f665.ts.net:10577/')
+
+
+def test_remote_account_actions_keep_same_origin_and_approved_paths():
+    payload = {'origin': 'http://localhost:9100', 'actions': {
+        'profile': 'http://localhost:9100/if/flow/monash-account-profile/',
+        'other': 'https://other.example.test/path'}}
+    fixed = module.browser_json(payload, account_settings=True)
+    assert fixed['origin'] == 'https://asus-dev.tail66f665.ts.net:10577'
+    assert fixed['actions']['profile'] == fixed['origin'] + '/if/flow/monash-account-profile/'
+    assert fixed['actions']['other'] == 'https://other.example.test/path'

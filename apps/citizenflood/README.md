@@ -58,3 +58,7 @@ ARCore phones, installation/permission refusal, no visible reference, tracking
 loss/recovery, reset, background/resume, rotation, large text, reference-height
 checks and sustained thermal/performance behaviour. Automated builds and
 shader checks do not establish physical alignment or scientific accuracy.
+
+## Cable-free local demo
+
+For the current Tailscale demo host, build with `--dart-define-from-file=tailscale-config.example.json` instead of the USB staging config. Connect the phone to the same tailnet. The host computer and local services must remain running; no USB reverse is required. See [local monitoring/demo operations](../../docs/operations/local-monitoring-data.md#cable-free-samsung-demo) for identity and test boundaries.

@@ -59,3 +59,18 @@ The 2026-11-05 operator callback failure occurred after a successful code/token 
 ## Simulation access policy
 
 Any verified signed-in account can read, create, edit, archive, run, replay and compare scenarios in the existing shared research lab. Anonymous requests remain denied, and browser mutations retain session/CSRF checks. Account administration, shared plant configuration, publication review and operational report response retain their separate server permissions and MFA requirements. No account was granted an administrative capability to enable lab access. The lab sign-in link uses ordinary account sign-in; operator MFA remains available for privileged tasks.
+
+## Cable-free Samsung demo
+
+Build CitizenFlood using `apps/citizenflood/tailscale-config.example.json` instead of the USB/localhost staging configuration. Its API and discovery transport use this host's Tailscale HTTPS services. Discovery endpoint URLs are adapted by `serve_tailnet_demo.py`; the canonical OIDC issuer identifier is deliberately preserved so existing account identities and report ownership do not change. The localhost issuer is an identity identifier here, not the network endpoint used by the phone. Approved account-settings action URLs are also adapted to the same remote identity origin.
+
+The phone must have Tailscale installed, signed into the same authorized tailnet and connected. The computer must remain awake with Docker services, Vite and the demo adapter running. USB reverse is unnecessary for this build. It can use Wi-Fi or mobile data through Tailscale; it does not work with this computer/services turned off. This remains a separate staging debug package, not a replacement for the public production APK.
+
+```sh
+cd apps/citizenflood
+flutter build apk --debug --dart-define-from-file=tailscale-config.example.json
+```
+
+The prepared APK is shared only within the tailnet on HTTPS port 10578. Install it over the existing staging app (same debug signing identity); do not uninstall merely to update, as that would remove local drafts. Initial phone sign-in/reporting without USB must still be checked on the Samsung. No phone was attached during preparation of this configuration.
+
+APK delivery uses a loopback file server on 8184 serving only `~/.local/share/monash-platform/apks/`, proxied by Tailscale HTTPS 10578. The current artifact is `citizenflood-tailnet-demo.apk`; it is copied out of Flutter's mutable build output so a later USB build cannot silently replace this download. Keep this file server running while downloading. The tailnet-only download URL is `https://asus-dev.tail66f665.ts.net:10578/citizenflood-tailnet-demo.apk`.

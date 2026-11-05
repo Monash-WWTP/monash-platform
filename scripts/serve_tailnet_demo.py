@@ -12,6 +12,29 @@ def browser_html(data: bytes) -> bytes:
   data=data.replace(local.encode(),b'https://asus-dev.tail66f665.ts.net:10577/')
  return data
 
+def browser_json(value, *, discovery=False, account_settings=False):
+ """Adapt transport URLs while retaining the canonical signed-token issuer."""
+ endpoint_keys = {'authorization_endpoint','token_endpoint','userinfo_endpoint','jwks_uri','end_session_endpoint','revocation_endpoint','introspection_endpoint'}
+ def rewrite_url(url):
+  for local,remote in PAIRS.items():
+   if url == local or url.startswith(local + '/'):
+    return remote + url[len(local):]
+  return url
+ def visit(item):
+  if isinstance(item,dict):
+   for key,child in item.items():
+    allowed = key in {'to','redirect','redirect_url','redirect_to'} or (discovery and key in endpoint_keys)
+    if allowed and isinstance(child,str):item[key]=rewrite_url(child)
+    else:visit(child)
+  elif isinstance(item,list):
+   for child in item:visit(child)
+ visit(value)
+ if account_settings and isinstance(value,dict):
+  if isinstance(value.get('origin'),str):value['origin']=rewrite_url(value['origin'])
+  if isinstance(value.get('actions'),dict):
+   value['actions']={key:rewrite_url(url) if isinstance(url,str) else url for key,url in value['actions'].items()}
+ return value
+
 class Proxy(BaseHTTPRequestHandler):
  def log_message(self,*args): pass
  def proxy(self):
@@ -33,17 +56,10 @@ class Proxy(BaseHTTPRequestHandler):
    if upstream == 9100 and 'text/html' in (r.getheader('Content-Type') or ''):
     data=browser_html(data)
    if 'application/json' in (r.getheader('Content-Type') or ''):
-    def rewrite(value):
-     if isinstance(value,dict):
-      for k,v in value.items():
-       if k in ('to','redirect','redirect_url','redirect_to') and isinstance(v,str):
-        for local,remote in PAIRS.items():
-         if v.startswith(local):value[k]=remote+v[len(local):];break
-       else:rewrite(v)
-     elif isinstance(value,list):
-      for item in value:rewrite(item)
     try:
-     value=json.loads(data);rewrite(value);data=json.dumps(value).encode()
+     value=browser_json(json.loads(data), discovery=self.path.split('?',1)[0].endswith('/.well-known/openid-configuration'),
+                        account_settings=self.path.split('?',1)[0]=='/api/v1/auth/account-settings')
+     data=json.dumps(value).encode()
     except (ValueError,UnicodeError):pass
    self.send_response(r.status)
    for k,v in r.getheaders():
