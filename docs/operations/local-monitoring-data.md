@@ -8,7 +8,7 @@ On 2026-11-05 the supplied Supabase public REST source was read through its publ
 
 `~/.local/share/monash-platform/monitoring/2026-11-05/`
 
-The application database holds two stations and 154 samples. Factor rows remain import provenance/reference data; they do not automatically configure scientific or operational factors. No plant capacity, equipment, permit threshold or account ownership was invented to make a demo. Monitoring locations now appear on the map even before an operational plant configuration exists. A location without a linked configured plant cannot open a research workspace.
+The application database holds two stations and 154 samples. Factor rows remain import provenance/reference data; they do not automatically configure scientific or operational factors. The monitoring import itself does not invent plant capacity, equipment, permit thresholds or account ownership. A subsequent, user-authorized local demo configuration adds explicitly synthetic engineering assumptions for NXP and PTG248; see below. Monitoring locations now appear on the map even before an operational plant configuration exists. A location without a linked configured plant cannot open a research workspace.
 
 ## Repeat the workflow
 
@@ -71,8 +71,32 @@ cd apps/citizenflood
 flutter build apk --debug --dart-define-from-file=tailscale-config.example.json
 ```
 
-The prepared APK is shared only within the tailnet on HTTPS port 10578. Install it over the existing staging app (same debug signing identity); do not uninstall merely to update, as that would remove local drafts. Initial phone sign-in/reporting without USB must still be checked on the Samsung. No phone was attached during preparation of this configuration.
+The prepared APK is shared only within the tailnet on HTTPS port 10578. Install it over the existing staging app (same debug signing identity); do not uninstall merely to update, as that would remove local drafts. Cable-free sign-in was subsequently checked on the Samsung, as recorded below. Report submission/upload acceptance remains pending.
 
 APK delivery uses a loopback file server on 8184 serving only `~/.local/share/monash-platform/apks/`, proxied by Tailscale HTTPS 10578. The current artifact is `citizenflood-tailnet-demo.apk`; it is copied out of Flutter's mutable build output so a later USB build cannot silently replace this download. Keep this file server running while downloading. The tailnet-only download URL is `https://asus-dev.tail66f665.ts.net:10578/citizenflood-tailnet-demo.apk`.
 
 Cable-free phone acceptance (2026-11-05): the Tailscale APK was installed over the existing staging app on Samsung SM-A076B. Tailscale was connected; `adb reverse --list` was empty. The app loaded its observation feed without a connection error and opened the CitizenFlood identity page over HTTPS. The user confirmed sign-in returned to CitizenFlood. Station/laboratory records are not currently a mobile map layer: the phone loads approved community reports plus the signed-in user's own reports, whereas the dashboard also loads monitoring stations and historical lab samples. Upload/report submission over Tailscale is not established by the sign-in check alone.
+
+## NXP and PETALING-MAWAR runnable demo configurations (2026-11-05)
+
+At the user's explicit request, both imported locations now have linked plant configurations and a **Demo assumptions baseline** scenario. Imported station metadata and historical samples were preserved. These are local demonstration configurations, not measured engineering records or validated plant models.
+
+| Setting | Both demonstration baselines | Provenance |
+| --- | --- | --- |
+| Design capacity | 10 MLD | Existing synthetic development fixture; assumed |
+| Influent flow | 6 MLD | Existing synthetic development fixture; assumed |
+| Influent BOD₅ / COD / TSS | 250 / 520 / 300 mg/L | Synthetic influent, not final-effluent samples |
+| Influent ammonia / TKN | 30 / 40 mg/L | Synthetic influent |
+| Equipment | One simulated pump, aeration unit and clarifier, each 100% available | Assumed equipment, not an asset inventory |
+| Maintenance | No events | Demo assumption, not a confirmed schedule |
+| Screening BOD₅ / COD / TSS | 50 / 200 / 100 mg/L | Synthetic screening values, not plant permits |
+| CH₄ / N₂O factors | 0.0121 kg CH₄/kg BOD₅; 0.0093 kg N₂O-N/kg N | Synthetic fixture's generic factors; site applicability unverified |
+| Plant status | Unknown | No operating-status evidence supplied |
+
+NXP retains its imported IETS label and coordinates; PTG248 retains its SBR label and coordinates. Neither label establishes the applicability of the generic factors or model. Imported factor-reference rows were not automatically promoted to site-approved factors. Equipment names and plant descriptions identify the assumptions. Configuration revisions and administrative history retain their source and the user's authorization reason.
+
+On this local database, NXP is plant 2 / scenario 2 / completed run 3; PETALING-MAWAR is plant 3 / scenario 3 / completed run 4. Both runs start on 2026-11-05 with a three-month horizon. These identifiers are local and must not be hardcoded into another environment. Successful execution establishes software behavior only; it does not establish scientific accuracy.
+
+Open the Simulation lab, choose the plant and select **Demo assumptions baseline**. Replace assumed capacity/equipment/thresholds/factors through Administration → Plants; replace influent and maintenance in the scenario. New configuration revisions affect future runs; retain existing saved-run provenance. Before production transfer, explicitly exclude these demo scenarios/configurations or replace them with reviewed site records. Do not import them silently as real engineering data.
+
+Pre-change application database snapshot: `~/.local/share/monash-platform/backups/before-engineering-demo-20261105.sql` (owner-only, unencrypted local dump). Treat it as private; encrypt before any transfer. The earlier encrypted backups predate these two configurations and runs. Create a new coordinated encrypted backup before migration; do not assume the earlier bundles contain the latest state.

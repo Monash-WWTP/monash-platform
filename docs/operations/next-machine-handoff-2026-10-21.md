@@ -1,3 +1,5 @@
+> Historical handoff dated 2026-10-21. For the subsequently running 2026-11-05 Tailscale demo, imported monitoring data, cable-free Samsung sign-in, shared lab access and explicitly assumed NXP/PTG248 engineering configurations, read [Local monitoring data and migration](local-monitoring-data.md) first. The shutdown and USB-only instructions below describe the earlier handoff, not the current host state. Production provisioning and scientific acceptance remain pending.
+
 # Continue on a new machine
 
 Handoff date: 21 October 2026. This guide assumes a Linux shell; adapt installation and Android USB setup for the new operating system. No repository clone, developer tools or credentials are assumed to exist there.
