@@ -31,9 +31,9 @@ test('failed runs expose retry without fabricated KPI cards', () => {
   assert.match(html, /Retry saved inputs/)
   assert.doesNotMatch(html, /NaN|Capacity utilisation|Estimated scenario GHG intensity/)
 })
-test('completed results expose immutable run identity and inputs instead of editable draft', () => {
+test('completed results retain saved inputs without exposing technical metadata', () => {
   const html = renderRun('completed')
-  assert.match(html, /sha256:immutable/)
+  assert.doesNotMatch(html, /sha256:immutable|effluent_v1|illustrative_unvalidated/)
   assert.match(html, /2025-01-01/)
   assert.match(html, /Saved run inputs/)
   assert.doesNotMatch(html, /999|Baseline projection|Difference vs Baseline|recovery is bounded at zero|NaN/)

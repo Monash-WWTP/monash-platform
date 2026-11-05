@@ -23,7 +23,7 @@ export default function ResultsPanel({ plantId }: { plantId: number }) {
   if (activeRunId && query.isLoading) return <p role="status" className="p-4 text-sm">Loading saved run…</p>
   if (!run) return <p className="p-4 text-sm text-muted-foreground">Configure a scenario and run an illustrative model screen to inspect results.</p>
   if (run.status !== 'completed') return <div className="space-y-3 p-4 text-sm">
-    <h2 className="font-semibold">{run.status === 'failed' ? 'Run failed' : 'Run in progress'} · #{run.id}</h2>
+    <h2 className="font-semibold">{run.status === 'failed' ? 'Run failed' : 'Run in progress'}</h2>
     <p>No completed results are available. Your scenario inputs have been kept.</p>
     {run.status === 'failed' ? <Button disabled={retry.isPending} onClick={() => retry.mutate(run.id)}>{retry.isPending ? 'Retrying…' : 'Retry saved inputs'}</Button> : <Button onClick={() => void query.refetch()}>Refresh run status</Button>}
     {retry.isError && <p role="alert">{retry.error.message}</p>}
@@ -33,10 +33,8 @@ export default function ResultsPanel({ plantId }: { plantId: number }) {
 
   return (
     <div className="flex flex-col gap-3 p-3">
-      <Card title={`Saved run #${run.id} · ${run.scenario_name}`}>
-        <p className="text-xs text-muted-foreground">{run.model_id} v{run.model_version} · {run.status} · {run.validation_status}</p>
+      <Card title={run.scenario_name}>
         <p className="mt-2 text-xs">Simulated period: {ts?.dates[0] ?? run.input_snapshot?.start_date ?? 'Not recorded'} → {ts?.dates.at(-1) ?? 'Not recorded'}</p>
-        <p className="mt-2 break-all font-mono text-[10px]">Artifact: {run.artifact_digest || 'Not recorded'}</p>
         <details className="mt-3 text-xs"><summary className="cursor-pointer font-medium">Saved run inputs</summary><pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap break-all rounded bg-muted p-3">{JSON.stringify(run.input_snapshot ?? {}, null, 2)}</pre></details>
       </Card>
       {!run.decision_use_permitted && (
@@ -119,8 +117,7 @@ export default function ResultsPanel({ plantId }: { plantId: number }) {
       </Card>
 
       <p className="px-1 text-[10px] text-muted-foreground">
-        Model: {run.model_id} v{run.model_version} · Run #{run.id} ·{' '}
-        {new Date(run.created_at).toLocaleString()}
+        Saved         {new Date(run.created_at).toLocaleString()}
       </p>
     </div>
   )

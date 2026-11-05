@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Factory } from 'lucide-react'
+import { ChevronDown, Factory } from 'lucide-react'
 
 import { usePlant, useRun, useTimeseries } from '../api/hooks'
 import { useWorkspaceStore } from '../stores/scenarioStore'
@@ -54,22 +54,24 @@ export default function WorkspacePage() {
   return (
     <div className="flex h-full flex-col overflow-y-auto lg:overflow-hidden">
       <OperatorHeader context="Simulation lab" />
-      <div className="shrink-0 border-b bg-background px-4 py-3">
-        <Link to="/dashboard/simulation" className="mr-4 inline-block min-h-11 content-center text-sm text-primary underline">Simulation lab</Link>
-        <Link to={`/dashboard?station=${encodeURIComponent(plant.code ?? '')}`} className="text-sm text-primary underline">Back to monitoring</Link>
-        <p className="mt-2 text-xs text-muted-foreground">Research sandbox · illustrative, unvalidated simulations. Observations remain in monitoring.</p>
-        <Link to="/dashboard/simulation/methods" className="mt-2 inline-block text-xs text-muted-foreground underline underline-offset-4">Methods and sources</Link>
-      </div>
-      <div className="flex shrink-0 flex-wrap items-center justify-between gap-4 border-b border-border bg-card px-4 py-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <Factory className="size-5 text-primary" />
-          <div className="min-w-0">
-            <h1 className="text-sm font-semibold leading-tight [overflow-wrap:anywhere]">{plant.name}</h1>
-            <p className="text-[11px] text-muted-foreground leading-tight">
-              Configured capacity {plant.capacity_mld} MLD · {plant.description}
-            </p>
+      <div className="flex shrink-0 flex-wrap items-start justify-between gap-x-4 gap-y-2 border-b border-border bg-background px-4 py-2">
+        <details className="group min-w-0 flex-1">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center gap-3 rounded focus-visible:outline-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+            <Factory className="size-5 shrink-0 text-primary" />
+            <h1 className="min-w-0 text-sm font-semibold [overflow-wrap:anywhere]">{plant.name}</h1>
+            <span className="ml-1 text-xs text-muted-foreground">Details</span>
+            <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="max-w-xl space-y-2 pb-3 pt-2 text-xs text-muted-foreground">
+            <p>Configured capacity {plant.capacity_mld} MLD · {plant.description}</p>
+            <p>Research sandbox · illustrative, unvalidated simulations. Observations remain in monitoring.</p>
+            <div className="flex flex-wrap gap-x-4 gap-y-2">
+              <Link to="/dashboard/simulation" className="text-primary underline">Simulation lab</Link>
+              <Link to={`/dashboard?station=${encodeURIComponent(plant.code ?? '')}`} className="text-primary underline">Back to monitoring</Link>
+              <Link to="/dashboard/simulation/methods" className="underline underline-offset-4">Methods and sources</Link>
+            </div>
           </div>
-        </div>
+        </details>
 
         <nav aria-label="Workspace views" className="flex max-w-full flex-wrap gap-1 rounded-md border border-border bg-muted p-0.5">
           {(
