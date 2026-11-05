@@ -75,7 +75,7 @@ The prepared APK is shared only within the tailnet on HTTPS port 10578. Install 
 
 APK delivery uses a loopback file server on 8184 serving only `~/.local/share/monash-platform/apks/`, proxied by Tailscale HTTPS 10578. The current artifact is `citizenflood-tailnet-demo.apk`; it is copied out of Flutter's mutable build output so a later USB build cannot silently replace this download. Keep this file server running while downloading. The tailnet-only download URL is `https://asus-dev.tail66f665.ts.net:10578/citizenflood-tailnet-demo.apk`.
 
-Cable-free phone acceptance (2026-11-05): the Tailscale APK was installed over the existing staging app on Samsung SM-A076B. Tailscale was connected; `adb reverse --list` was empty. The app loaded its observation feed without a connection error and opened the CitizenFlood identity page over HTTPS. The user confirmed sign-in returned to CitizenFlood. Station/laboratory records are not currently a mobile map layer: the phone loads approved community reports plus the signed-in user's own reports, whereas the dashboard also loads monitoring stations and historical lab samples. Upload/report submission over Tailscale is not established by the sign-in check alone.
+Cable-free phone acceptance (2026-11-05): the Tailscale APK was installed over the existing staging app on Samsung SM-A076B. Tailscale was connected; `adb reverse --list` was empty. The app loaded its observation feed without a connection error and opened the CitizenFlood identity page over HTTPS. The user confirmed sign-in returned to CitizenFlood. At that sign-in acceptance checkpoint, station/laboratory records were not yet a mobile map layer. The subsequent mobile monitoring update below adds that layer. Upload/report submission over Tailscale is not established by the sign-in check alone.
 
 ## NXP and PETALING-MAWAR runnable demo configurations (2026-11-05)
 
@@ -104,3 +104,13 @@ Pre-change application database snapshot: `~/.local/share/monash-platform/backup
 ## Plant input and prediction-quality guide
 
 See [Plant setup and prediction-quality guide](plant-engineering-guide.md) for field-by-field units, evidence requirements, current demo assumptions, data collection priorities and the calibration/validation work needed for more precise predictions.
+
+## Mobile monitoring layer (2026-11-05)
+
+CitizenFlood now reads the same public `/api/v1/monitoring/stations` and station-filtered `/api/v1/monitoring/samples` contracts as the dashboard. Factory markers identify imported monitoring locations separately from citizen-report markers. **Plants** lists all imported stations and moves the map to the selected location; tapping a marker or list item opens station details with the most recent laboratory sample by sample date. Sample dates, available values and BDL flags are shown; empty histories and request failures have distinct states and retry. Historical measurements are labelled as historical, not live or simulated. Synthetic DEMO001 and engineering assumptions are not presented as laboratory readings.
+
+Both station and sample requests follow pagination; the station count is not hardcoded. The current backend contains two imported locations, NXP and PTG248, not 21. A larger dataset will appear after a reviewed backend import and mobile refresh; this client change does not invent missing locations. When samples share the same date, the current date-only record cannot establish within-day chronology. The layer does not expose private reports, administrative editing, live sensor streams or simulation results.
+
+The updated Tailscale APK must be installed for this feature; refreshing an old APK does not add new source functionality. Continue using the tailnet download above. Repository/automated verification and physical installation evidence are reported separately from operator acceptance.
+
+Physical-device verification: the updated debug APK was installed in place on Samsung SM-A076B. The Plants list displayed NXP and PETALING-MAWAR; selecting PTG248 centred its factory marker, and tapping that marker opened the 2025-12-30 laboratory sample with preserved BDL labels. This verifies the list/marker/detail path on this device, not all accessibility, network-failure or scale scenarios.

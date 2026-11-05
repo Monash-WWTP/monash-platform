@@ -8,7 +8,7 @@ NXP and PETALING-MAWAR have runnable local demonstration scenarios. Their identi
 
 `effluent_v1` 1.4.1 is an illustrative, deterministic daily heuristic. It is not a calibrated activated-sludge model, plant mass balance or weather forecast. Its default weekly flow oscillation is imposed, not learned from the plant. Process labels such as IETS or SBR do not select a site-specific treatment model. More precise inputs may improve the relevance of scenarios but cannot by themselves establish prediction accuracy. Model development, calibration and independent validation are separate work.
 
-The dashboard provides monitoring, engineering configuration and the shared simulation lab. CitizenFlood currently provides community observations and own reports; it does not display the dashboard's plant/station laboratory layer. Citizen observations do not automatically become model inputs.
+The dashboard provides monitoring, engineering configuration and the shared simulation lab. CitizenFlood provides community observations, own reports and imported monitoring-station markers with historical laboratory sample details. Its Plants list follows the shared monitoring station dataset; synthetic-only simulation plants and engineering administration remain in the dashboard. Citizen observations do not automatically become model inputs.
 
 ## 2. Where to enter information
 
