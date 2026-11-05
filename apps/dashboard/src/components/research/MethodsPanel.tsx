@@ -1,6 +1,6 @@
 /** Scientific status is independent of successful software execution. */
-export default function MethodsPanel() {
-  return <details className="rounded border border-border bg-card p-3 text-sm">
+export default function MethodsPanel({ expanded = false }: { expanded?: boolean }) {
+  return <details open={expanded} className="rounded border border-border bg-card p-3 text-sm">
     <summary className="min-h-6 cursor-pointer font-medium">Methods and sources · unvalidated research</summary>
     <div className="mt-3 max-w-4xl space-y-3 text-xs leading-relaxed text-muted-foreground">
       <p><strong className="text-foreground">Effluent simulation:</strong> effluent_v1 is a deterministic heuristic, not a calibrated ASM1 or plant mass-balance model. Its empirical coefficients lack equation-level study provenance and site validation. No quantified uncertainty is supplied. Decision use is not permitted.</p>

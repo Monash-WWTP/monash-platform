@@ -41,6 +41,10 @@ const router = createBrowserRouter([
     }),
   },
   {
+    path: "/dashboard/simulation/methods",
+    lazy: async () => ({ Component: (await import("./pages/SimulationMethodsPage")).default }),
+  },
+  {
     path: "/dashboard/simulation",
     lazy: async () => ({ Component: (await import("./pages/SimulationLabPage")).default }),
   },

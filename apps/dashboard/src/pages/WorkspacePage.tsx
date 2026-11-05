@@ -7,7 +7,6 @@ import { useWorkspaceStore } from '../stores/scenarioStore'
 import ResultsPanel from '../components/results/ResultsPanel'
 import ScenarioPanel from '../components/scenario/ScenarioPanel'
 import OperatorHeader from '../components/OperatorHeader'
-import MethodsPanel from '../components/research/MethodsPanel'
 import { Button } from '../components/ui'
 const ComparisonView = lazy(() => import('../components/comparison/ComparisonView'))
 const TrendsChart = lazy(() => import('../components/dashboard/TrendsChart'))
@@ -59,7 +58,7 @@ export default function WorkspacePage() {
         <Link to="/dashboard/simulation" className="mr-4 inline-block min-h-11 content-center text-sm text-primary underline">Simulation lab</Link>
         <Link to={`/dashboard?station=${encodeURIComponent(plant.code ?? '')}`} className="text-sm text-primary underline">Back to monitoring</Link>
         <p className="mt-2 text-xs text-muted-foreground">Research sandbox · illustrative, unvalidated simulations. Observations remain in monitoring.</p>
-        <div className="mt-3"><MethodsPanel /></div>
+        <Link to="/dashboard/simulation/methods" className="mt-2 inline-block text-xs text-muted-foreground underline underline-offset-4">Methods and sources</Link>
       </div>
       <div className="flex shrink-0 flex-wrap items-center justify-between gap-4 border-b border-border bg-card px-4 py-3">
         <div className="flex min-w-0 items-center gap-3">
