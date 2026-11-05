@@ -20,6 +20,17 @@ class PreviewSession extends AccountSession {
 }
 
 void main() {
+  setUp(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          DepthPreview.channel,
+          (call) async => call.method == 'isSupported' ? true : null,
+        );
+  });
+  tearDown(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(DepthPreview.channel, null);
+  });
   final data = <String, dynamic>{
     'kind': 'water_reading',
     'reference_kind': 'depth',
@@ -43,6 +54,7 @@ void main() {
           ),
         ),
       );
+      await tester.pumpAndSettle();
       final action = find.widgetWithText(OutlinedButton, 'Preview depth');
       expect(tester.widget<OutlinedButton>(action).onPressed, isNull);
       await tester.enterText(find.byType(TextFormField).at(0), 'Road surface');
@@ -80,6 +92,7 @@ void main() {
           ),
         ),
       );
+      await tester.pumpAndSettle();
       expect(
         find.text('Visualise reported depth'),
         owner ? findsOneWidget : findsNothing,
@@ -94,7 +107,7 @@ void main() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(DepthPreview.channel, (call) async {
           calls.add(call.method);
-          return null;
+          return call.method == 'isSupported' ? true : null;
         });
     addTearDown(
       () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -109,12 +122,13 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
     expect(find.text('Private report'), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('3D water preview'), 200);
+    await tester.scrollUntilVisible(find.text('Open AR preview'), 200);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('3D water preview'));
+    await tester.tap(find.text('Open AR preview'));
     await tester.pumpAndSettle();
-    expect(calls, contains('open3d'));
+    expect(calls, contains('open'));
     session.change();
     await tester.pumpAndSettle();
     expect(find.text('Private report'), findsNothing);
@@ -127,10 +141,12 @@ void main() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
           DepthPreview.channel,
-          (_) async => throw PlatformException(
-            code: 'unavailable',
-            message: 'AR unavailable. Continue reporting normally.',
-          ),
+          (call) async => call.method == 'isSupported'
+              ? true
+              : throw PlatformException(
+                  code: 'unavailable',
+                  message: 'AR unavailable. Continue reporting normally.',
+                ),
         );
     addTearDown(
       () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -158,25 +174,11 @@ void main() {
     await tester.scrollUntilVisible(find.text('Return to report'), 200);
     expect(find.text('Return to report'), findsOneWidget);
   });
-  testWidgets('3D preview opens without AR and preserves report context', (
+  testWidgets('unsupported device hides AR and simulated actions', (
     tester,
   ) async {
-    final calls = <MethodCall>[];
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(DepthPreview.channel, (call) async {
-          calls.add(call);
-          if (call.method == 'open') {
-            throw PlatformException(
-              code: 'unavailable',
-              message: 'AR unavailable',
-            );
-          }
-          return null;
-        });
-    addTearDown(
-      () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(DepthPreview.channel, null),
-    );
+        .setMockMethodCallHandler(DepthPreview.channel, (_) async => false);
     await tester.pumpWidget(
       MaterialApp(
         home: DepthPreviewScreen(
@@ -185,28 +187,10 @@ void main() {
         ),
       ),
     );
-    await tester.scrollUntilVisible(find.text('Open AR preview'), 200);
-    await tester.ensureVisible(
-      find.widgetWithText(OutlinedButton, 'Open AR preview'),
-    );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Open AR preview'));
-    await tester.pumpAndSettle();
-    expect(calls.last.method, 'open');
-    await tester.scrollUntilVisible(find.text('3D water preview'), -200);
-    await tester.ensureVisible(
-      find.widgetWithText(FilledButton, '3D water preview'),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('3D water preview'));
-    await tester.pumpAndSettle();
-    expect(calls.last.method, 'open3d');
-    expect(calls.last.arguments, {
-      'depthM': 0.5,
-      'reference': 'Road surface',
-      'contextLabel': 'Draft depth',
-    });
-    expect(data['value'], 0.5);
+    expect(find.text('Open AR preview'), findsNothing);
+    expect(find.text('3D water preview'), findsNothing);
+    expect(find.text('Camera water'), findsNothing);
     await tester.scrollUntilVisible(find.text('Return to report'), 200);
     expect(find.text('Return to report'), findsOneWidget);
   });

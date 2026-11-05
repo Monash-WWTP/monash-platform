@@ -1,3 +1,11 @@
+# AR water rendering
+
+As of 2026-11-05 only the ARCore-tracked native preview is available. The live camera filter, standalone synthetic scene, Basic/Full graphics switch and WebView renderer have been removed. UI actions require a successful native ARCore support check; launch also fails closed for unsupported/unknown devices. ARCore service installation and permission recovery remain in the tracked activity. Depth occlusion requires separate device capability and current depth images. Reporting is available without ARCore.
+
+The native renderer retains the Evan-derived wave solver and MIT attribution. Pinned source files remain solely for reproducible native shader extraction; they are not an executable preview. Native GPU startup/readback succeeded on the Samsung during earlier camera-filter testing, but that phone does not support ARCore, so real AR anchor/occlusion acceptance remains pending on a compatible device.
+
+## Historical implementation evidence (superseded preview modes)
+
 # Android water rendering
 
 ## Full camera-free preview
@@ -92,3 +100,7 @@ Startup timeout, missing WebView/provider and unsupported real-device extension 
 ### Native GPU port and camera filter (2026-10-29)
 
 The native renderer now includes extracted Evan drop/update/normal shaders, VBO mesh displacement, peaked normals, reference-plane refraction and AR ambient lighting, with guarded CPU fallback. Source provenance and bounded/rate-switch clocks are tested. This is separate from the verified WebView GPU pipeline above. Native float execution and real AR visuals remain unverified on physical hardware; emulator native GLES3 attempts terminated the host, so emulator native surfaces deliberately use GLES2 compatibility. See [camera-water-filter.md](camera-water-filter.md) for camera-only entry, lifecycle, test evidence and remaining gates.
+
+## AR-only removal verification (2026-11-05)
+
+69 Flutter tests, 12 native tests and two provenance tests pass. Static analysis, debug staging APK, repository policy and pinned-source checks pass. The replacement APK was installed on Samsung SM-A076B; its map displays Refresh observations and no camera-water toolbar entry. Physical tracked AR testing remains pending on an ARCore-compatible device. Removal includes the native simulation activities, WebView scene and synthetic-scene assets; only the pinned wave solver source and MIT license remain for native shader generation.

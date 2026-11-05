@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -47,25 +46,18 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
     super.dispose();
   }
 
+  final _supported = DepthPreview.isSupported();
   bool _opening = false;
   String? _error;
-  Future<void> _open({
-    bool threeDimensional = false,
-    bool cameraFilter = false,
-  }) async {
+  Future<void> _open() async {
     if (_invalidated) return;
     setState(() {
       _opening = true;
       _error = null;
     });
     try {
-      if (cameraFilter) {
-        await widget.preview.openCamera(contextLabel: widget.contextLabel);
-      } else if (threeDimensional) {
-        await widget.preview.open3d(contextLabel: widget.contextLabel);
-      } else {
-        await widget.preview.open(contextLabel: widget.contextLabel);
-      }
+      if (!await _supported || _invalidated || !mounted) return;
+      await widget.preview.open(contextLabel: widget.contextLabel);
     } on MissingPluginException {
       if (mounted) {
         setState(
@@ -104,8 +96,6 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
         ),
       );
     }
-    final supported =
-        !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(title: const Text('Visualise reported depth')),
@@ -130,10 +120,6 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
               'This illustrates your entered depth. It does not measure water or predict flooding.',
             ),
             const SizedBox(height: 16),
-            if (!supported)
-              const Text(
-                'Water previews are available on Android. Reporting remains available.',
-              ),
             if (_error != null) ...[
               Semantics(
                 liveRegion: true,
@@ -144,26 +130,6 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
               ),
               const SizedBox(height: 16),
             ],
-            FilledButton.icon(
-              onPressed: supported && !_opening
-                  ? () => _open(cameraFilter: true)
-                  : null,
-              icon: const Icon(Icons.camera_alt_outlined),
-              label: const Text('Camera water'),
-            ),
-            const SizedBox(height: 12),
-            FilledButton.icon(
-              onPressed: supported && !_opening
-                  ? () => _open(threeDimensional: true)
-                  : null,
-              icon: const Icon(Icons.water),
-              label: const Text('3D water preview'),
-            ),
-            const Text(
-              'Rotate and zoom an illustrative scene. No camera needed.',
-            ),
-            const SizedBox(height: 16),
-            const Divider(height: 32),
             Text('AR in your surroundings', style: theme.textTheme.titleMedium),
             const SizedBox(height: 16),
             const Text(
@@ -202,10 +168,19 @@ class _DepthPreviewScreenState extends State<DepthPreviewScreen> {
               'Camera frames are not uploaded by this preview. No rendered image is attached to your report. A past report is illustrated in your current surroundings, not reconstructed.',
             ),
             const SizedBox(height: 24),
-            OutlinedButton.icon(
-              onPressed: supported && !_opening ? () => _open() : null,
-              icon: const Icon(Icons.view_in_ar),
-              label: Text(_opening ? 'Opening camera…' : 'Open AR preview'),
+            FutureBuilder<bool>(
+              future: _supported,
+              builder: (context, snapshot) => snapshot.data == true
+                  ? OutlinedButton.icon(
+                      onPressed: _opening ? null : _open,
+                      icon: const Icon(Icons.view_in_ar),
+                      label: Text(
+                        _opening ? 'Opening camera…' : 'Open AR preview',
+                      ),
+                    )
+                  : const Text(
+                      'AR is unavailable on this device. Reporting remains available.',
+                    ),
             ),
             const SizedBox(height: 8),
             TextButton(

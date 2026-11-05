@@ -1,3 +1,4 @@
+import 'ar_supported.dart';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -84,22 +85,24 @@ class ReportDetailSheet extends StatelessWidget {
                 ),
               ),
             if (depthPreview != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: OutlinedButton.icon(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (_) => DepthPreviewScreen(
-                        preview: depthPreview,
-                        contextLabel: report.observedAt == null
-                            ? 'Reported depth · observation time unavailable'
-                            : 'Reported depth · ${DateFormat('d MMM y · HH:mm').format(report.observedAt!.toLocal())}',
+              ArSupported(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: OutlinedButton.icon(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (_) => DepthPreviewScreen(
+                          preview: depthPreview,
+                          contextLabel: report.observedAt == null
+                              ? 'Reported depth · observation time unavailable'
+                              : 'Reported depth · ${DateFormat('d MMM y · HH:mm').format(report.observedAt!.toLocal())}',
+                        ),
                       ),
                     ),
+                    icon: const Icon(Icons.view_in_ar),
+                    label: const Text('Visualise reported depth'),
                   ),
-                  icon: const Icon(Icons.view_in_ar),
-                  label: const Text('Visualise reported depth'),
                 ),
               ),
             if (ownerView && report.reviewReason != null) ...[

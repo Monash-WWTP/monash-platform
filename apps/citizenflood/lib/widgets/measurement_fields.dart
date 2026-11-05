@@ -1,3 +1,4 @@
+import 'ar_supported.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../services/depth_preview.dart';
@@ -265,34 +266,36 @@ class MeasurementFieldsState extends State<MeasurementFields> {
         ),
         if (_method == 'instrument') text('instrument', 'Instrument or gauge'),
         if (_reference == 'depth')
-          Builder(
-            builder: (context) {
-              final preview = DepthPreview.fromObservation({
-                'kind': 'water_reading',
-                'reference_kind': _reference,
-                'unit': 'm',
-                'value': double.tryParse(field('value').text.trim()),
-                'reference_description': field('surface').text,
-              });
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: OutlinedButton.icon(
-                  onPressed: preview == null
-                      ? null
-                      : () => Navigator.push(
-                          context,
-                          MaterialPageRoute<void>(
-                            builder: (_) => DepthPreviewScreen(
-                              preview: preview,
-                              contextLabel: 'Draft depth',
+          ArSupported(
+            child: Builder(
+              builder: (context) {
+                final preview = DepthPreview.fromObservation({
+                  'kind': 'water_reading',
+                  'reference_kind': _reference,
+                  'unit': 'm',
+                  'value': double.tryParse(field('value').text.trim()),
+                  'reference_description': field('surface').text,
+                });
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: OutlinedButton.icon(
+                    onPressed: preview == null
+                        ? null
+                        : () => Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (_) => DepthPreviewScreen(
+                                preview: preview,
+                                contextLabel: 'Draft depth',
+                              ),
                             ),
                           ),
-                        ),
-                  icon: const Icon(Icons.view_in_ar),
-                  label: const Text('Preview depth'),
-                ),
-              );
-            },
+                    icon: const Icon(Icons.view_in_ar),
+                    label: const Text('Preview depth'),
+                  ),
+                );
+              },
+            ),
           ),
       ] else ...[
         choice('Temperature subject', _subject, const [

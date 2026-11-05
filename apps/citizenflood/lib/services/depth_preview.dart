@@ -28,18 +28,15 @@ class DepthPreview {
 
   static Future<void> close() => channel.invokeMethod<void>('close');
 
-  // The camera effect receives no observation data and works without the API.
-  static Future<void> openCameraFilter() =>
-      channel.invokeMethod<void>('openCamera');
-
-  Future<void> openCamera({required String contextLabel}) => openCameraFilter();
-
-  Future<void> open3d({required String contextLabel}) =>
-      channel.invokeMethod<void>('open3d', {
-        'depthM': depthM,
-        'reference': reference,
-        'contextLabel': contextLabel,
-      });
+  static Future<bool> isSupported() async {
+    try {
+      return await channel.invokeMethod<bool>('isSupported') ?? false;
+    } on MissingPluginException {
+      return false;
+    } on PlatformException {
+      return false;
+    }
+  }
 
   Future<void> open({required String contextLabel}) =>
       channel.invokeMethod<void>('open', {

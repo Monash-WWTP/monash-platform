@@ -57,24 +57,12 @@ void main() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, null);
   });
-  test(
-    'camera water uses a separate launch without changing the reading',
-    () async {
-      MethodCall? received;
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(DepthPreview.channel, (call) async {
-            received = call;
-            return null;
-          });
-      final data = reading();
-      await DepthPreview.fromObservation(
-        data,
-      )!.openCamera(contextLabel: 'Draft depth');
-      expect(received!.method, 'openCamera');
-      expect(received!.arguments, isNull);
-      expect(data['value'], 0.5);
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(DepthPreview.channel, null);
-    },
-  );
+  test('unsupported or missing native capability fails closed', () async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(DepthPreview.channel, (_) async => false);
+    expect(await DepthPreview.isSupported(), isFalse);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(DepthPreview.channel, null);
+    expect(await DepthPreview.isSupported(), isFalse);
+  });
 }
