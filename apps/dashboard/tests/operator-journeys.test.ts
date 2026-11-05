@@ -23,8 +23,8 @@ test('workspace and moderation share a recognizable route back to the platform',
   client.setQueryData(['scenarios', 1], [])
   for (const [path, Component] of [['/dashboard/plants/1', WorkspacePage], ['/dashboard/moderation', ModerationPage]] as const) {
     const html = render(client, path, Component)
-    assert.match(html, /href="\/"[^>]*>Monash Water/)
-    assert.match(html, /href="\/dashboard"/)
+    assert.match(html, /alt="Monash Water"/)
+    assert.match(html, /Back to main page/)
   }
   assert.match(render(client, '/dashboard/plants/1', WorkspacePage), /aria-pressed="true"/)
   assert.doesNotMatch(render(client, '/dashboard/plants/1', WorkspacePage), /3D Digital Twin/)

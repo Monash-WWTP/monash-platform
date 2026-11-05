@@ -1,17 +1,14 @@
 import { Link } from 'react-router-dom'
-import { documentationUrl, documentationLabel } from '../lib/documentation'
 
-/** Shared navigation for the monitoring, scenario and review surfaces. */
-export default function OperatorHeader({ context, monitoring = false }: { context: string; monitoring?: boolean }) {
-  return <header className="flex min-h-14 shrink-0 flex-wrap items-center justify-between gap-x-5 gap-y-2 border-b border-border bg-background px-4 py-3">
-    <Link to="/" className="text-lg font-bold tracking-tight text-foreground">Monash Water</Link>
-    <nav aria-label="Operator navigation" className="flex flex-wrap items-center gap-4 text-sm">
-      {!monitoring && <Link to="/dashboard" className="text-primary underline underline-offset-4">Monitoring</Link>}
-      {context !== 'Operations reports' && <Link to="/dashboard/operations" className="text-primary underline underline-offset-4">Operations reports</Link>}
-      {context !== 'Report review' && <Link to="/dashboard/moderation" className="text-primary underline underline-offset-4">Publication review</Link>}
-      {context !== 'Administration' && <Link to="/dashboard/admin" className="text-primary underline underline-offset-4">Administration</Link>}
-      <a href={documentationUrl} className="text-primary underline underline-offset-4">{documentationLabel}</a>
-      <span aria-current="page">{context}</span>
+/** Quiet shared header; task navigation belongs within each operator surface. */
+export default function OperatorHeader({ context }: { context: string; monitoring?: boolean }) {
+  return <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-background px-4">
+    <Link to="/" aria-label="Monash Water home" className="rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
+      <img src="/assets/platform-logo.png" alt="Monash Water" className="size-8" />
+    </Link>
+    <nav aria-label="Operator navigation">
+      <Link to="/" className="inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-foreground">Back to main page</Link>
     </nav>
+    <span className="sr-only" aria-current="page">{context}</span>
   </header>
 }
