@@ -2,7 +2,7 @@ import { observationSummary } from "../api/observations"
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import * as maplibregl from 'maplibre-gl'
 import mapWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { ChevronsLeft, ChevronsRight, X } from 'lucide-react'
 
 import { monitoringLocations, type MonitoringLocation } from '../lib/monitoringLocations'
@@ -235,7 +235,10 @@ export default function MapPage() {
       <div className="absolute inset-x-0 top-0 z-10"><OperatorHeader context="Monitoring" monitoring /></div>
       <div ref={mapContainer} style={{ position: 'absolute', inset: '56px 0 0' }} aria-label="Plant locations" />
       <section className={`absolute left-3 top-[68px] z-10 max-h-[calc(100%-80px)] w-[min(320px,calc(100%-24px))] overflow-y-auto rounded-lg border border-border bg-background p-4`} aria-label="Find a plant">
-        <h1 className="text-lg font-semibold">Water monitoring</h1>
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="text-lg font-semibold">Water monitoring</h1>
+          <Link to="/dashboard/simulation" className="inline-flex min-h-11 items-center text-sm font-medium text-primary underline underline-offset-4">Simulation lab</Link>
+        </div>
         {mapUnavailable && <p role="status" className="mt-3 text-sm text-warning">Interactive map unavailable. All plants remain available below.</p>}
         <label className="sr-only" htmlFor="plant-search">Search plants</label>
         <input id="plant-search" type="search" value={search} onChange={event => setSearch(event.target.value)}

@@ -29,10 +29,10 @@ export default function WorkspacePage() {
   }, [id, resetWorkspace])
 
   if (isLoading) {
-    return <div className="flex h-full flex-col"><OperatorHeader context="Research sandbox" /><p role="status" className="p-6 text-sm text-muted-foreground">Loading plant…</p></div>
+    return <div className="flex h-full flex-col"><OperatorHeader context="Simulation lab" /><p role="status" className="p-6 text-sm text-muted-foreground">Loading plant…</p></div>
   }
   if (isError) {
-    return <div className="flex h-full flex-col"><OperatorHeader context="Research sandbox" />
+    return <div className="flex h-full flex-col"><OperatorHeader context="Simulation lab" />
       <div role="alert" className="mx-auto max-w-xl space-y-4 p-6">
         <h1 className="text-2xl font-semibold">Plant information is unavailable</h1>
         <p className="text-sm text-muted-foreground">We couldn’t load this plant. Retry, or return to monitoring to select another plant.</p>
@@ -43,7 +43,7 @@ export default function WorkspacePage() {
   if (!plant) {
     return (
       <div className="flex h-full flex-col gap-4 text-muted-foreground">
-        <OperatorHeader context="Research sandbox" />
+        <OperatorHeader context="Simulation lab" />
         Plant not found.
         <Link to="/dashboard" className="text-primary underline">
           Back to map
@@ -54,9 +54,10 @@ export default function WorkspacePage() {
 
   return (
     <div className="flex h-full flex-col overflow-y-auto lg:overflow-hidden">
-      <OperatorHeader context="Research sandbox" />
+      <OperatorHeader context="Simulation lab" />
       <div className="shrink-0 border-b bg-background px-4 py-3">
-        <Link to={`/dashboard?station=${encodeURIComponent(plant.code ?? '')}`} className="text-sm text-primary underline">← Back to monitoring this plant</Link>
+        <Link to="/dashboard/simulation" className="mr-4 inline-block min-h-11 content-center text-sm text-primary underline">Simulation lab</Link>
+        <Link to={`/dashboard?station=${encodeURIComponent(plant.code ?? '')}`} className="text-sm text-primary underline">Back to monitoring</Link>
         <p className="mt-2 text-xs text-muted-foreground">Research sandbox · illustrative, unvalidated simulations. Observations remain in monitoring.</p>
         <div className="mt-3"><MethodsPanel /></div>
       </div>

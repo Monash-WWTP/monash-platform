@@ -31,3 +31,15 @@ Reusing the same snapshot is idempotent. A new snapshot may reuse identical stat
 An encrypted full local backup was created at `~/.local/share/monash-platform/backups/demo-2026-11-05.enc`. It includes application and identity database dumps, one private media object and local configuration. Its separate encryption key stays outside Git and chat. Use `scripts/staging_backup.py` and the existing backup/restore runbook for isolated restore rehearsal; never restore over a valuable database for testing.
 
 For production, either import a reviewed snapshot into a migrated empty application database, or restore the application/identity/private-storage bundle through the approved cutover plan. Reconcile record counts, identifiers and import digests. Retain historical censoring flags, dates, units and source labels. Domain/issuer and account ownership mapping, production secrets, SMTP and storage still require deployment configuration; a local backup is not an automatic production cutover. The supplied database URL contains `[YOUR-PASSWORD]` and has not been used as a production connection.
+
+## Simulation lab and demo baseline
+
+The monitoring page links to `/dashboard/simulation`. This lists configured simulation plants separately from imported monitoring locations and identifies missing engineering configuration. Laboratory effluent concentrations do not supply influent BOD/COD/TSS/ammonia/TKN or flow. Real-site scenarios also need capacity, equipment/maintenance assumptions, factor applicability and calibration/validation evidence. Do not infer these values from final-effluent samples.
+
+The local demo fixture was explicitly seeded on 2026-11-05 using the existing development-only fixture, then repeated to verify idempotence:
+
+```sh
+docker exec -e APP_ENV=development monash-staging-api-1 uv run --no-sync python -m app.devdata
+```
+
+This creates one `DEMO001` Synthetic Demonstration Plant and one Synthetic baseline scenario. The fixture is displayed in the lab and excluded from the real-station map. It uses editable synthetic capacity, influent, equipment and screening assumptions; it is not associated with PTG248 or NXP. Running or changing a scenario still requires an authorized operator session and MFA. The current local database had zero scenarios and zero saved simulation runs before this seed; no historical runs were removed. The fixture is development-only, not a production data import. Review/exclude demonstration data during production cutover.

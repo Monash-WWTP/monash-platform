@@ -10,6 +10,7 @@ export function monitoringLocations(plants: Plant[], stations: Station[]): Monit
   const locations = new Map<string, MonitoringLocation>()
   for (const station of stations) locations.set(station.code, station)
   for (const plant of plants) {
+    if (plant.code === 'DEMO001') continue // Synthetic fixture belongs in the lab, not the real station map.
     const code = plant.code ?? `plant-${plant.id}`
     locations.set(code, { ...plant, code })
   }
