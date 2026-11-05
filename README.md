@@ -69,3 +69,5 @@ The [approved repository design](docs/superpowers/specs/2026-10-02-unified-platf
 See the [verification and review evidence](docs/migration/VERIFICATION.md) and [implementation decisions](docs/migration/IMPLEMENTATION_DECISIONS.md) for exact results and tradeoffs.
 
 Administration setup and operational boundaries: [platform administration](docs/operations/platform-administration.md). Production deployment artifacts: [server preparation](infra/production/README.md).
+
+Plant setup: [engineering inputs and prediction quality](docs/operations/plant-engineering-guide.md).

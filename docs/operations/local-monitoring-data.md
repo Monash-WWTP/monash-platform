@@ -100,3 +100,7 @@ On this local database, NXP is plant 2 / scenario 2 / completed run 3; PETALING-
 Open the Simulation lab, choose the plant and select **Demo assumptions baseline**. Replace assumed capacity/equipment/thresholds/factors through Administration → Plants; replace influent and maintenance in the scenario. New configuration revisions affect future runs; retain existing saved-run provenance. Before production transfer, explicitly exclude these demo scenarios/configurations or replace them with reviewed site records. Do not import them silently as real engineering data.
 
 Pre-change application database snapshot: `~/.local/share/monash-platform/backups/before-engineering-demo-20261105.sql` (owner-only, unencrypted local dump). Treat it as private; encrypt before any transfer. The earlier encrypted backups predate these two configurations and runs. Create a new coordinated encrypted backup before migration; do not assume the earlier bundles contain the latest state.
+
+## Plant input and prediction-quality guide
+
+See [Plant setup and prediction-quality guide](plant-engineering-guide.md) for field-by-field units, evidence requirements, current demo assumptions, data collection priorities and the calibration/validation work needed for more precise predictions.
