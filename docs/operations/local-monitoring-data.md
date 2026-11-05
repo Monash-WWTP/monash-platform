@@ -43,3 +43,9 @@ docker exec -e APP_ENV=development monash-staging-api-1 uv run --no-sync python 
 ```
 
 This creates one `DEMO001` Synthetic Demonstration Plant and one Synthetic baseline scenario. The fixture is displayed in the lab and excluded from the real-station map. It uses editable synthetic capacity, influent, equipment and screening assumptions; it is not associated with PTG248 or NXP. Running or changing a scenario still requires an authorized operator session and MFA. The current local database had zero scenarios and zero saved simulation runs before this seed; no historical runs were removed. The fixture is development-only, not a production data import. Review/exclude demonstration data during production cutover.
+
+## Local Tailscale demo adapter
+
+Run `python3 scripts/serve_tailnet_demo.py` while Vite (8180) and authentik (9100) are running. This loopback-only adapter is specific to this demo host. Its two listeners are 8182 (web/API) and 9182 (identity). Tailscale Serve routes HTTPS 10575 to 8182, HTTPS 10577 to 9182 and HTTPS 10576 directly to Mailpit 8125. It preserves the local canonical OIDC issuer and registered callback while adapting browser URLs, including authentik's embedded frontend API base. WebSocket upgrades are tunneled for identity and Vite. No credentials or request payloads are logged.
+
+The previous temporary proxy rewrote HTTP redirects but left authentik's frontend API base at localhost, causing “The request failed and the interceptors did not return an alternative response” in a remote browser. It also dropped WebSocket upgrades. The adapter now rewrites the embedded base and forwards upgrade handshakes. This is local demo compatibility, not the production domain/issuer/callback cutover design.
