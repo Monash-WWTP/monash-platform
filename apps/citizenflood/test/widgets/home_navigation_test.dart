@@ -14,4 +14,8 @@ void main() {
     expect(find.text('Account'), findsOneWidget);
     expect(find.byTooltip('New report'), findsOneWidget);
   });
+  testWidgets('simulated camera entry is absent', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: HomeShell()));
+    expect(find.byTooltip('Camera water'), findsNothing);
+  });
 }

@@ -1,0 +1,13 @@
+{
+  "repository": "https://github.com/evanw/webgl-water",
+  "commit": "73eda8be832b649367b25ea5690c1f0181bb56ad",
+  "copyright": "2011 Evan Wallace",
+  "license": "MIT",
+  "files": {
+    "water.js": {
+      "upstreamSha256": "87f1377aa9bce86065a8e4b50aebc7888b8cdea6f6735353b30ef08ef06d3f69",
+      "bundledSha256": "5859a59d02c3cb887b965c9a2c92a11795a75f3376affc6766c2b187bfbe83f8"
+    }
+  },
+  "usage": "Pinned solver source for native shader extraction only; standalone preview removed."
+}

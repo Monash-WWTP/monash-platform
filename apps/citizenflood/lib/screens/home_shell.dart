@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import '../services/account_session.dart';
 import 'map_screen.dart';
 import 'my_reports_screen.dart';
 import 'profile_screen.dart';
 
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key});
+  const HomeShell({super.key, this.session});
+  final AccountSession? session;
   @override
   State<HomeShell> createState() => _HomeShellState();
 }

@@ -20,13 +20,17 @@ jobs:
           channel: stable
           flutter-version: '3.44.7'
           cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test test/water/*.test.cjs
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
       - run: flutter build apk --debug --dart-define-from-file=staging-config.example.json
       - run: test -s build/app/outputs/flutter-apk/app-debug.apk
-      - name: Native AR input tests
-        run: cd android && ./gradlew :app:testDebugUnitTest --tests '*DepthInputTest'
+      - name: Native preview tests
+        run: cd android && ./gradlew :app:testDebugUnitTest
       - uses: actions/upload-artifact@v4
         with:
           name: citizenflood-staging-apk

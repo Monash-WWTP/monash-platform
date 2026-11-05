@@ -27,11 +27,13 @@ Protocol revision2 adds optional flooding movement and owned-report follow-ups, 
 ## Reported-depth AR (source feature; device acceptance pending)
 
 For a water reading expressed as depth in metres above a described surface,
-choose **Preview depth in AR** in the form or **Visualise reported depth** in
+choose **Preview depth** in the form or **Visualise reported depth** in
 an owned report. The preview uses the existing value; it never measures water,
 changes the reading or predicts flooding. Gauge stages, qualitative and
 unstructured legacy reports are excluded. Saved reports show their observation
 time, or explicitly state that it is unavailable.
+
+AR entry points are shown only after a native ARCore support check succeeds. Unsupported or unknown availability hides the action, and the native launcher checks again. The camera filter, camera-free 3D scene and WebView preview have been removed.
 
 On compatible Android phones, optional Google Play Services for AR setup and
 camera access occur only on entry. The pre-camera screen includes the

@@ -19,24 +19,33 @@ class MainActivity : FlutterActivity() {
                     result.success(null)
                     return@setMethodCallHandler
                 }
+                if (call.method == "isSupported") {
+                    if (Build.VERSION.SDK_INT < 24) result.success(false)
+                    else com.google.ar.core.ArCoreApk.getInstance().checkAvailabilityAsync(this) {
+                        availability -> runOnUiThread { result.success(availability.isSupported) }
+                    }
+                    return@setMethodCallHandler
+                }
                 if (call.method != "open") { result.notImplemented(); return@setMethodCallHandler }
                 val input = DepthInput.parse(call.argument<Any>("depthM"),
                     call.argument<Any>("reference"), call.argument<Any>("contextLabel"))
                 if (input == null) {
                     result.error("invalid_depth", "Enter a valid depth and reference surface.", null)
-                } else if (Build.VERSION.SDK_INT < 24) {
-                    result.error("unavailable", "AR requires Android 7 or later. Continue reporting normally.", null)
+                } else if (Build.VERSION.SDK_INT < 24 ||
+                    !com.google.ar.core.ArCoreApk.getInstance().checkAvailability(this).isSupported) {
+                    result.error("unavailable", "AR is unavailable on this device. Continue reporting normally.", null)
                 } else {
                     try {
                         DepthPreviewActivity.closeActive()
                         val launchToken = DepthLaunch.begin()
-                        startActivity(Intent(this, DepthPreviewActivity::class.java)
+                        val activity = DepthPreviewActivity::class.java
+                        startActivity(Intent(this, activity)
                             .putExtra("launchToken", launchToken)
                             .putExtra("depthM", input.metres).putExtra("reference", input.reference)
                             .putExtra("contextLabel", input.context))
                         result.success(null)
                     } catch (_: Exception) {
-                        result.error("unavailable", "AR could not open. Continue reporting normally.", null)
+                        result.error("unavailable", "Preview could not open. Continue reporting normally.", null)
                     }
                 }
             }

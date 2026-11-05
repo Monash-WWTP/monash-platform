@@ -57,4 +57,12 @@ void main() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, null);
   });
+  test('unsupported or missing native capability fails closed', () async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(DepthPreview.channel, (_) async => false);
+    expect(await DepthPreview.isSupported(), isFalse);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(DepthPreview.channel, null);
+    expect(await DepthPreview.isSupported(), isFalse);
+  });
 }

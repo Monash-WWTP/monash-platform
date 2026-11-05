@@ -28,6 +28,16 @@ class DepthPreview {
 
   static Future<void> close() => channel.invokeMethod<void>('close');
 
+  static Future<bool> isSupported() async {
+    try {
+      return await channel.invokeMethod<bool>('isSupported') ?? false;
+    } on MissingPluginException {
+      return false;
+    } on PlatformException {
+      return false;
+    }
+  }
+
   Future<void> open({required String contextLabel}) =>
       channel.invokeMethod<void>('open', {
         'depthM': depthM,
