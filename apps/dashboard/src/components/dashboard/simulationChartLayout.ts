@@ -35,4 +35,3 @@ export function contextChartLayout(ts: Timeseries, title: string) {
       textStyle: { color: CHART.axis, fontSize: 11 } },
   }
 }
-

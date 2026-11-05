@@ -117,7 +117,7 @@ export default function ResultsPanel({ plantId }: { plantId: number }) {
       </Card>
 
       <p className="px-1 text-[10px] text-muted-foreground">
-        Saved         {new Date(run.created_at).toLocaleString()}
+        Saved {new Date(run.created_at).toLocaleString()}
       </p>
     </div>
   )
