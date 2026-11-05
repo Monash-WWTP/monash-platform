@@ -84,7 +84,7 @@ def login(
                 nonce=nonce,
                 code_challenge=challenge,
                 code_challenge_method="S256",
-                **({"prompt": "login"} if operator else {}),
+                **({"prompt": "login", "max_age": 1} if operator else {}),
             )
         )
     )
