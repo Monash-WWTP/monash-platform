@@ -53,3 +53,9 @@ Screening supports upper limits for BOD, COD, TSS, ammonia, nitrate, phosphorus 
 `report:respond` grants the separate [operator response workflow](operator-response.md), with MFA on every read/write. It permits assignment, inspection/action records and closure history, not public-summary approval, configuration administration or scientific certification. Administration can grant/revoke it with a reason through the existing protected user permissions form; trusted CLI grants also support it. Removing permission revokes browser sessions. Existing `report:review` remains publication moderation.
 
 Simulation access update (2026-11-05): any signed-in platform account can use the shared research lab. Legacy `scenario:operate` grants no longer gate its endpoints. Administrative configuration and permissions remain independently protected.
+
+## Configure engineering inputs from an imported station
+
+In Stations, select **Configure engineering inputs** next to a location. This opens `?view=plants&station=CODE`. The editor reuses an existing plant with that code, or prefills a new configuration with the imported name, location and process label. The station code is locked in this workflow; capacity remains blank until explicitly entered. Equipment, thresholds and factor settings use the existing plant editor and revision/source requirements. Saving does not rewrite the station's laboratory records. The resulting **Open Simulation lab** link leads to influent, scenario equipment and maintenance inputs.
+
+Station lookup follows admin pagination with its 100-row limit, so a station or existing linked plant beyond the first page is not silently overlooked. Editable settings inputs use the background surface, while disabled identifiers retain their disabled appearance.

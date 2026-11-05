@@ -1,4 +1,4 @@
-import { ApiRequestError, fetchApi, type Page } from './transport'
+import { ApiRequestError, allPages, fetchApi, type Page } from './transport'
 
 export const ordinaryCapabilities = ['report:own', 'report:respond', 'report:review', 'monitor:read'] as const
 export const capabilityLabels: Record<string, string> = { 'report:own': 'Submit own reports', 'report:respond': 'Respond to citizen reports', 'report:review': 'Review reports', 'monitor:read': 'Read monitoring data', 'scenario:operate': 'Run research scenarios', 'platform:admin': 'Platform administrator' }
@@ -24,6 +24,12 @@ export const adminApi = {
     const fields = { code, name, latitude, longitude, capacity_mld, description, stp_type, status, units, configuration }
     return fetchApi<PlantSettings>(`${base}/plants${id ? `/${id}` : ''}`, { method: id ? 'PUT' : 'POST', body: JSON.stringify({ ...fields, expected_revision: revision, reason }) })
   },
+  stationEngineering: async (code: string) => {
+    const [stations, plants] = await Promise.all([allPages<AdminStation>(`${base}/stations`, 100), allPages<PlantSettings>(`${base}/plants`, 100)])
+    const station = stations.find(item => item.code === code)
+    if (!station) throw new Error('Station not found. Return to Stations and refresh.')
+    return { station, plant: plants.find(item => item.code === code) ?? null }
+  },
   stations: (offset = 0) => fetchApi<Page<AdminStation>>(`${base}/stations?limit=25&offset=${offset}`),
   saveStation: (station: AdminStation, reason: string, creating: boolean) => fetchApi<AdminStation>(`${base}/stations${creating ? '' : `/${encodeURIComponent(station.code)}`}`, { method: creating ? 'POST' : 'PUT', body: JSON.stringify({ code: station.code, name: station.payload.name, latitude: station.payload.latitude, longitude: station.payload.longitude, category: station.payload.category || null, stp_type: station.payload.stp_type || null, expected_revision: station.revision || null, reason }) }),
   history: (offset = 0) => fetchApi<Page<HistoryEvent>>(`${base}/history?limit=25&offset=${offset}`),
@@ -38,3 +44,10 @@ export function adminErrorText(error: unknown): string {
 }
 
 export const newPlant = (): PlantSettings => ({ code: '', name: '', latitude: 0, longitude: 0, capacity_mld: 1, description: '', stp_type: '', status: 'unknown', revision: 0, units: [], configuration: { thresholds: [], emission_factors: { ef_ch4: 0.0121, ef_n2o: 0.0093, ch4_unit: 'kg CH4/kg BOD5', n2o_unit: 'kg N2O-N/kg N', source: '', applicability: '' } } })
+
+/** Preserve source identity/location, but require an explicit engineering capacity. */
+export function plantFromStation(station: AdminStation): PlantSettings {
+  return { ...newPlant(), code: station.code, name: station.payload.name,
+    latitude: station.payload.latitude, longitude: station.payload.longitude,
+    stp_type: station.payload.stp_type ?? '', capacity_mld: Number.NaN }
+}
