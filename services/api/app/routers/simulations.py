@@ -7,7 +7,7 @@ from wwtp_sim.interface import MODEL_REGISTRY
 from ..http.errors import ApiError
 from ..db.models import Scenario, SimulationRun
 from ..db.session import get_db
-from ..operator_auth import require_operator
+from ..operator_auth import require_simulation_user
 from ..schemas import CompareOut, CompareRequest, ModelOut, RunOut, RunRequest, TimeseriesOut
 from ..services.simulation import execute_run, replay_run
 from ..services.comparison import validate_comparison
@@ -49,7 +49,7 @@ def run_scenario(
     scenario_id: int,
     body: RunRequest,
     db: Session = Depends(get_db),
-    _operator: str = Depends(require_operator),
+    _operator: str = Depends(require_simulation_user),
 ):
     scenario = db.get(Scenario, scenario_id)
     if not scenario or scenario.archived:
@@ -64,7 +64,7 @@ def run_scenario(
 def get_run(
     run_id: int,
     db: Session = Depends(get_db),
-    _operator: str = Depends(require_operator),
+    _operator: str = Depends(require_simulation_user),
 ):
     run = db.get(SimulationRun, run_id)
     if not run:
@@ -76,7 +76,7 @@ def get_run(
 def get_run_timeseries(
     run_id: int,
     db: Session = Depends(get_db),
-    _operator: str = Depends(require_operator),
+    _operator: str = Depends(require_simulation_user),
 ):
     run = db.get(SimulationRun, run_id)
     if not run:
@@ -88,7 +88,7 @@ def get_run_timeseries(
 def compare_runs(
     body: CompareRequest,
     db: Session = Depends(get_db),
-    _operator: str = Depends(require_operator),
+    _operator: str = Depends(require_simulation_user),
 ):
     runs = [db.get(SimulationRun, rid) for rid in body.run_ids]
     missing = [rid for rid, r in zip(body.run_ids, runs) if r is None]
@@ -112,7 +112,7 @@ def get_metrics():
 
 
 @router.post("/runs/{run_id}/replay",response_model=RunOut,status_code=201)
-def replay(run_id:int,db:Session=Depends(get_db),_operator:str=Depends(require_operator)):
+def replay(run_id:int,db:Session=Depends(get_db),_operator:str=Depends(require_simulation_user)):
     original=db.get(SimulationRun,run_id)
     if not original:raise ApiError(404,"run_not_found","Run not found")
     return _run_out(replay_run(db,original))

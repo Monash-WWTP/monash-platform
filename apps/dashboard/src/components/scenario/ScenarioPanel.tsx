@@ -145,7 +145,7 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
 
   return (
     <div ref={panel} className="flex h-full flex-col gap-3 overflow-y-auto p-3">
-      <OperatorAccess />
+      <OperatorAccess simulation />
       <Card
         title="Saved Scenarios"
         action={
@@ -159,9 +159,9 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
           {scenariosError && (
             <p role="alert" className="text-xs text-destructive">
               {scenariosError instanceof ApiRequestError && scenariosError.status === 401
-                ? 'Sign in with an approved operator account to view saved scenarios.'
+                ? 'Sign in to view saved scenarios.'
                 : scenariosError instanceof ApiRequestError && scenariosError.status === 403
-                  ? 'This account does not have WWTP operator access.'
+                  ? 'The request was not permitted. Refresh and try again.'
                   : scenariosError instanceof ApiRequestError && scenariosError.status === 503
                     ? 'Operator access is not configured on the server.'
                     : 'Saved scenarios could not be loaded.'}

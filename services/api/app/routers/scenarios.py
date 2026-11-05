@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from ..http.errors import ApiError
 from ..db.models import Plant, Scenario, SimulationRun
 from ..db.session import get_db
-from ..operator_auth import require_operator
+from ..operator_auth import require_simulation_user
 from ..schemas import ScenarioIn, ScenarioOut
 
 router = APIRouter(tags=["scenarios"])
@@ -26,7 +26,7 @@ def _to_out(db: Session, s: Scenario) -> ScenarioOut:
 def list_scenarios(
     plant_id: int,
     db: Session = Depends(get_db),
-    _operator: str = Depends(require_operator),
+    _operator: str = Depends(require_simulation_user),
 ):
     scenarios = db.query(Scenario).filter(Scenario.plant_id == plant_id, Scenario.archived.is_(False)).order_by(Scenario.id).all()
     return [_to_out(db, s) for s in scenarios]
@@ -37,7 +37,7 @@ def create_scenario(
     plant_id: int,
     body: ScenarioIn,
     db: Session = Depends(get_db),
-    _operator: str = Depends(require_operator),
+    _operator: str = Depends(require_simulation_user),
 ):
     if not db.get(Plant, plant_id):
         raise ApiError(404, "plant_not_found", "Plant not found")
@@ -60,7 +60,7 @@ def create_scenario(
 def get_scenario(
     scenario_id: int,
     db: Session = Depends(get_db),
-    _operator: str = Depends(require_operator),
+    _operator: str = Depends(require_simulation_user),
 ):
     scenario = db.get(Scenario, scenario_id)
     if not scenario or scenario.archived:
@@ -73,7 +73,7 @@ def update_scenario(
     scenario_id: int,
     body: ScenarioIn,
     db: Session = Depends(get_db),
-    _operator: str = Depends(require_operator),
+    _operator: str = Depends(require_simulation_user),
 ):
     scenario = db.get(Scenario, scenario_id)
     if not scenario or scenario.archived:
@@ -93,7 +93,7 @@ def update_scenario(
 def delete_scenario(
     scenario_id: int,
     db: Session = Depends(get_db),
-    _operator: str = Depends(require_operator),
+    _operator: str = Depends(require_simulation_user),
 ):
     scenario = db.get(Scenario, scenario_id)
     if not scenario or scenario.archived:

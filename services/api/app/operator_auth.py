@@ -1,13 +1,14 @@
-"""Native application-owned operator authorization, keyed by stable account UUID."""
+"""Research simulation access requires a verified signed-in platform account."""
 
 from fastapi import Depends
 from .db.platform import Account
-from .identity.dependencies import require_scenario, require_mfa
-from .http.errors import ApiError
+from .identity.dependencies import require_account
 
 
-def require_operator(account: Account = Depends(require_scenario)) -> str:
-    if "scenario:operate" not in account.capabilities:
-        raise ApiError(403, "capability_required", "Operator access is required")
-    require_mfa(account)
+def require_simulation_user(account: Account = Depends(require_account)) -> str:
     return account.id
+
+
+# Compatibility for existing integrations/dependency overrides. Administrative,
+# moderation and operator-response permissions have separate dependencies.
+require_operator = require_simulation_user
