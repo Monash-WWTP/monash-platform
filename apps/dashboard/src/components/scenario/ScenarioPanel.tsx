@@ -20,7 +20,7 @@ const UNIT_LABEL: Record<UnitType, string> = {
   clarifier: 'Clarifier',
 }
 
-export default function ScenarioPanel({ plantId }: { plantId: number }) {
+export default function ScenarioPanel({ plantId, capacityMld }: { plantId: number; capacityMld?: number }) {
   const { data: scenarios, error: scenariosError, isLoading: scenariosLoading } = useScenarios(plantId)
   const createScenario = useCreateScenario(plantId)
   const updateScenario = useUpdateScenario(plantId)
@@ -38,11 +38,13 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
     removeMaintenance,
     loadScenario,
     resetDraft,
+    applyPlantCapacity,
     setActiveRunId,
     setCenterTab,
   } = useWorkspaceStore()
 
   const panel = useRef<HTMLDivElement>(null)
+  useEffect(() => { if (capacityMld) applyPlantCapacity(capacityMld) }, [capacityMld, applyPlantCapacity])
   const mounted = useRef(true)
   useEffect(() => { mounted.current = true; return () => { mounted.current = false } }, [])
   const [startDate, setStartDate] = useState(() => new Date().toISOString().slice(0, 10))
@@ -184,7 +186,10 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
               {!s.is_baseline && (
                 <button
                   className="ml-2 flex size-11 items-center justify-center text-muted-foreground hover:text-destructive sm:size-8"
-                  onClick={() => deleteScenario.mutate(s.id)}
+                  onClick={() => {
+                    if (window.confirm(`Delete "${s.name}"? It leaves your saved scenarios; its past runs stay in history.`))
+                      deleteScenario.mutate(s.id)
+                  }}
                   title="Delete scenario"
                   aria-label={`Delete ${s.name}`}
                 >
@@ -265,7 +270,7 @@ export default function ScenarioPanel({ plantId }: { plantId: number }) {
           </p>
           <div>
             <Label>Assumed influent</Label>
-            <p className="mb-2 text-xs text-muted-foreground">All defaults are illustrative assumptions. Verify source, units and sampling period before changing them; monitoring data is not automatically imported.</p>
+            <p className="mb-2 text-xs text-muted-foreground">Flow starts at the plant’s design capacity; other defaults are illustrative assumptions. Verify source, units and sampling period before changing them; monitoring data is not automatically imported.</p>
             <div className="grid grid-cols-2 gap-2">
               {(
                 [

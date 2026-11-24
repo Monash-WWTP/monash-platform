@@ -45,6 +45,18 @@ def discovery():
         raise ApiError(503, "identity_unavailable", "Identity service is unavailable")
 
 
+OPERATOR_MAX_AGE = 60
+CLOCK_SKEW = 60
+
+
+def fresh_operator_login(auth_time) -> bool:
+    """OIDC max_age requires the client to verify auth_time itself."""
+    if isinstance(auth_time, bool) or not isinstance(auth_time, (int, float)):
+        return False
+    age = now().timestamp() - auth_time
+    return -CLOCK_SKEW <= age <= OPERATOR_MAX_AGE + CLOCK_SKEW
+
+
 @router.get("/login")
 def login(
     operator: bool = False,
@@ -84,7 +96,9 @@ def login(
                 nonce=nonce,
                 code_challenge=challenge,
                 code_challenge_method="S256",
-                **({"prompt": "login"} if operator else {}),
+                # authentik 2026.8 starts a new session on every login, so
+                # prompt=login loops; max_age forces a fresh login instead.
+                **({"max_age": str(OPERATOR_MAX_AGE)} if operator else {}),
             )
         )
     )
@@ -164,6 +178,10 @@ def callback(
             "amr", []
         ):
             raise ValueError("Operator MFA is required")
+        if client_id == settings.oidc_operator_client_id and not fresh_operator_login(
+            claims.get("auth_time")
+        ):
+            raise ValueError("Operator login is not recent")
         if claims.get("nonce") != nonce:
             raise ValueError("Nonce mismatch")
     except (httpx.HTTPError, jwt.PyJWTError, ValueError, KeyError):
@@ -242,9 +260,9 @@ def logout(
 @router.get("/register")
 def register():
     return RedirectResponse(
-        settings.oidc_issuer.rstrip("/")
-        + "/if/flow/monash-citizen-enrollment/?"
-        + urlencode({"next": settings.web_origin + "/api/v1/auth/login"}),
+        # The enrollment flow ends with its own redirect back to /auth/login;
+        # authentik rejects an absolute ?next= at flow completion.
+        settings.oidc_issuer.rstrip("/") + "/if/flow/monash-citizen-enrollment/",
         status_code=303,
     )
 

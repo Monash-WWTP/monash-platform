@@ -26,6 +26,12 @@ Mobile opens the system browser. On resume it refreshes identity proof once for 
 
 Web clears cached private queries when leaving for settings, then obtains fresh signed claims through OIDC on return. The return destination is a fixed `/account` choice, not an arbitrary URL. Display labels come only from signed claims; a monotonic claim timestamp prevents older proofs reverting a newer label. Changes within the same issued-at second may need a later refresh. Concurrent label projection is not serialized in this release; a later refresh may be needed if older and newer proofs arrive together. This affects the display label, not identity or permissions.
 
+## Identity behavior with authentik 2026.8 (24 November 2026)
+
+- **Operator re-authentication** uses OIDC `max_age=60` instead of `prompt=login`. In this authentik release every login starts a new session, which drops `prompt=login`'s marker and loops back to sign-in. The API requires a fresh `auth_time` (within `max_age` plus 60 s skew) as well as `amr` containing `mfa`. If an operator signed in without MFA less than a minute earlier, the callback refuses the login. Wait a minute, then sign in again.
+- **Registration return:** authentik never follows an absolute `?next=` at the end of a flow ("Invalid next URL"). The enrollment flow therefore ends with a static redirect stage to `MONASH_ACCOUNT_RETURN_ORIGIN/api/v1/auth/login?account_settings=true`, which signs the confirmed user in and returns them to `/account`.
+- **Account type:** enrollment creates `internal` (non-administrator) users, and bootstrap upgrades earlier verified `external` accounts. authentik refuses `external` users at `/if/user/`, which is where the Security / MFA & sessions page hands off. `AccountSettingsGuard` still blocks token and user API writes for non-superusers.
+
 ## Email templates
 
 All four platform account emails extend `email/monash_base.html`: registration confirmation, password recovery, candidate-email confirmation and previous-address notification. The base owns the logo, typography, spacing, action-button styling and footer. Child templates supply purpose-specific wording; recovery must never masquerade as registration. The previous-address notice has no confirmation button. Local Mailpit verifies rendering/delivery only, not production SMTP deliverability.

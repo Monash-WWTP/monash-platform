@@ -30,3 +30,32 @@ test('a late replay cannot replace a newer run selection', () => {
   useWorkspaceStore.getState().activateReplay(11, 12)
   assert.equal(useWorkspaceStore.getState().activeRunId, null)
 })
+
+test('a new scenario keeps the current horizon so its runs stay comparable', () => {
+  useWorkspaceStore.getState().resetWorkspace()
+  useWorkspaceStore.getState().setDraft({ name: 'Baseline', horizon: '1_month' })
+  useWorkspaceStore.getState().loadScenario(7, { ...useWorkspaceStore.getState().draft })
+  useWorkspaceStore.getState().resetDraft()
+  const { draft, editingScenarioId } = useWorkspaceStore.getState()
+  assert.equal(editingScenarioId, null)
+  assert.equal(draft.name, '')
+  assert.equal(draft.horizon, '1_month')
+})
+
+test('the default influent flow follows the plant design capacity', () => {
+  useWorkspaceStore.getState().resetWorkspace()
+  useWorkspaceStore.getState().applyPlantCapacity(2.5)
+  assert.equal(useWorkspaceStore.getState().draft.forecast.influent.flow, 2.5)
+  useWorkspaceStore.getState().resetDraft()
+  assert.equal(useWorkspaceStore.getState().draft.forecast.influent.flow, 2.5)
+})
+
+test('plant capacity never overwrites a scenario being edited or a typed flow', () => {
+  useWorkspaceStore.getState().resetWorkspace()
+  useWorkspaceStore.getState().setInfluent({ flow: 4 })
+  useWorkspaceStore.getState().applyPlantCapacity(2.5)
+  assert.equal(useWorkspaceStore.getState().draft.forecast.influent.flow, 4)
+  useWorkspaceStore.getState().loadScenario(3, { ...useWorkspaceStore.getState().draft, name: 'Saved' })
+  useWorkspaceStore.getState().applyPlantCapacity(9)
+  assert.equal(useWorkspaceStore.getState().draft.forecast.influent.flow, 4)
+})
