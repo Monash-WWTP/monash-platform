@@ -129,4 +129,61 @@ void main() {
       expect(calls, 1);
     },
   );
+  testWidgets('signing out clears an earlier account settings error', (
+    t,
+  ) async {
+    final session = SignOutSession();
+    final api = PlatformApi(
+      baseUrl: 'https://example.test',
+      token: () async => 'proof',
+      client: MockClient((r) async {
+        if (r.url.path.endsWith('account-settings')) {
+          return http.Response(
+            jsonEncode({'available': false, 'origin': null, 'actions': {}}),
+            200,
+          );
+        }
+        return http.Response(
+          jsonEncode({'email': 'qa@example.test', 'display_name': null}),
+          200,
+        );
+      }),
+    );
+    await t.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ProfileScreen(session: session, api: api),
+        ),
+      ),
+    );
+    await t.pumpAndSettle();
+    await t.tap(find.text('Profile'));
+    await t.pumpAndSettle();
+    expect(
+      find.text('Account settings unavailable. Please try again.'),
+      findsOneWidget,
+    );
+    await t.ensureVisible(find.text('Sign out'));
+    await t.tap(find.text('Sign out'));
+    await t.pumpAndSettle();
+    expect(
+      find.text('Account settings unavailable. Please try again.'),
+      findsNothing,
+    );
+  });
+}
+
+class SignOutSession extends AccountSession {
+  bool _signedIn = true;
+  int _generation = 0;
+  @override
+  bool get signedIn => _signedIn;
+  @override
+  int get generation => _generation;
+  @override
+  Future<void> signOut() async {
+    _signedIn = false;
+    _generation++;
+    notifyListeners();
+  }
 }

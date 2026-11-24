@@ -44,7 +44,11 @@ class _ProfileScreenState extends State<ProfileScreen>
   void _changed() {
     if (_generation == _session.generation) return;
     _generation = _session.generation;
-    setState(_load);
+    setState(() {
+      // A message about the previous session no longer applies.
+      _error = null;
+      _load();
+    });
   }
 
   @override

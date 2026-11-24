@@ -74,7 +74,9 @@ class _MapScreenState extends State<MapScreen> {
     super.dispose();
   }
 
-  void _refresh() => setState(() => _future = _repo.recent());
+  void _refresh() => setState(() {
+    _future = _repo.recent();
+  });
   Future<void> _locate() async {
     final generation = _generation;
     setState(() => _locating = true);

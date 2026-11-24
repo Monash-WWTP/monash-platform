@@ -95,7 +95,7 @@ export default function WorkspacePage() {
       <div className={`grid min-w-0 flex-1 grid-cols-1 lg:min-h-0 ${centerTab === 'trends' ? 'lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(0,1fr)]' : ''}`}>
         <aside aria-label="Scenario settings" className={`min-h-0 min-w-0 border-b border-border bg-background lg:overflow-y-auto lg:border-b-0 lg:border-r ${centerTab === 'compare' ? 'hidden' : ''}`}>
 
-          <ScenarioPanel key={id} plantId={id} />
+          <ScenarioPanel key={id} plantId={id} capacityMld={plant.capacity_mld} />
         </aside>
         <main className="min-h-[360px] min-w-0 overflow-y-auto p-4 lg:min-h-0">
           <div className="mx-auto max-w-6xl space-y-4">

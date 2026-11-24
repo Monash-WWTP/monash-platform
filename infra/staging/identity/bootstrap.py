@@ -83,6 +83,9 @@ return len(password) >= 12 and password == data.get("password_repeat") and bool(
         defaults={
             "create_users_as_inactive": True,
             "user_creation_mode": "always_create",
+            # External users are refused by authentik's /if/user/ interface,
+            # which the account Security settings page hands off to.
+            "user_type": "internal",
         },
     )
     email, _ = EmailStage.objects.update_or_create(
@@ -107,7 +110,20 @@ user.save(update_fields=["attributes"])
 return True"""
         },
     )
-    for order, stage in enumerate([prompt_stage, write, email, login]):
+    # authentik never follows an absolute ?next= after a flow, so return to the
+    # web client's login explicitly once the confirmed account is signed in.
+    finish, _ = RedirectStage.objects.update_or_create(
+        name="monash-enrollment-return",
+        defaults={
+            "mode": "static",
+            "target_static": os.environ.get(
+                "MONASH_ACCOUNT_RETURN_ORIGIN", "http://localhost:8180"
+            ).rstrip("/")
+            + "/api/v1/auth/login?account_settings=true",
+            "keep_context": False,
+        },
+    )
+    for order, stage in enumerate([prompt_stage, write, email, login, finish]):
         binding, _ = FlowStageBinding.objects.update_or_create(
             target=flow, order=order * 10, defaults={"stage": stage}
         )
@@ -316,3 +332,11 @@ import sys
 sys.path.insert(0, '/monash-brand')
 from bootstrap_accounts import provision
 provision()
+
+# Accounts enrolled before user_type was set were created as external users,
+# which cannot open the Security settings page. Upgrade only those accounts.
+from authentik.core.models import User, UserTypes
+
+User.objects.filter(
+    type=UserTypes.EXTERNAL, attributes__has_key="monash_verified_email"
+).update(type=UserTypes.INTERNAL)

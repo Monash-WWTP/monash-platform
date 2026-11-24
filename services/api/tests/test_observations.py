@@ -298,7 +298,13 @@ def test_browser_callback_session_reaches_both_api_versions(monkeypatch):
         ),
     )
     monkeypatch.setattr(
-        auth, "validate_token", lambda *a, **k: {"nonce": nonce, "amr": ["mfa"]}
+        auth,
+        "validate_token",
+        lambda *a, **k: {
+            "nonce": nonce,
+            "amr": ["mfa"],
+            "auth_time": int(now().timestamp()),
+        },
     )
     monkeypatch.setattr(auth, "account_from_claims", lambda db, claims: a)
     browser_client = TestClient(app, base_url="https://testserver")

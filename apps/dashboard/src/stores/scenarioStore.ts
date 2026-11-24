@@ -2,16 +2,21 @@ import { create } from 'zustand'
 
 import type { MaintenanceEvent, ScenarioInput } from '../api/types'
 
-export const emptyDraft = (): ScenarioInput => ({
+export const DEFAULT_FLOW_MLD = 6
+
+export const emptyDraft = (
+  horizon: ScenarioInput['horizon'] = '3_months',
+  flow = DEFAULT_FLOW_MLD,
+): ScenarioInput => ({
   name: '',
-  horizon: '3_months',
+  horizon,
   forecast: {
     demand: 'normal',
     demand_change_pct: 0,
     weather: 'normal',
     rainfall_mm_day: 0,
     // Illustrative draft assumptions, not measurements or calibrated site defaults.
-    influent: { flow: 6, bod: 250, cod: 520, tss: 300, ammonia: 30, tkn: 40 },
+    influent: { flow, bod: 250, cod: 520, tss: 300, ammonia: 30, tkn: 40 },
   },
   maintenance: [],
   operating_parameters: {
@@ -26,6 +31,8 @@ export const emptyDraft = (): ScenarioInput => ({
 interface WorkspaceState {
   draft: ScenarioInput
   editingScenarioId: number | null
+  /** Plant design capacity used as the default assumed flow for new drafts. */
+  defaultFlow: number | null
   activeRunId: number | null
   baselineRunId: number | null
   compareRunIds: number[]
@@ -39,6 +46,7 @@ interface WorkspaceState {
   removeMaintenance: (index: number) => void
   loadScenario: (id: number, draft: ScenarioInput) => void
   resetDraft: () => void
+  applyPlantCapacity: (capacityMld: number) => void
   resetWorkspace: () => void
   activateReplay: (sourceRunId: number, resultRunId: number) => void
   setActiveRunId: (id: number | null) => void
@@ -50,6 +58,7 @@ interface WorkspaceState {
 export const useWorkspaceStore = create<WorkspaceState>((set) => ({
   draft: emptyDraft(),
   editingScenarioId: null,
+  defaultFlow: null,
   activeRunId: null,
   baselineRunId: null,
   compareRunIds: [],
@@ -82,8 +91,34 @@ export const useWorkspaceStore = create<WorkspaceState>((set) => ({
       draft: { ...s.draft, maintenance: s.draft.maintenance.filter((_, i) => i !== index) },
     })),
   loadScenario: (id, draft) => set({ editingScenarioId: id, draft }),
-  resetDraft: () => set({ editingScenarioId: null, draft: emptyDraft() }),
-  resetWorkspace: () => set({ draft: emptyDraft(), editingScenarioId: null, activeRunId: null, baselineRunId: null, compareRunIds: [], centerTab: 'trends' }),
+  // Keep the horizon: runs are only comparable over identical simulated dates.
+  resetDraft: () =>
+    set((s) => ({
+      editingScenarioId: null,
+      draft: emptyDraft(s.draft.horizon, s.defaultFlow ?? DEFAULT_FLOW_MLD),
+    })),
+  applyPlantCapacity: (capacityMld) =>
+    set((s) => {
+      if (!(capacityMld > 0)) return {}
+      const untouched =
+        s.editingScenarioId === null &&
+        s.draft.forecast.influent.flow === (s.defaultFlow ?? DEFAULT_FLOW_MLD)
+      return {
+        defaultFlow: capacityMld,
+        ...(untouched
+          ? {
+              draft: {
+                ...s.draft,
+                forecast: {
+                  ...s.draft.forecast,
+                  influent: { ...s.draft.forecast.influent, flow: capacityMld },
+                },
+              },
+            }
+          : {}),
+      }
+    }),
+  resetWorkspace: () => set({ draft: emptyDraft(), editingScenarioId: null, defaultFlow: null, activeRunId: null, baselineRunId: null, compareRunIds: [], centerTab: 'trends' }),
   activateReplay: (sourceRunId, resultRunId) => set(s => s.activeRunId === sourceRunId ? { activeRunId: resultRunId } : {}),
   setActiveRunId: (id) => set({ activeRunId: id }),
   setBaselineRunId: (id) => set({ baselineRunId: id }),
